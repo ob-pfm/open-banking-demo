@@ -1,0 +1,27 @@
+export declare const PREFIX_CLASS: string;
+export declare const DEFAULT_MAIN_PROPS: {
+    cardMyCategoriesTitle: null;
+    categoriesTitle: null;
+    categoryButtonText: null;
+    deleteCategoryDisabled: boolean;
+    deleteCategoryButtonText: null;
+    deleteOwnCategoryDisabled: boolean;
+    deleteOwnCategoryButtonText: null;
+    myCategoryButtonText: null;
+    newCategoryModalButtonText: null;
+    newCategoryModalInputColorPickerLabel: null;
+    newCategoryModalInputLabel: null;
+    newCategoryModalTitle: null;
+    newSubCategoryModalButtonText: null;
+    newSubCategoryModalInputColorPickerLabel: null;
+    newSubCategoryModalInputLabel: null;
+    newSubCategoryModalTitle: null;
+    detailsCategoryModalTitle: null;
+    detailsCategoryModalButtonText: null;
+    detailsCategoryModalSubCategoryText: null;
+    categoriesData: never[];
+    confirmDeleteDialogTitle: null;
+    confirmDeleteDialogMessage: null;
+    confirmDeleteDialogNegativeButtonText: null;
+    confirmDeleteDialogPositiveButtonText: null;
+};

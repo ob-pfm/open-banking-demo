@@ -1,0 +1,33 @@
+import IAccount from '../interfaces/IAccount';
+export default class Account {
+    private _id;
+    private _providerId;
+    private _nature;
+    private _name;
+    private _number;
+    private _balance;
+    private _chargeable;
+    private _dateCreated;
+    private _lastUpdated;
+    private _userId?;
+    private _financialEntityId?;
+    constructor({ id, providerId, nature, name, number, balance, chargeable, dateCreated, lastUpdated, userId, financialEntityId }: IAccount);
+    get id(): number;
+    get providerId(): string | null;
+    set providerId(value: string | null);
+    get userId(): number | undefined;
+    get financialEntityId(): number | undefined;
+    get nature(): string;
+    set nature(value: string);
+    get name(): string;
+    set name(value: string);
+    get number(): string;
+    set number(value: string);
+    get balance(): number;
+    set balance(value: number);
+    get chargeable(): boolean;
+    set chargeable(value: boolean);
+    get dateCreated(): Date | null;
+    get lastUpdated(): Date | null;
+    get formattedLastUpdated(): string;
+}

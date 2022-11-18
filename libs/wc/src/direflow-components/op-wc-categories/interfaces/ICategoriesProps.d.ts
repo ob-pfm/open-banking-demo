@@ -1,0 +1,29 @@
+import ICategory from '../../../shared/interfaces/ICategory';
+import ISharedProperties from '../../../shared/interfaces/IProperties';
+import ICommonProps from '../../../shared/interfaces/ICommonProps';
+export interface ICategoriesProps extends ISharedProperties, ICommonProps {
+    cardMyCategoriesTitle: string | null;
+    categoriesTitle: string | null;
+    categoryButtonText: string | null;
+    deleteCategoryDisabled: string | boolean;
+    deleteCategoryButtonText: string | null;
+    deleteOwnCategoryDisabled: string | boolean;
+    deleteOwnCategoryButtonText: string | null;
+    myCategoryButtonText: string | null;
+    newCategoryModalButtonText: string | null;
+    newCategoryModalInputColorPickerLabel: string | null;
+    newCategoryModalInputLabel: string | null;
+    newCategoryModalTitle: string | null;
+    newSubCategoryModalButtonText: string | null;
+    newSubCategoryModalInputColorPickerLabel: string | null;
+    newSubCategoryModalInputLabel: string | null;
+    newSubCategoryModalTitle: string | null;
+    detailsCategoryModalTitle: string | null;
+    detailsCategoryModalButtonText: string | null;
+    detailsCategoryModalSubCategoryText: string | null;
+    categoriesData: ICategory[] | string;
+    confirmDeleteDialogTitle: string | null;
+    confirmDeleteDialogMessage: string | null;
+    confirmDeleteDialogNegativeButtonText: string | null;
+    confirmDeleteDialogPositiveButtonText: string | null;
+}

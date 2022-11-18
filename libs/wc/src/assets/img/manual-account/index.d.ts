@@ -1,0 +1,9 @@
+export { default as CashIcon } from './CashIcon';
+export { default as CreditCardIcon } from './CreditCardIcon';
+export { default as DebitCardIcon } from './DebitCardIcon';
+export { default as DebtIcon } from './DebtIcon';
+export { default as GoodsIcon } from './GoodsIcon';
+export { default as InvestmentIcon } from './InvestmentIcon';
+export { default as LifeInsuranceIcon } from './LifeInsuranceIcon';
+export { default as MortgageIcon } from './MortgageIcon';
+export { default as PersonalCreditIcon } from './PersonalCreditIcon';

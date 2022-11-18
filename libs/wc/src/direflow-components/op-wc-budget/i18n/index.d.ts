@@ -1,0 +1,41 @@
+declare const i18n: {
+    es: {
+        budgets: string;
+        totalBudget: string;
+        selectCategory: string;
+        detail: string;
+        category: string;
+        subcategories: string;
+        toRun: string;
+        createBudget: string;
+        saveChanges: string;
+        edit: string;
+        delete: string;
+        warning: string;
+        deleteMessage: string;
+        cancel: string;
+        newBudget: string;
+        newBudgetMessage: string;
+        withoutBudgets: string;
+    };
+    pt: {
+        budgets: string;
+        totalBudget: string;
+        selectCategory: string;
+        detail: string;
+        category: string;
+        subcategories: string;
+        toRun: string;
+        createBudget: string;
+        saveChanges: string;
+        edit: string;
+        delete: string;
+        warning: string;
+        deleteMessage: string;
+        cancel: string;
+        newBudget: string;
+        newBudgetMessage: string;
+        withoutBudgets: string;
+    };
+};
+export default i18n;

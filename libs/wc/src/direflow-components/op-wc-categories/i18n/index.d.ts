@@ -1,0 +1,43 @@
+declare const i18n: {
+    es: {
+        myCategories: string;
+        categories: string;
+        details: string;
+        deleteCategory: string;
+        save: string;
+        color: string;
+        name: string;
+        newCategory: string;
+        subcategoryColor: string;
+        subcategoryName: string;
+        newSubcategory: string;
+        categoryDetails: string;
+        createSubcategory: string;
+        subcategories: string;
+        warning: string;
+        confirmMessage: string;
+        cancel: string;
+        delete: string;
+    };
+    pt: {
+        myCategories: string;
+        categories: string;
+        details: string;
+        deleteCategory: string;
+        save: string;
+        color: string;
+        name: string;
+        newCategory: string;
+        subcategoryColor: string;
+        subcategoryName: string;
+        newSubcategory: string;
+        categoryDetails: string;
+        createSubcategory: string;
+        subcategories: string;
+        warning: string;
+        confirmMessage: string;
+        cancel: string;
+        delete: string;
+    };
+};
+export default i18n;

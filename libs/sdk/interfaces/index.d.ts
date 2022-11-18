@@ -1,0 +1,11 @@
+export { default as IAccount } from './IAccount';
+export { default as IAccountsResponse } from './IAccountsResponse';
+export { default as IBank } from './IBank';
+export { default as IBankAggStatus } from './IBankAggStatus';
+export { default as IBanksResponse } from './IBanksResponse';
+export { default as IError } from './IError';
+export { default as IErrorResponse } from './IErrorResponse';
+export { default as ITransaction } from './ITransaction';
+export { default as ITransactionsResponse } from './ITransactionsResponse';
+export { default as IUser } from './IUser';
+export { default as IUserDetail } from './IUserDetail';

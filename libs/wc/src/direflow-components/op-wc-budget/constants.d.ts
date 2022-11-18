@@ -1,0 +1,25 @@
+export declare const DEFAULT_MAIN_PROPS: {
+    budgetTitle: null;
+    budgetTotalTitle: null;
+    budgetModalFirstTitle: null;
+    budgetModalSecondTitle: string;
+    budgetModalDetailTitle: null;
+    formCategoriesText: null;
+    formSubcategoriesText: null;
+    budgetData: never[];
+    categoriesData: never[];
+    warningPercentage: number;
+    budgetCardMessage: null;
+    formCreateButtonText: null;
+    formSaveButtonText: null;
+    editButtonText: null;
+    deleteButtonText: null;
+    confirmDeleteDialogTitle: null;
+    confirmDeleteDialogMessage: null;
+    confirmDeleteDialogNegativeButtonText: null;
+    confirmDeleteDialogPositiveButtonText: null;
+    isEmpty: boolean;
+    emptyViewTitle: null;
+    emptyViewDescription: null;
+    emptyViewActionText: null;
+};

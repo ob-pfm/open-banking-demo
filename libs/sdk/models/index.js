@@ -1,0 +1,20 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UserDetail = exports.User = exports.Transaction = exports.Error = exports.BankAggStatus = exports.Bank = exports.Account = void 0;
+var Account_1 = require("./Account");
+Object.defineProperty(exports, "Account", { enumerable: true, get: function () { return __importDefault(Account_1).default; } });
+var Bank_1 = require("./Bank");
+Object.defineProperty(exports, "Bank", { enumerable: true, get: function () { return __importDefault(Bank_1).default; } });
+var BankAggStatus_1 = require("./BankAggStatus");
+Object.defineProperty(exports, "BankAggStatus", { enumerable: true, get: function () { return __importDefault(BankAggStatus_1).default; } });
+var Error_1 = require("./Error");
+Object.defineProperty(exports, "Error", { enumerable: true, get: function () { return __importDefault(Error_1).default; } });
+var Transaction_1 = require("./Transaction");
+Object.defineProperty(exports, "Transaction", { enumerable: true, get: function () { return __importDefault(Transaction_1).default; } });
+var User_1 = require("./User");
+Object.defineProperty(exports, "User", { enumerable: true, get: function () { return __importDefault(User_1).default; } });
+var UserDetail_1 = require("./UserDetail");
+Object.defineProperty(exports, "UserDetail", { enumerable: true, get: function () { return __importDefault(UserDetail_1).default; } });
