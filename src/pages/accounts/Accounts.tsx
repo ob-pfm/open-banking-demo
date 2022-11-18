@@ -42,7 +42,9 @@ const AccountsComponent = () => {
       deleteAccountDisabled
       editAccountDisabled
       fontFamily="Lato"
-      primaryColor="#ee6e73"
+      lang="pt"
+      currencyLang="pt-BR"
+      currencyType="BRL"
       componentStyles={styles}
     />
   );

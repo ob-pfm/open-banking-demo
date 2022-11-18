@@ -49,7 +49,11 @@ const Header = () => {
             Meus investimentos
           </Link>
         </div>
-        <div className={`header__nav-item ${location && location.pathname === '/pfm' && 'header__nav-item--selected'}`}>
+        <div
+          className={`header__nav-item ${
+            location && location.pathname.includes('pfm') && 'header__nav-item--selected'
+          }`}
+        >
           <Link className="header__nav-link" to="/pfm">
             PFM
           </Link>
