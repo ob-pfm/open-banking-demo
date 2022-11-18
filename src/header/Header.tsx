@@ -5,47 +5,53 @@ const Header = () => {
   const location = useLocation();
   return (
     <div className="header">
-      <span className="header__title">EL BANCO</span>
       <nav className="header__nav">
         <div
           className={`header__nav-item ${
-            location && location.pathname === '/movimientos' && 'header__nav-item--selected'
+            location &&
+            (location.pathname === '/meus-produtos' || location.pathname === '/') &&
+            'header__nav-item--selected'
           }`}
         >
-          <Link className="header__nav-link" to="/movimientos">
-            Movimientos
+          <Link className="header__nav-link" to="/meus-produtos">
+            Meus produtos
           </Link>
         </div>
         <div
-          className={`header__nav-item ${location && location.pathname === '/cuentas' && 'header__nav-item--selected'}`}
+          className={`header__nav-item ${location && location.pathname === '/contas' && 'header__nav-item--selected'}`}
         >
-          <Link className="header__nav-link" to="/cuentas">
-            Cuentas
+          <Link className="header__nav-link" to="/contas">
+            Contas
+          </Link>
+        </div>
+        <div
+          className={`header__nav-item ${location && location.pathname === '/cartoes' && 'header__nav-item--selected'}`}
+        >
+          <Link className="header__nav-link" to="/cartoes">
+            Cartões
           </Link>
         </div>
         <div
           className={`header__nav-item ${
-            location && location.pathname === '/categorias' && 'header__nav-item--selected'
+            location && location.pathname === '/meus-emprestimos' && 'header__nav-item--selected'
           }`}
         >
-          <Link className="header__nav-link" to="/categorias">
-            Categorías
+          <Link className="header__nav-link" to="/meus-emprestimos">
+            Meus Empréstimos
           </Link>
         </div>
         <div
           className={`header__nav-item ${
-            location && location.pathname === '/presupuestos' && 'header__nav-item--selected'
+            location && location.pathname === '/meus-investimentos' && 'header__nav-item--selected'
           }`}
         >
-          <Link className="header__nav-link" to="/presupuestos">
-            Presupuestos
+          <Link className="header__nav-link" to="/meus-investimentos">
+            Meus investimentos
           </Link>
         </div>
-        <div
-          className={`header__nav-item ${location && location.pathname === '/resumen' && 'header__nav-item--selected'}`}
-        >
-          <Link className="header__nav-link" to="/resumen">
-            Resumen
+        <div className={`header__nav-item ${location && location.pathname === '/pfm' && 'header__nav-item--selected'}`}>
+          <Link className="header__nav-link" to="/pfm">
+            PFM
           </Link>
         </div>
       </nav>
