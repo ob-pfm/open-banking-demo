@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 
-import { OpenBankingSDK, ACCOUNTS_TYPE, Account } from '../../libs/sdk';
+import { AccountsClient, Account } from '../../libs/sdk';
 import '../../libs/wc/ob-accounts-component';
 import styles from './style.css';
 
@@ -8,14 +8,7 @@ const userId = 2230376;
 const AccountsComponent = () => {
   const componentRef = useRef<any>(null);
 
-  const accountServices = useMemo(() => {
-    const obSDK = new OpenBankingSDK({
-      includes: ACCOUNTS_TYPE,
-      sandbox: true
-    });
-    const { Accounts } = obSDK.connect('XXXX-XXXX-XXXX');
-    return Accounts;
-  }, []);
+  const accountServices = useMemo(() => new AccountsClient('XXXX-XXXX-XXXX', true), []);
   const getAccounts = useCallback(
     (onSuccess: () => void) => {
       if (accountServices && componentRef.current !== null) {

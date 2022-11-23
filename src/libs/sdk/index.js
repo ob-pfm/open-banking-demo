@@ -1,18 +1,14 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Transaction = exports.Bank = exports.Account = exports.TransactionPayload = exports.BankPayload = exports.AccountPayload = exports.USERS_TYPE = exports.TRANSACTIONS_TYPE = exports.BANKS_TYPE = exports.ACCOUNTS_TYPE = exports.SignUp = exports.OpenBankingSDK = void 0;
-var OpenBankingSDK_1 = require("./core/OpenBankingSDK");
-Object.defineProperty(exports, "OpenBankingSDK", { enumerable: true, get: function () { return __importDefault(OpenBankingSDK_1).default; } });
-var core_1 = require("./core/");
-Object.defineProperty(exports, "SignUp", { enumerable: true, get: function () { return core_1.SignUp; } });
-var constants_1 = require("./constants");
-Object.defineProperty(exports, "ACCOUNTS_TYPE", { enumerable: true, get: function () { return constants_1.ACCOUNTS_TYPE; } });
-Object.defineProperty(exports, "BANKS_TYPE", { enumerable: true, get: function () { return constants_1.BANKS_TYPE; } });
-Object.defineProperty(exports, "TRANSACTIONS_TYPE", { enumerable: true, get: function () { return constants_1.TRANSACTIONS_TYPE; } });
-Object.defineProperty(exports, "USERS_TYPE", { enumerable: true, get: function () { return constants_1.USERS_TYPE; } });
+exports.Transaction = exports.Bank = exports.Account = exports.TransactionPayload = exports.BankPayload = exports.AccountPayload = exports.UsersClient = exports.TransactionsClient = exports.BanksClient = exports.AccountsClient = exports.signUp = exports.buildClients = void 0;
+var helpers_1 = require("./helpers");
+Object.defineProperty(exports, "buildClients", { enumerable: true, get: function () { return helpers_1.buildClients; } });
+Object.defineProperty(exports, "signUp", { enumerable: true, get: function () { return helpers_1.signUp; } });
+var clients_1 = require("./clients");
+Object.defineProperty(exports, "AccountsClient", { enumerable: true, get: function () { return clients_1.AccountsClient; } });
+Object.defineProperty(exports, "BanksClient", { enumerable: true, get: function () { return clients_1.BanksClient; } });
+Object.defineProperty(exports, "TransactionsClient", { enumerable: true, get: function () { return clients_1.TransactionsClient; } });
+Object.defineProperty(exports, "UsersClient", { enumerable: true, get: function () { return clients_1.UsersClient; } });
 var payloads_1 = require("./payloads");
 Object.defineProperty(exports, "AccountPayload", { enumerable: true, get: function () { return payloads_1.AccountPayload; } });
 Object.defineProperty(exports, "BankPayload", { enumerable: true, get: function () { return payloads_1.BankPayload; } });
