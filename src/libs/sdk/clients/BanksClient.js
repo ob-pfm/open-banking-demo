@@ -60,6 +60,16 @@ class BanksClient extends Client_1.default {
             return response.banks.map((bankData) => new models_1.Bank(bankData));
         });
     }
+    createConsent(bankId, userId, time) {
+        return this._apiCore.doGet(`${this._path}/${bankId}/consents?userId=${userId}&time=${time}`, (response) => {
+            return new models_1.ConsentCreateResponse(response);
+        });
+    }
+    getResources(bankId, userId) {
+        return this._apiCore.doGet(`${this._path}/${bankId}/resources?userId=${userId}`, (response) => {
+            return new models_1.ResourceDetailResponse(response);
+        });
+    }
     getAggregationStatus(bankId, userId) {
         return this._apiCore.doGet(`${this._path}/${bankId}/status?userId=${userId}`, (response) => {
             return new models_1.BankAggStatus(response);
