@@ -1,6 +1,7 @@
 export { default as Account } from './Account';
 export { default as Bank } from './Bank';
 export { default as BankAggStatus } from './BankAggStatus';
+export { default as Category } from './Category';
 export { default as ConsentCreateResponse } from './ConsentCreateResponse';
 export { default as Error } from './Error';
 export { default as ResourceDetailResponse } from './ResourceDetailResponse';

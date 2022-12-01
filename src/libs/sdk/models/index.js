@@ -3,13 +3,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserDetail = exports.User = exports.Transaction = exports.SignUpResponse = exports.ResourceDetailResponse = exports.Error = exports.ConsentCreateResponse = exports.BankAggStatus = exports.Bank = exports.Account = void 0;
+exports.UserDetail = exports.User = exports.Transaction = exports.SignUpResponse = exports.ResourceDetailResponse = exports.Error = exports.ConsentCreateResponse = exports.Category = exports.BankAggStatus = exports.Bank = exports.Account = void 0;
 var Account_1 = require("./Account");
 Object.defineProperty(exports, "Account", { enumerable: true, get: function () { return __importDefault(Account_1).default; } });
 var Bank_1 = require("./Bank");
 Object.defineProperty(exports, "Bank", { enumerable: true, get: function () { return __importDefault(Bank_1).default; } });
 var BankAggStatus_1 = require("./BankAggStatus");
 Object.defineProperty(exports, "BankAggStatus", { enumerable: true, get: function () { return __importDefault(BankAggStatus_1).default; } });
+var Category_1 = require("./Category");
+Object.defineProperty(exports, "Category", { enumerable: true, get: function () { return __importDefault(Category_1).default; } });
 var ConsentCreateResponse_1 = require("./ConsentCreateResponse");
 Object.defineProperty(exports, "ConsentCreateResponse", { enumerable: true, get: function () { return __importDefault(ConsentCreateResponse_1).default; } });
 var Error_1 = require("./Error");

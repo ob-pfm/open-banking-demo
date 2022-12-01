@@ -1,8 +1,9 @@
+import { FC, memo } from 'react';
+
 import { Link, useLocation } from 'react-router-dom';
 
-const Menu = () => {
+const Menu: FC = () => {
   const location = useLocation();
-  console.log(location.pathname);
   return (
     <div className="menu">
       <nav className="menu__nav">
@@ -57,4 +58,4 @@ const Menu = () => {
     </div>
   );
 };
-export default Menu;
+export default memo(Menu);
