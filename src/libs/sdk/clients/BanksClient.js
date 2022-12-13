@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const models_1 = require("../models");
+const constants_1 = require("../constants");
 const Client_1 = __importDefault(require("./Client"));
 class BanksClient extends Client_1.default {
     constructor(apiKey, sandbox) {
@@ -22,7 +23,7 @@ class BanksClient extends Client_1.default {
     }
     aggStatusBankSubscribe(options) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { bankId, userId, onCompletedStatus, onInProcessStatus, onFailedStatus, onServerError } = options;
+            const { bankId, userId, onConsentRequestedStatus, onConsentGrantedStatus, onConsentDeletedStatus, onAggregationStartedStatus, onAggregationCompletedStatus, onFailedStatus, onServerError } = options;
             if (this._isRunningPolling) {
                 const response = yield fetch(`${this._serverUrl}${this._path}/${bankId}/status?userId=${userId}`);
                 if (response.status == 502) {
@@ -37,13 +38,22 @@ class BanksClient extends Client_1.default {
                 else {
                     const data = yield response.json();
                     switch (data.status) {
-                        case 'completed':
-                            onCompletedStatus && onCompletedStatus();
+                        case constants_1.CONSENT_REQUESTED_STATUS:
+                            onConsentRequestedStatus && onConsentRequestedStatus();
                             break;
-                        case 'in process':
-                            onInProcessStatus && onInProcessStatus();
+                        case constants_1.CONSENT_GRANTED_STATUS:
+                            onConsentGrantedStatus && onConsentGrantedStatus();
                             break;
-                        case 'failed':
+                        case constants_1.CONSENT_DELETED_STATUS:
+                            onConsentDeletedStatus && onConsentDeletedStatus();
+                            break;
+                        case constants_1.AGGREGATION_STARTED_STATUS:
+                            onAggregationStartedStatus && onAggregationStartedStatus();
+                            break;
+                        case constants_1.AGGREGATION_COMPLETED_STATUS:
+                            onAggregationCompletedStatus && onAggregationCompletedStatus();
+                            break;
+                        case constants_1.PROCESS_FAILED_STATUS:
                             onFailedStatus && onFailedStatus();
                             break;
                         default:
@@ -61,7 +71,7 @@ class BanksClient extends Client_1.default {
         });
     }
     getAggregates(userId) {
-        return this._apiCore.doGet(`aggregate?userId=${userId}`, (response) => {
+        return this._apiCore.doGet(`${this._path}/aggregate?userId=${userId}`, (response) => {
             return response.banks.map((bankData) => new models_1.Bank(bankData));
         });
     }

@@ -6,6 +6,7 @@ export default class CategoriesClient extends Client implements ICategoriesClien
     private _path;
     private processResponse;
     getList(userId: string | number, cursor?: string | number): Promise<Category[]>;
+    getListWithSubcategories(userId: string | number, cursor?: string | number): Promise<Category[]>;
     get(id: string | number): Promise<Category>;
     create(categoryToCreate: CategoryPayload): Promise<Category>;
     edit(id: string | number, categoryToUpdate: CategoryPayload): Promise<Category>;

@@ -3,7 +3,7 @@ interface ICategoryPayload {
     userId?: number;
     name: string;
     color: string;
-    parentCategoryId: number;
+    parentCategoryId: number | null;
 }
 export default class CategoryPayload {
     private _userId?;
@@ -17,8 +17,8 @@ export default class CategoryPayload {
     set name(value: string);
     get color(): string;
     set color(value: string);
-    get parentCategoryId(): number;
-    set parentCategoryId(value: number);
+    get parentCategoryId(): number | null;
+    set parentCategoryId(value: number | null);
     get plainObject(): PlainObject;
 }
 export {};

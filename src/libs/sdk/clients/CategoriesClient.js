@@ -18,6 +18,23 @@ class CategoriesClient extends Client_1.default {
             return response.data.map((bankData) => new models_1.Category(bankData));
         });
     }
+    getListWithSubcategories(userId, cursor) {
+        return this._apiCore.doGet(`${this._path}?userId=${userId}${cursor ? `&cursor=${cursor}` : ''}`, (response) => {
+            let categories = [];
+            if (response.data) {
+                const catsOrd = response.data.reverse();
+                categories = catsOrd
+                    .filter((cat) => !cat.parentCategoryId)
+                    .map((cat) => new models_1.ParentCategory(cat));
+                categories.forEach((parcat) => {
+                    parcat.subcategories = catsOrd
+                        .filter((rescat) => rescat.parentCategoryId === parcat.id)
+                        .map((cat) => new models_1.Category(cat));
+                });
+            }
+            return categories;
+        });
+    }
     get(id) {
         return this._apiCore.doGet(`${this._path}/${id}`, this.processResponse);
     }

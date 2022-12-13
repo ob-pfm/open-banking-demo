@@ -4,6 +4,7 @@ export { default as BankAggStatus } from './BankAggStatus';
 export { default as Category } from './Category';
 export { default as ConsentCreateResponse } from './ConsentCreateResponse';
 export { default as Error } from './Error';
+export { default as ParentCategory } from './ParentCategory';
 export { default as ResourceDetailResponse } from './ResourceDetailResponse';
 export { default as SignUpResponse } from './SignUpResponse';
 export { default as Transaction } from './Transaction';

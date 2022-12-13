@@ -28,11 +28,11 @@ const Menu: FC = () => {
           </Link>
         </div>
         <div
-          className={`menu__nav-item menu__nav-item--disabled ${
-            location && location.pathname === '/categorias' && 'menu__nav-item--selected'
+          className={`menu__nav-item ${
+            location && location.pathname === '/pfm/categorias' && 'menu__nav-item--selected'
           }`}
         >
-          <Link className="menu__nav-link" to="/categorias">
+          <Link className="menu__nav-link" to="categorias">
             Categorías
           </Link>
         </div>

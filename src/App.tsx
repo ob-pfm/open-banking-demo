@@ -1,10 +1,13 @@
 import { Route, Routes } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 
 import Header from './header/Header';
 import { AccountsPage, CardsPage, MyInvestmentsPage, MyLoansPage, MyProductsPage, PFMPage } from './pages/subpages';
 
 import './App.css';
+import 'react-toastify/dist/ReactToastify.css';
 import AccountsComponent from './pages/accounts/Accounts';
+import CategoriesComponent from './pages/categories/Categories';
 
 function App() {
   return (
@@ -21,8 +24,18 @@ function App() {
           <Route path="/pfm" element={<PFMPage />}>
             <Route index element={<AccountsComponent />} />
             <Route path="contas" element={<AccountsComponent />} />
+            <Route path="categorias" element={<CategoriesComponent />} />
           </Route>
         </Routes>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          closeOnClick
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </div>
     </>
   );

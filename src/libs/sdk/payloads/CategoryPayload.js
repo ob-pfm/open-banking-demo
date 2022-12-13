@@ -5,7 +5,7 @@ class CategoryPayload {
         this._userId = userId;
         this._name = name;
         this._color = color;
-        this._parentCategoryId = parentCategoryId;
+        this._parentCategoryId = parentCategoryId || null;
     }
     get userId() {
         return this._userId;
@@ -26,7 +26,7 @@ class CategoryPayload {
         this._color = value;
     }
     get parentCategoryId() {
-        return this._parentCategoryId;
+        return this._parentCategoryId || null;
     }
     set parentCategoryId(value) {
         this._parentCategoryId = value;

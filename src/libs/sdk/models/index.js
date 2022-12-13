@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserDetail = exports.User = exports.Transaction = exports.SignUpResponse = exports.ResourceDetailResponse = exports.Error = exports.ConsentCreateResponse = exports.Category = exports.BankAggStatus = exports.Bank = exports.Account = void 0;
+exports.UserDetail = exports.User = exports.Transaction = exports.SignUpResponse = exports.ResourceDetailResponse = exports.ParentCategory = exports.Error = exports.ConsentCreateResponse = exports.Category = exports.BankAggStatus = exports.Bank = exports.Account = void 0;
 var Account_1 = require("./Account");
 Object.defineProperty(exports, "Account", { enumerable: true, get: function () { return __importDefault(Account_1).default; } });
 var Bank_1 = require("./Bank");
@@ -16,6 +16,8 @@ var ConsentCreateResponse_1 = require("./ConsentCreateResponse");
 Object.defineProperty(exports, "ConsentCreateResponse", { enumerable: true, get: function () { return __importDefault(ConsentCreateResponse_1).default; } });
 var Error_1 = require("./Error");
 Object.defineProperty(exports, "Error", { enumerable: true, get: function () { return __importDefault(Error_1).default; } });
+var ParentCategory_1 = require("./ParentCategory");
+Object.defineProperty(exports, "ParentCategory", { enumerable: true, get: function () { return __importDefault(ParentCategory_1).default; } });
 var ResourceDetailResponse_1 = require("./ResourceDetailResponse");
 Object.defineProperty(exports, "ResourceDetailResponse", { enumerable: true, get: function () { return __importDefault(ResourceDetailResponse_1).default; } });
 var SignUpResponse_1 = require("./SignUpResponse");

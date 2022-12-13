@@ -5,5 +5,5 @@ export default interface IAccountsClient {
     get: (id: string | number) => Promise<Account>;
     create: (accountToCreate: AccountPayload) => Promise<Account>;
     edit: (id: string | number, accountToUpdate: AccountPayload) => Promise<Account>;
-    delete: (id: string | number) => Promise<Account>;
+    delete: (id: string | number) => Promise<boolean>;
 }

@@ -41,6 +41,10 @@
   pointer-events: none;
 }
 
+.menu__nav-item--disabled {
+  opacity: 0.3;
+}
+
 .menu__nav-item--selected:hover > .menu__nav-link{
   opacity: 1;
 }
