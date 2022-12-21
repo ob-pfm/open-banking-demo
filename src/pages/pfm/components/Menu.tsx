@@ -46,11 +46,11 @@ const Menu: FC = () => {
           </Link>
         </div>
         <div
-          className={`menu__nav-item menu__nav-item--disabled ${
-            location && location.pathname === '/resumen' && 'menu__nav-item--selected'
+          className={`menu__nav-item ${
+            location && location.pathname === '/pfm/resumen' && 'menu__nav-item--selected'
           }`}
         >
-          <Link className="menu__nav-link" to="/resumen">
+          <Link className="menu__nav-link" to="resumen">
             Resumen
           </Link>
         </div>

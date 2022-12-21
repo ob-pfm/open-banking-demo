@@ -49,10 +49,6 @@ const BudgetsComponent = () => {
         .getList(userId)
         .then((response: Budget[]) => {
           componentRef.current.budgetData = response.map((budget) => budget.getPlainObject());
-          console.log(
-            '🚀 ~ file: Budgets.tsx:50 ~ .then ~ response.map((budget) => budget.getPlainObject()',
-            response.map((budget) => budget.getPlainObject())
-          );
           onSuccess(response.length === 0);
         })
         .catch(() => {
@@ -135,7 +131,6 @@ const BudgetsComponent = () => {
           ...category.getPlainObject(),
           subcategories: category.subcategories.map((subcategory) => subcategory.getPlainObject())
         }));
-        console.log('🚀 ~componentRef.current.categoriesData', componentRef.current.categoriesData);
         getBudgets((isEmpty: boolean) => {
           if (isEmpty) {
             componentRef.current.isEmpty = true;

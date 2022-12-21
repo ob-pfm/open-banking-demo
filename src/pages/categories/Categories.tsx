@@ -62,7 +62,6 @@ const CategoriesComponent = () => {
       const newCategory = new CategoryPayload({ userId, ...category });
       categoriesServices.create(newCategory).then((response: Category) => {
         toast.success('Subcategoria adicionada.');
-        console.log('🚀  handleSavesubCategory', response);
         setCategories([response.getPlainObject(), ...categories]);
         onSuccess();
       });

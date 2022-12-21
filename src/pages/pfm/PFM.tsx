@@ -66,9 +66,6 @@ const PFMPage = () => {
             progress: undefined,
             theme: 'light'
           });
-
-          /*  console.log('🚀  resourcesResponse', resourcesResponse.resources);
-          openDialog(true); */
         });
         banksClient!.getAggregationStatus(selectedBankId, userId).then((aggResponse) => {
           setAggStatus(aggResponse.status);

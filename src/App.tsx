@@ -10,6 +10,7 @@ import AccountsComponent from './pages/accounts/Accounts';
 import CategoriesComponent from './pages/categories/Categories';
 import TransactionsComponent from './pages/transactions/Transactions';
 import BudgetsComponent from './pages/budgets/Budgets';
+import SumaryComponent from './pages/sumary/Sumary';
 
 
 function App() {
@@ -30,6 +31,8 @@ function App() {
             <Route path="categorias" element={<CategoriesComponent />} />
             <Route path="movimientos" element={<TransactionsComponent />} />
             <Route path="presupuestos" element={<BudgetsComponent />} />
+            <Route path="resumen" element={<SumaryComponent />} />
+
           </Route>
         </Routes>
         <ToastContainer
