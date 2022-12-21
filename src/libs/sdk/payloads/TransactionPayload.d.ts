@@ -1,6 +1,5 @@
 import { PlainObject } from '../types';
 interface ITransactionPayload {
-    accountId: number;
     amount: number;
     charge: boolean;
     date: Date | number;
@@ -8,15 +7,12 @@ interface ITransactionPayload {
     categoryId?: number;
 }
 export default class TransactionPayload {
-    private _accountId;
     private _amount;
     private _charge;
     private _date;
     private _description;
     private _categoryId;
-    constructor({ accountId, amount, charge, date, description, categoryId }: ITransactionPayload);
-    get accountId(): number;
-    set accountId(value: number);
+    constructor({ amount, charge, date, description, categoryId }: ITransactionPayload);
     get amount(): number;
     get charge(): boolean;
     set charge(value: boolean);

@@ -6,7 +6,7 @@ export default class AccountsClient extends Client implements IAccountsClient {
     private _path;
     private processListResponse;
     private processResponse;
-    getList(userId: string): Promise<Account[]>;
+    getList(userId: number): Promise<Account[]>;
     get(id: string | number): Promise<Account>;
     create(accountToCreate: AccountPayload): Promise<Account>;
     edit(id: string | number, accountToUpdate: AccountPayload): Promise<Account>;

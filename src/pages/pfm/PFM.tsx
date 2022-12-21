@@ -8,6 +8,7 @@ import '../../libs/wc/ob-onboarding-component';
 import '../../libs/wc/ob-consent-wizard-component';
 
 import './style.css';
+import Bank from '../../libs/sdk/models/Bank';
 
 const userId = 123;
 
@@ -31,8 +32,8 @@ const PFMPage = () => {
       if (e.detail) {
         onboardingComponentRef.current.isShown = false;
         consentWizardComponentRef.current.isShown = true;
-        banksClient!.getAvailables().then((response) => {
-          consentWizardComponentRef.current.banksData = response.map((bank) => bank.getPlainObject());
+        banksClient!.getAvailables().then((response: Bank[]) => {
+          consentWizardComponentRef.current.banksData = response.map((bank: Bank) => bank.getPlainObject());
         });
       }
     },

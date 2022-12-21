@@ -87,7 +87,7 @@ const AccountsComponent = () => {
   const getAccounts = useCallback(
     (onSuccess: () => void) => {
       if (accountServices && componentRef.current !== null) {
-        accountServices.getList(`${userId}`).then((response: Account[]) => {
+        accountServices.getList(userId).then((response: Account[]) => {
           setAccounts(response.map((account) => account.getPlainObject()));
           onSuccess();
         });

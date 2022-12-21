@@ -19,11 +19,11 @@ const Menu: FC = () => {
           </Link>
         </div>
         <div
-          className={`menu__nav-item menu__nav-item--disabled ${
-            location && location.pathname === '/movimientos' && 'menu__nav-item--selected'
+          className={`menu__nav-item ${
+            location && location.pathname === '/pfm/movimientos' && 'menu__nav-item--selected'
           }`}
         >
-          <Link className="menu__nav-link" to="/movimientos">
+          <Link className="menu__nav-link" to="movimientos">
             Movimientos
           </Link>
         </div>
@@ -37,11 +37,11 @@ const Menu: FC = () => {
           </Link>
         </div>
         <div
-          className={`menu__nav-item menu__nav-item--disabled ${
-            location && location.pathname === '/presupuestos' && 'menu__nav-item--selected'
+          className={`menu__nav-item ${
+            location && location.pathname === '/pfm/presupuestos' && 'menu__nav-item--selected'
           }`}
         >
-          <Link className="menu__nav-link" to="/presupuestos">
+          <Link className="menu__nav-link" to="presupuestos">
             Presupuestos
           </Link>
         </div>

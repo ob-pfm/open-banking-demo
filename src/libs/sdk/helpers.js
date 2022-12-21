@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.signUp = exports.buildClients = exports.processErrors = void 0;
+exports.signUp = exports.buildClients = exports.processErrors = exports.parseDateTextToUnix = exports.parseDateToUnix = void 0;
 const axios_1 = __importDefault(require("axios"));
 const constants_1 = require("./constants");
 const clients_1 = require("./clients");
@@ -32,6 +32,13 @@ const createErrorItem = (status, title, message) => {
 const createErrorObject = (error) => {
     return new models_1.Error(`${error.code || '0'}`, 'Error System', `${error}`);
 };
+const parseDateToUnix = (date) => date.getTime();
+exports.parseDateToUnix = parseDateToUnix;
+const parseDateTextToUnix = (dateText) => {
+    const date = new Date(dateText);
+    return (0, exports.parseDateToUnix)(date);
+};
+exports.parseDateTextToUnix = parseDateTextToUnix;
 const processErrors = (error, reject) => {
     if (error.response) {
         if (error.response.status === 500) {
@@ -50,6 +57,9 @@ exports.processErrors = processErrors;
 const buildClients = (apiKey, sandbox) => ({
     accountsClient: new clients_1.AccountsClient(apiKey, sandbox),
     banksClient: new clients_1.BanksClient(apiKey, sandbox),
+    budgetsClient: new clients_1.BudgetsClient(apiKey, sandbox),
+    categoriesClient: new clients_1.CategoriesClient(apiKey, sandbox),
+    insightsClient: new clients_1.InsightsClient(apiKey, sandbox),
     transactionsClient: new clients_1.TransactionsClient(apiKey, sandbox),
     usersClient: new clients_1.UsersClient(apiKey, sandbox)
 });

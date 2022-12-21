@@ -1,19 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class TransactionPayload {
-    constructor({ accountId, amount, charge, date, description, categoryId }) {
-        this._accountId = accountId;
+    constructor({ amount, charge, date, description, categoryId }) {
         this._amount = amount;
         this._charge = charge;
         this._date = date;
         this._description = description;
         this._categoryId = categoryId || null;
-    }
-    get accountId() {
-        return this._accountId;
-    }
-    set accountId(value) {
-        this._accountId = value;
     }
     get amount() {
         return this._amount;
@@ -38,7 +31,6 @@ class TransactionPayload {
     }
     get plainObject() {
         return {
-            accountId: this._accountId,
             amount: this._amount,
             categoryId: this._categoryId,
             charge: this._charge,
