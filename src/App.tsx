@@ -26,12 +26,12 @@ function App() {
           <Route path="/meus-emprestimos" element={<MyLoansPage />} />
           <Route path="/meus-investimentos" element={<MyInvestmentsPage />} />
           <Route path="/pfm" element={<PFMPage />}>
-            <Route index element={<AccountsComponent />} />
+            <Route index element={<SumaryComponent />} />
+            <Route path="resumen" element={<SumaryComponent />} />
+            <Route path="movimientos" element={<TransactionsComponent />} />
             <Route path="contas" element={<AccountsComponent />} />
             <Route path="categorias" element={<CategoriesComponent />} />
-            <Route path="movimientos" element={<TransactionsComponent />} />
             <Route path="presupuestos" element={<BudgetsComponent />} />
-            <Route path="resumen" element={<SumaryComponent />} />
 
           </Route>
         </Routes>

@@ -24,7 +24,7 @@ import { IListOptions } from '../../libs/sdk/interfaces';
 import '../../libs/wc/ob-transactions-component';
 
 const userId = 2230376;
-const accountId = 2602081;
+const accountId = 9200;
 interface ISubmitEventData {
   transaction: {
     id?: string;

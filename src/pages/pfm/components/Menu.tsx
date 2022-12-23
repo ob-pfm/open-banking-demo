@@ -10,12 +10,12 @@ const Menu: FC = () => {
         <div
           className={`menu__nav-item ${
             location &&
-            (location.pathname === '/pfm' || location.pathname === '/pfm/contas') &&
+            (location.pathname === '/pfm' || location.pathname === '/pfm/resumen') &&
             'menu__nav-item--selected'
           }`}
         >
-          <Link className="menu__nav-link" to="contas">
-            Contas
+          <Link className="menu__nav-link" to="resumen">
+            Resumen
           </Link>
         </div>
         <div
@@ -25,6 +25,13 @@ const Menu: FC = () => {
         >
           <Link className="menu__nav-link" to="movimientos">
             Movimientos
+          </Link>
+        </div>
+        <div
+          className={`menu__nav-item ${location && location.pathname === '/pfm/contas' && 'menu__nav-item--selected'}`}
+        >
+          <Link className="menu__nav-link" to="contas">
+            Contas
           </Link>
         </div>
         <div
@@ -43,15 +50,6 @@ const Menu: FC = () => {
         >
           <Link className="menu__nav-link" to="presupuestos">
             Presupuestos
-          </Link>
-        </div>
-        <div
-          className={`menu__nav-item ${
-            location && location.pathname === '/pfm/resumen' && 'menu__nav-item--selected'
-          }`}
-        >
-          <Link className="menu__nav-link" to="resumen">
-            Resumen
           </Link>
         </div>
       </nav>
