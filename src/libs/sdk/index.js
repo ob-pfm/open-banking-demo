@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PROCESS_FAILED_STATUS = exports.AGGREGATION_COMPLETED_STATUS = exports.AGGREGATION_STARTED_STATUS = exports.CONSENT_DELETED_STATUS = exports.CONSENT_GRANTED_STATUS = exports.CONSENT_REQUESTED_STATUS = exports.FilterOptions = exports.Resume = exports.ParentCategory = exports.Transaction = exports.Category = exports.Budget = exports.Bank = exports.Analysis = exports.Account = exports.TransactionPayload = exports.CategoryPayload = exports.BudgetPayload = exports.BankPayload = exports.AccountPayload = exports.UsersClient = exports.TransactionsClient = exports.InsightsClient = exports.CategoriesClient = exports.BudgetsClient = exports.BanksClient = exports.AccountsClient = exports.signUp = exports.buildClients = void 0;
+exports.FilterOptions = exports.Resume = exports.ParentCategory = exports.Transaction = exports.Category = exports.Budget = exports.Bank = exports.Analysis = exports.Account = exports.TransactionPayload = exports.CategoryPayload = exports.BudgetPayload = exports.BankPayload = exports.AccountPayload = exports.UsersClient = exports.TransactionsClient = exports.InsightsClient = exports.CategoriesClient = exports.BudgetsClient = exports.BanksClient = exports.AccountsClient = exports.signUp = exports.buildClients = void 0;
 var helpers_1 = require("./helpers");
 Object.defineProperty(exports, "buildClients", { enumerable: true, get: function () { return helpers_1.buildClients; } });
 Object.defineProperty(exports, "signUp", { enumerable: true, get: function () { return helpers_1.signUp; } });
@@ -28,10 +28,3 @@ Object.defineProperty(exports, "Transaction", { enumerable: true, get: function 
 Object.defineProperty(exports, "ParentCategory", { enumerable: true, get: function () { return models_1.ParentCategory; } });
 Object.defineProperty(exports, "Resume", { enumerable: true, get: function () { return models_1.Resume; } });
 Object.defineProperty(exports, "FilterOptions", { enumerable: true, get: function () { return models_1.FilterOptions; } });
-var constants_1 = require("./constants");
-Object.defineProperty(exports, "CONSENT_REQUESTED_STATUS", { enumerable: true, get: function () { return constants_1.CONSENT_REQUESTED_STATUS; } });
-Object.defineProperty(exports, "CONSENT_GRANTED_STATUS", { enumerable: true, get: function () { return constants_1.CONSENT_GRANTED_STATUS; } });
-Object.defineProperty(exports, "CONSENT_DELETED_STATUS", { enumerable: true, get: function () { return constants_1.CONSENT_DELETED_STATUS; } });
-Object.defineProperty(exports, "AGGREGATION_STARTED_STATUS", { enumerable: true, get: function () { return constants_1.AGGREGATION_STARTED_STATUS; } });
-Object.defineProperty(exports, "AGGREGATION_COMPLETED_STATUS", { enumerable: true, get: function () { return constants_1.AGGREGATION_COMPLETED_STATUS; } });
-Object.defineProperty(exports, "PROCESS_FAILED_STATUS", { enumerable: true, get: function () { return constants_1.PROCESS_FAILED_STATUS; } });

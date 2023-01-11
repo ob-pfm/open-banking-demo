@@ -5,7 +5,7 @@ class CategoryPayload {
         this._userId = userId;
         this._name = name;
         this._color = color;
-        this._parentCategoryId = parentCategoryId || null;
+        this._parentCategoryId = parentCategoryId;
     }
     get userId() {
         return this._userId;
@@ -31,7 +31,7 @@ class CategoryPayload {
     set parentCategoryId(value) {
         this._parentCategoryId = value;
     }
-    get plainObject() {
+    toObject() {
         return {
             userId: this._userId,
             name: this._name,

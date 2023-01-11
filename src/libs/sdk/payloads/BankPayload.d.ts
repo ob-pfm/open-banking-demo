@@ -1,4 +1,8 @@
-import { PlainObject } from '../types';
+export interface IBankPayload {
+    bankId: string;
+    name: string;
+    imagePath: string;
+}
 export default class BankPayload {
     private _bankId;
     private _name;
@@ -10,5 +14,5 @@ export default class BankPayload {
     set name(value: string);
     get imagePath(): string;
     set imagePath(value: string);
-    get plainObject(): PlainObject;
+    toObject(): IBankPayload;
 }

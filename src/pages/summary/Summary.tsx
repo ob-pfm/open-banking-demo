@@ -1,23 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useOutletContext, createSearchParams, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
 
-import {
-  CategoriesClient,
-  ParentCategory,
-  CONSENT_REQUESTED_STATUS,
-  CONSENT_GRANTED_STATUS,
-  CONSENT_DELETED_STATUS,
-  AGGREGATION_STARTED_STATUS,
-  AGGREGATION_COMPLETED_STATUS,
-  PROCESS_FAILED_STATUS,
-  InsightsClient,
-  Resume
-} from '../../libs/sdk';
+import { CategoriesClient, ParentCategory, InsightsClient, Resume } from '../../libs/sdk';
+import { API_KEY, USER_ID } from '../../constants';
 
 import '../../libs/wc/ob-summary-component';
 
-const userId = 2230376;
 const getDateRange = (date: Date) => {
   const month = date.getMonth();
   const year = date.getFullYear();
@@ -28,30 +16,33 @@ const getDateRange = (date: Date) => {
 };
 
 interface ISubmitEventData {
-  summary: { categoryId: number; parentCategoryId: number; };
+  summary: { categoryId: number; parentCategoryId: number };
   date: number | string;
 }
 
-const SumaryComponent = () => {
+const SummaryComponent = () => {
   const componentRef = useRef<any>(null);
   const navigate = useNavigate();
-  const { aggStatus } = useOutletContext<{ aggStatus: string | null }>();
-  const categoryServices = useMemo(() => new CategoriesClient('XXXX-XXXX-XXXX', true), []);
-  const insightsServices = useMemo(() => new InsightsClient('XXXX-XXXX-XXXX', true), []);
+  const { alertIsShown, alertText } = useOutletContext<{ alertIsShown: boolean; alertText: string }>();
+  const categoryServices = useMemo(() => new CategoriesClient(API_KEY, true), []);
+  const insightsServices = useMemo(() => new InsightsClient(API_KEY, true), []);
 
-  const handleSubcategoryDetailClick = useCallback((e: { detail: ISubmitEventData }) => {
-    const { summary, date } = e.detail;
-    const { iniDate, endDate } = getDateRange(new Date(date));
-    navigate({
-      pathname: '../movimientos',
-      search: createSearchParams({
-        category_id: `${summary.parentCategoryId}`,
-        subcategory_id: `${summary.categoryId}`,
-        date_from: `${iniDate}`,
-        date_to: `${endDate}`
-      }).toString()
-    });
-  }, [navigate]);
+  const handleSubcategoryDetailClick = useCallback(
+    (e: { detail: ISubmitEventData }) => {
+      const { summary, date } = e.detail;
+      const { iniDate, endDate } = getDateRange(new Date(date));
+      navigate({
+        pathname: '../movimientos',
+        search: createSearchParams({
+          category_id: `${summary.parentCategoryId}`,
+          subcategory_id: `${summary.categoryId}`,
+          date_from: `${iniDate}`,
+          date_to: `${endDate}`
+        }).toString()
+      });
+    },
+    [navigate]
+  );
 
   const handleTransactionDetailClick = useCallback(
     (e: { detail: ISubmitEventData }) => {
@@ -78,13 +69,13 @@ const SumaryComponent = () => {
       balances: []
     };
     categoryServices
-      .getListWithSubcategories(userId)
+      .getListWithSubcategories(USER_ID)
       .then((response: ParentCategory[]) => {
         componentRef.current.categoriesData = response.map((category) => ({
-          ...category.getPlainObject(),
-          subcategories: category.subcategories.map((subcategory) => subcategory.getPlainObject())
+          ...category.toObject(),
+          subcategories: category.subcategories.map((subcategory) => subcategory.toObject())
         }));
-        return insightsServices.getResume(userId);
+        return insightsServices.getResume(USER_ID);
       })
       .then((response: Resume) => {
         if (response && response.balances && response.expenses && response.incomes) {
@@ -104,39 +95,6 @@ const SumaryComponent = () => {
   }, [insightsServices, categoryServices]);
 
   useEffect(() => {
-    switch (aggStatus) {
-      case CONSENT_REQUESTED_STATUS:
-        toast.info('Consentimento solicitado.');
-        break;
-      case CONSENT_GRANTED_STATUS:
-        toast.success('Consentimento concedido.');
-        break;
-      case CONSENT_DELETED_STATUS:
-        toast.warn('Consentimento removido.');
-        break;
-      case AGGREGATION_STARTED_STATUS:
-        componentRef.current.alertType = 'warning';
-        componentRef.current.alertText = 'Agregação de banco em processo...';
-        componentRef.current.showAlert = true;
-        break;
-      case AGGREGATION_COMPLETED_STATUS:
-        if (componentRef.current.showAlert) {
-          componentRef.current.showAlert = false;
-        }
-        toast.success('Agregação de banco finalizada.');
-        break;
-      case PROCESS_FAILED_STATUS:
-        if (componentRef.current.showAlert) {
-          componentRef.current.showAlert = false;
-        }
-        toast.error('Consentimento removido.');
-        break;
-      default:
-        break;
-    }
-  }, [aggStatus]);
-
-  useEffect(() => {
     const componentRefCurrent = componentRef.current;
     componentRefCurrent.addEventListener('subcategory-detail-click', handleSubcategoryDetailClick);
     componentRefCurrent.addEventListener('transactions-detail-click', handleTransactionDetailClick);
@@ -147,8 +105,17 @@ const SumaryComponent = () => {
     };
   }, [handleSubcategoryDetailClick, handleTransactionDetailClick]);
   return (
-    <ob-summary-component ref={componentRef} fontFamily="Lato" lang="pt" currencyLang="pt-BR" currencyType="BRL" />
+    <ob-summary-component
+      ref={componentRef}
+      alertType="warning"
+      showAlert={alertIsShown}
+      alertText={alertText}
+      fontFamily="Lato"
+      lang="pt"
+      currencyLang="pt-BR"
+      currencyType="BRL"
+    />
   );
 };
 
-export default SumaryComponent;
+export default SummaryComponent;

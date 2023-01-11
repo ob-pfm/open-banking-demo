@@ -39,7 +39,7 @@ class Account {
     get lastUpdated() {
         return this._lastUpdated;
     }
-    getPlainObject() {
+    toObject() {
         return {
             id: this._id,
             providerId: this._providerId,

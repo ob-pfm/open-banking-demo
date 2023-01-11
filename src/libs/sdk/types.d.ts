@@ -8,6 +8,4 @@ export declare type ClientDictionary = {
     transactionsClient: ITransactionsClient;
     usersClient: IUsersClient;
 };
-declare type Primitive = bigint | boolean | null | number | string | symbol | object | undefined;
-export declare type PlainObject = Record<string, Primitive>;
-export {};
+export declare type BankStatus = 'CONSENT_REQUESTED' | 'CONSENT_GRANTED' | 'CONSENT_DELETED' | 'AGGREGATION_STARTED' | 'AGGREGATION_COMPLETED' | 'PROCESS_FAILED';

@@ -1,14 +1,5 @@
-import { PlainObject } from '../types';
-interface IAccountPayload {
-    userId: number;
-    financialEntityId: number;
-    nature: string;
-    name: string;
-    number: string;
-    balance: number;
-    chargeable: boolean;
-}
-export default class AccountPayload {
+import IAccountPayload from '../interfaces/IAccountPayload';
+export default class AccountPayload implements IAccountPayload {
     private _userId;
     private _financialEntityId;
     private _nature;
@@ -31,6 +22,5 @@ export default class AccountPayload {
     set balance(value: number);
     get chargeable(): boolean;
     set chargeable(value: boolean);
-    get plainObject(): PlainObject;
+    toObject(): IAccountPayload;
 }
-export {};

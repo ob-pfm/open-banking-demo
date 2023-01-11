@@ -1,5 +1,4 @@
 import IResourceDetailResponse from '../interfaces/IResourceDetailResponse';
-import { PlainObject } from '../types';
 export default class ResourceDetailResponse implements IResourceDetailResponse {
     private _bankId;
     private _userId;
@@ -8,5 +7,5 @@ export default class ResourceDetailResponse implements IResourceDetailResponse {
     get bankId(): string;
     get userId(): number;
     get resources(): string[];
-    getPlainObject(): PlainObject;
+    toObject(): IResourceDetailResponse;
 }

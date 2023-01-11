@@ -49,7 +49,7 @@ class Transaction {
     set accountId(value) {
         this._accountId = value;
     }
-    getPlainObject() {
+    toObject() {
         return {
             id: this._id,
             date: this._date,

@@ -1,5 +1,5 @@
 import IBankAggStatus from '../interfaces/IBankAggStatus';
-import { PlainObject } from '../types';
+import { BankStatus } from '../types';
 export default class BankAggStatus implements IBankAggStatus {
     private _bankId;
     private _userId;
@@ -7,6 +7,6 @@ export default class BankAggStatus implements IBankAggStatus {
     constructor({ bankId, userId, status }: IBankAggStatus);
     get bankId(): string;
     get userId(): number;
-    get status(): string;
-    getPlainObject(): PlainObject;
+    get status(): BankStatus;
+    toObject(): IBankAggStatus;
 }

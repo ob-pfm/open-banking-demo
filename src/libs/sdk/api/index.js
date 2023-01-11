@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ApiCore = exports.SERVER_URL_SANDBOX = exports.SERVER_URL_PROD = void 0;
 const helpers_1 = require("../helpers");
-exports.SERVER_URL_PROD = 'https://pfm-api-production.finerioconnect.com';
-exports.SERVER_URL_SANDBOX = 'http://localhost:4200/api/v1/';
+exports.SERVER_URL_PROD = 'http://ec2-3-21-18-54.us-east-2.compute.amazonaws.com:8081/api/v1/';
+exports.SERVER_URL_SANDBOX = 'http://ec2-3-21-18-54.us-east-2.compute.amazonaws.com:8081/api/v1/';
 class ApiCore {
     constructor(apiSettings) {
         this.doGet = (url, success) => new Promise((resolve, reject) => {
@@ -12,15 +12,15 @@ class ApiCore {
                 .then((response) => resolve(success(response.data)))
                 .catch((error) => (0, helpers_1.processErrors)(error, reject));
         });
-        this.doPost = (url, body, success, isPlainObject) => new Promise((resolve, reject) => {
+        this.doPost = (url, body, success) => new Promise((resolve, reject) => {
             this._apiInstance
-                .post(url, isPlainObject ? body : body.plainObject)
+                .post(url, body)
                 .then((response) => resolve(success(response.data)))
                 .catch((error) => (0, helpers_1.processErrors)(error, reject));
         });
-        this.doPut = (url, body, success, isPlainObject) => new Promise((resolve, reject) => {
+        this.doPut = (url, body, success) => new Promise((resolve, reject) => {
             this._apiInstance
-                .put(url, isPlainObject ? body : body.plainObject)
+                .put(url, body)
                 .then((response) => resolve(success(response.data)))
                 .catch((error) => (0, helpers_1.processErrors)(error, reject));
         });

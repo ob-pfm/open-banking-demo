@@ -52,7 +52,7 @@ class AccountPayload {
     set chargeable(value) {
         this._chargeable = value;
     }
-    get plainObject() {
+    toObject() {
         return {
             userId: this._userId,
             financialEntityId: this._financialEntityId,

@@ -1,4 +1,4 @@
-import { ICategoriesClient } from '../interfaces';
+import { ICategoriesClient, ICategoryUpdatePayload } from '../interfaces';
 import { Category, ParentCategory } from '../models';
 import CategoryPayload from '../payloads/CategoryPayload';
 import Client from './Client';
@@ -9,6 +9,6 @@ export default class CategoriesClient extends Client implements ICategoriesClien
     getListWithSubcategories(userId: string | number, cursor?: string | number): Promise<ParentCategory[]>;
     get(id: string | number): Promise<Category>;
     create(categoryToCreate: CategoryPayload): Promise<Category>;
-    edit(id: string | number, categoryToUpdate: CategoryPayload): Promise<Category>;
+    edit(id: string | number, categoryToUpdate: ICategoryUpdatePayload): Promise<Category>;
     delete(id: string | number): Promise<boolean>;
 }

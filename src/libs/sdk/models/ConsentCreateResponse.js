@@ -15,7 +15,7 @@ class ConsentCreateResponse {
     get url() {
         return this._url;
     }
-    getPlainObject() {
+    toObject() {
         return {
             bankId: this._bankId,
             userId: this._userId,

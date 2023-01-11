@@ -10,7 +10,7 @@ class UsersClient extends Client_1.default {
         return new models_1.UserDetail(response);
     }
     create(cpf) {
-        return this._apiCore.doPost('/onboarding/users', { cpf: cpf }, (response) => new models_1.User(response), true);
+        return this._apiCore.doPost('/onboarding/users', { cpf: cpf }, (response) => new models_1.User(response));
     }
     get(id) {
         return this._apiCore.doGet(`/open-finances/users/${id}`, this.processResponse);

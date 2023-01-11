@@ -2,19 +2,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import {
-  AccountsClient,
-  Account,
-  AccountPayload,
-  CONSENT_REQUESTED_STATUS,
-  CONSENT_GRANTED_STATUS,
-  CONSENT_DELETED_STATUS,
-  AGGREGATION_STARTED_STATUS,
-  AGGREGATION_COMPLETED_STATUS,
-  PROCESS_FAILED_STATUS
-} from '../../libs/sdk';
-import { PlainObject } from '../../libs/sdk/types';
+import { AccountsClient, Account, AccountPayload } from '../../libs/sdk';
+import { IAccount } from '../../libs/sdk/interfaces';
 import '../../libs/wc/ob-accounts-component';
+import { API_KEY } from '../../constants';
 import styles from './style.css';
 
 const FINANCIAL_ENTITIES = [
@@ -65,7 +56,7 @@ const FINANCIAL_ENTITIES = [
 const userId = 2230376;
 interface ISubmitEventData {
   account: {
-    id?: string;
+    id?: number;
     balance: number;
     chargeable: boolean;
     financialEntityId: string;
@@ -76,21 +67,26 @@ interface ISubmitEventData {
   onSuccess: () => void;
 }
 interface IDeleteEventData {
-  accountId: string;
+  accountId: number;
   onSuccess: () => void;
 }
 const AccountsComponent = () => {
   const componentRef = useRef<any>(null);
-  const { aggStatus } = useOutletContext<{ aggStatus: string | null }>();
-  const accountServices = useMemo(() => new AccountsClient('XXXX-XXXX-XXXX', true), []);
-  const [accounts, setAccounts] = useState<PlainObject[]>([]);
+  const { alertIsShown, alertText } = useOutletContext<{ alertIsShown: boolean; alertText: string }>();
+  const accountServices = useMemo(() => new AccountsClient(API_KEY, true), []);
+  const [accounts, setAccounts] = useState<IAccount[]>([]);
   const getAccounts = useCallback(
-    (onSuccess: () => void) => {
+    (onSuccess: () => void, onError: (error: string) => void) => {
       if (accountServices && componentRef.current !== null) {
-        accountServices.getList(userId).then((response: Account[]) => {
-          setAccounts(response.map((account) => account.getPlainObject()));
-          onSuccess();
-        });
+        accountServices
+          .getList(userId)
+          .then((response: Account[]) => {
+            setAccounts(response.map((account) => account.toObject()));
+            onSuccess();
+          })
+          .catch((error) => {
+            onError(error && error.detail ? error.detail : 'Erro no sistema.');
+          });
       }
     },
     [accountServices, componentRef]
@@ -103,7 +99,7 @@ const AccountsComponent = () => {
       const newAccount = new AccountPayload({ userId, financialEntityId: parseInt(financialEntityId), ...rest });
       accountServices.create(newAccount).then((response: Account) => {
         toast.success('Conta adicionada.');
-        setAccounts([response.getPlainObject(), ...accounts]);
+        setAccounts([response.toObject(), ...accounts]);
         onSuccess();
       });
     },
@@ -120,7 +116,7 @@ const AccountsComponent = () => {
         setAccounts(
           accounts.map((accountItem) => {
             if (accountItem.id === id) {
-              return response.getPlainObject();
+              return response.toObject();
             }
             return accountItem;
           })
@@ -144,51 +140,23 @@ const AccountsComponent = () => {
     },
     [accountServices, accounts]
   );
-
   useEffect(() => {
     componentRef.current.showMainLoading = true;
     componentRef.current.financialEntitiesData = FINANCIAL_ENTITIES;
-    getAccounts(() => {
-      componentRef.current.showMainLoading = false;
-    });
+    getAccounts(
+      () => {
+        componentRef.current.showMainLoading = false;
+      },
+      (error: string) => {
+        toast.error(error);
+        componentRef.current.showMainLoading = false;
+      }
+    );
   }, [getAccounts]);
 
   useEffect(() => {
     componentRef.current.accountsData = accounts;
   }, [componentRef, accounts]);
-
-  useEffect(() => {
-    switch (aggStatus) {
-      case CONSENT_REQUESTED_STATUS:
-        toast.info('Consentimento solicitado.');
-        break;
-      case CONSENT_GRANTED_STATUS:
-        toast.success('Consentimento concedido.');
-        break;
-      case CONSENT_DELETED_STATUS:
-        toast.warn('Consentimento removido.');
-        break;
-      case AGGREGATION_STARTED_STATUS:
-        componentRef.current.alertType = 'warning';
-        componentRef.current.alertText = 'Agregação de banco em processo...';
-        componentRef.current.showAlert = true;
-        break;
-      case AGGREGATION_COMPLETED_STATUS:
-        if (componentRef.current.showAlert) {
-          componentRef.current.showAlert = false;
-        }
-        toast.success('Agregação de banco finalizada.');
-        break;
-      case PROCESS_FAILED_STATUS:
-        if (componentRef.current.showAlert) {
-          componentRef.current.showAlert = false;
-        }
-        toast.error('Consentimento removido.');
-        break;
-      default:
-        break;
-    }
-  }, [aggStatus]);
 
   useEffect(() => {
     const componentRefCurrent = componentRef.current;
@@ -206,6 +174,9 @@ const AccountsComponent = () => {
   return (
     <ob-accounts-component
       ref={componentRef}
+      alertType="warning"
+      showAlert={alertIsShown}
+      alertText={alertText}
       fontFamily="Lato"
       lang="pt"
       currencyLang="pt-BR"

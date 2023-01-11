@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 
@@ -7,11 +8,10 @@ import { AccountsPage, CardsPage, MyInvestmentsPage, MyLoansPage, MyProductsPage
 import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 import AccountsComponent from './pages/accounts/Accounts';
-import CategoriesComponent from './pages/categories/Categories';
+/* import CategoriesComponent from './pages/categories/Categories';
 import TransactionsComponent from './pages/transactions/Transactions';
 import BudgetsComponent from './pages/budgets/Budgets';
-import SumaryComponent from './pages/sumary/Sumary';
-
+import SummaryComponent from './pages/summary/Summary'; */
 
 function App() {
   return (
@@ -26,13 +26,11 @@ function App() {
           <Route path="/meus-emprestimos" element={<MyLoansPage />} />
           <Route path="/meus-investimentos" element={<MyInvestmentsPage />} />
           <Route path="/pfm" element={<PFMPage />}>
-            <Route index element={<SumaryComponent />} />
-            <Route path="resumen" element={<SumaryComponent />} />
-            <Route path="movimientos" element={<TransactionsComponent />} />
-            <Route path="contas" element={<AccountsComponent />} />
-            <Route path="categorias" element={<CategoriesComponent />} />
-            <Route path="presupuestos" element={<BudgetsComponent />} />
-
+            <Route path="" element={<AccountsComponent />} />
+            {/*  <Route path="resumen" element={<SummaryComponent />} />
+            <Route path="movimientos" element={<TransactionsComponent />} /> */}
+            {/* <Route path="categorias" element={<CategoriesComponent />} />
+            <Route path="presupuestos" element={<BudgetsComponent />} /> */}
           </Route>
         </Routes>
         <ToastContainer
@@ -49,4 +47,4 @@ function App() {
   );
 }
 
-export default App;
+export default memo(App);

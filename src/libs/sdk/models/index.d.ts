@@ -5,6 +5,7 @@ export { default as BankAggStatus } from './BankAggStatus';
 export { default as Budget } from './Budget';
 export { default as Category } from './Category';
 export { default as ConsentCreateResponse } from './ConsentCreateResponse';
+export { default as ConsumeConsentResponse } from './ConsumeConsentResponse';
 export { default as Error } from './Error';
 export { default as FilterOptions } from './FilterOptions';
 export { default as ParentCategory } from './ParentCategory';

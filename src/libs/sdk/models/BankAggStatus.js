@@ -15,7 +15,7 @@ class BankAggStatus {
     get status() {
         return this._status;
     }
-    getPlainObject() {
+    toObject() {
         return {
             bankId: this._bankId,
             userId: this._userId,
