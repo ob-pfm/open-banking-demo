@@ -8,6 +8,7 @@ const api_1 = require("../api");
 const api_2 = require("../api");
 class Client {
     constructor(apiKey, sandbox) {
+        this._apiKey = apiKey;
         this._headers = { 'X-api-key': apiKey };
         this._sandbox = sandbox || false;
         this._serverUrl = this._sandbox ? api_2.SERVER_URL_SANDBOX : api_2.SERVER_URL_PROD;

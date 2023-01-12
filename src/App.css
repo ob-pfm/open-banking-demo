@@ -1,0 +1,12 @@
+.error-text,
+.success-text {
+  font-weight: bold;
+}
+
+.error-text {
+  color: #da291c;
+}
+
+.success-text {
+  color: #01855a;
+}

@@ -1,6 +1,6 @@
 import { AxiosInstance } from 'axios';
-export declare const SERVER_URL_PROD = "http://ec2-3-21-18-54.us-east-2.compute.amazonaws.com:8081/api/v1/";
-export declare const SERVER_URL_SANDBOX = "http://ec2-3-21-18-54.us-east-2.compute.amazonaws.com:8081/api/v1/";
+export declare const SERVER_URL_PROD = "http://ecbantest@ec2-3-21-18-54.us-east-2.compute.amazonaws.com:8081/api/v1/";
+export declare const SERVER_URL_SANDBOX: string;
 export declare class ApiCore {
     private _apiInstance;
     constructor(apiSettings: AxiosInstance);

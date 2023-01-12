@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useOutletContext, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { ACCOUNT_ID, API_KEY, USER_ID } from '../../constants';
+import { ACCOUNT_ID, API_KEY } from '../../constants';
+import { showErrorToast } from '../../helpers';
+import { IOutletContext } from '../../interfaces';
 
 import {
   AccountsClient,
@@ -38,7 +40,7 @@ interface IDeleteEventData {
 const TransactionsComponent = () => {
   const componentRef = useRef<any>(null);
   const [searchParams] = useSearchParams();
-  const { alertIsShown, alertText } = useOutletContext<{ alertIsShown: boolean; alertText: string }>();
+  const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
   const [filterOptions, setFilterOptions] = useState<FilterOptions>(new FilterOptions());
   const accountServices = useMemo(() => new AccountsClient(API_KEY, true), []);
   const categoryServices = useMemo(() => new CategoriesClient(API_KEY, true), []);
@@ -161,58 +163,60 @@ const TransactionsComponent = () => {
   );
 
   useEffect(() => {
-    const subcategoryId = searchParams.get('subcategory_id');
-    const categoryId = searchParams.get('category_id');
-    const dateFrom = searchParams.get('date_from');
-    const dateTo = searchParams.get('date_to');
+    if (userId) {
+      const subcategoryId = searchParams.get('subcategory_id');
+      const categoryId = searchParams.get('category_id');
+      const dateFrom = searchParams.get('date_from');
+      const dateTo = searchParams.get('date_to');
 
-    componentRef.current.showMainLoading = true;
-    componentRef.current.transactionsData = [];
-    componentRef.current.accountsData = [];
-    componentRef.current.categoriesData = [];
-    accountServices
-      .getList(USER_ID)
-      .then((response: Account[]) => {
-        componentRef.current.accountsData = response.map((account: Account) => account.toObject());
-        return categoryServices.getListWithSubcategories(USER_ID);
-      })
-      .then((response: ParentCategory[]) => {
-        componentRef.current.categoriesData = response.map((category) => ({
-          ...category.toObject(),
-          subcategories: category.subcategories.map((subcategory) => subcategory.toObject())
-        }));
-        const tempOptions: FilterOptions = new FilterOptions();
-        if (categoryId) {
-          tempOptions.categoryId = categoryId;
-        }
-        if (subcategoryId) {
-          tempOptions.subcategoryId = subcategoryId;
-        }
-        if (dateFrom) {
-          const date = new Date(parseInt(dateFrom));
-          const [splittedDate] = date.toISOString().split('T');
-          tempOptions.dateFrom = splittedDate;
-        }
-        if (dateTo) {
-          const date = new Date(parseInt(dateTo));
-          const [splittedDate] = date.toISOString().split('T');
-          tempOptions.dateTo = splittedDate;
-        }
-        if (tempOptions) {
-          componentRef.current.defaultFilterOptions = tempOptions;
-          setFilterOptions(tempOptions);
-        }
-        filterTransactions(tempOptions, (transactionsRes: Transaction[]) => {
-          if (!transactionsRes.length) {
-            componentRef.current.isEmpty = true;
+      componentRef.current.showMainLoading = true;
+      componentRef.current.transactionsData = [];
+      componentRef.current.accountsData = [];
+      componentRef.current.categoriesData = [];
+      accountServices
+        .getList(userId)
+        .then((response: Account[]) => {
+          componentRef.current.accountsData = response.map((account: Account) => account.toObject());
+          return categoryServices.getListWithSubcategories(userId);
+        })
+        .then((response: ParentCategory[]) => {
+          componentRef.current.categoriesData = response.map((category) => ({
+            ...category.toObject(),
+            subcategories: category.subcategories.map((subcategory) => subcategory.toObject())
+          }));
+          const tempOptions: FilterOptions = new FilterOptions();
+          if (categoryId) {
+            tempOptions.categoryId = categoryId;
           }
-          componentRef.current.showMainLoading = false;
+          if (subcategoryId) {
+            tempOptions.subcategoryId = subcategoryId;
+          }
+          if (dateFrom) {
+            const date = new Date(parseInt(dateFrom));
+            const [splittedDate] = date.toISOString().split('T');
+            tempOptions.dateFrom = splittedDate;
+          }
+          if (dateTo) {
+            const date = new Date(parseInt(dateTo));
+            const [splittedDate] = date.toISOString().split('T');
+            tempOptions.dateTo = splittedDate;
+          }
+          if (tempOptions) {
+            componentRef.current.defaultFilterOptions = tempOptions;
+            setFilterOptions(tempOptions);
+          }
+          filterTransactions(tempOptions, (transactionsRes: Transaction[]) => {
+            if (!transactionsRes.length) {
+              componentRef.current.isEmpty = true;
+            }
+            componentRef.current.showMainLoading = false;
+          });
+        })
+        .catch((error) => {
+          showErrorToast(error);
         });
-      })
-      .catch(() => {
-        // e.detail.showToast('error', 'Error de servidor');
-      });
-  }, [filterTransactions, accountServices, categoryServices, searchParams]);
+    }
+  }, [filterTransactions, accountServices, categoryServices, searchParams, userId]);
 
   useEffect(() => {
     const componentRefCurrent = componentRef.current;

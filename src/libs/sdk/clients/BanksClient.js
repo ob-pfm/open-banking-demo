@@ -19,12 +19,17 @@ class BanksClient extends Client_1.default {
         super(apiKey, sandbox);
         this._path = '/open-banking/banks';
         this._isRunningPolling = false;
+        this._timer = 0;
     }
     aggStatusBankSubscribe(options) {
         return __awaiter(this, void 0, void 0, function* () {
             const { bankId, userId, onResponse, onError } = options;
             if (this._isRunningPolling) {
-                const response = yield fetch(`${this._serverUrl}${this._path}/${bankId}/status?userId=${userId}`);
+                const response = yield fetch(`${this._serverUrl}${this._path}/${bankId}/status?userId=${userId}`, {
+                    headers: {
+                        'X-api-key': this._apiKey
+                    }
+                });
                 if (response.status !== 200) {
                     if (onError) {
                         onError(response);
@@ -34,7 +39,9 @@ class BanksClient extends Client_1.default {
                 else {
                     const data = yield response.json();
                     onResponse(data.status);
-                    yield this.aggStatusBankSubscribe(options);
+                    this._timer = setTimeout(() => __awaiter(this, void 0, void 0, function* () {
+                        yield this.aggStatusBankSubscribe(options);
+                    }), options.time || 5000);
                 }
             }
         });
@@ -78,8 +85,12 @@ class BanksClient extends Client_1.default {
     }
     aggregationStatusUnsubscribe() {
         if (this._isRunningPolling) {
+            clearTimeout(this._timer);
             this._isRunningPolling = false;
         }
+    }
+    get isRunningPolling() {
+        return this._isRunningPolling;
     }
 }
 exports.default = BanksClient;

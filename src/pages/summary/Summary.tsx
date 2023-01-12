@@ -2,9 +2,11 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useOutletContext, createSearchParams, useNavigate } from 'react-router-dom';
 
 import { CategoriesClient, ParentCategory, InsightsClient, Resume } from '../../libs/sdk';
-import { API_KEY, USER_ID } from '../../constants';
+import { API_KEY } from '../../constants';
 
 import '../../libs/wc/ob-summary-component';
+import { IOutletContext } from '../../interfaces';
+import { showErrorToast } from '../../helpers';
 
 const getDateRange = (date: Date) => {
   const month = date.getMonth();
@@ -23,7 +25,7 @@ interface ISubmitEventData {
 const SummaryComponent = () => {
   const componentRef = useRef<any>(null);
   const navigate = useNavigate();
-  const { alertIsShown, alertText } = useOutletContext<{ alertIsShown: boolean; alertText: string }>();
+  const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
   const categoryServices = useMemo(() => new CategoriesClient(API_KEY, true), []);
   const insightsServices = useMemo(() => new InsightsClient(API_KEY, true), []);
 
@@ -61,38 +63,41 @@ const SummaryComponent = () => {
   );
 
   useEffect(() => {
-    componentRef.current.showMainLoading = true;
-    componentRef.current.categoriesData = [];
-    componentRef.current.summaryData = {
-      incomes: [],
-      expenses: [],
-      balances: []
-    };
-    categoryServices
-      .getListWithSubcategories(USER_ID)
-      .then((response: ParentCategory[]) => {
-        componentRef.current.categoriesData = response.map((category) => ({
-          ...category.toObject(),
-          subcategories: category.subcategories.map((subcategory) => subcategory.toObject())
-        }));
-        return insightsServices.getResume(USER_ID);
-      })
-      .then((response: Resume) => {
-        if (response && response.balances && response.expenses && response.incomes) {
-          componentRef.current.summaryData = {
-            balances: response.balances,
-            expenses: response.expenses,
-            incomes: response.incomes
-          };
-        } else {
-          componentRef.current.isEmpty = true;
-        }
-        componentRef.current.showMainLoading = false;
-      })
-      .catch(() => {
-        // e.detail.showToast('error', 'Error de servidor');
-      });
-  }, [insightsServices, categoryServices]);
+    if (userId) {
+      componentRef.current.showMainLoading = true;
+      componentRef.current.categoriesData = [];
+      componentRef.current.summaryData = {
+        incomes: [],
+        expenses: [],
+        balances: []
+      };
+      categoryServices
+        .getListWithSubcategories(userId)
+        .then((response: ParentCategory[]) => {
+          componentRef.current.categoriesData = response.map((category) => ({
+            ...category.toObject(),
+            subcategories: category.subcategories.map((subcategory) => subcategory.toObject())
+          }));
+          return insightsServices.getResume(userId);
+        })
+        .then((response: Resume) => {
+          if (response && response.balances && response.expenses && response.incomes) {
+            componentRef.current.summaryData = {
+              balances: response.balances,
+              expenses: response.expenses,
+              incomes: response.incomes
+            };
+          } else {
+            componentRef.current.isEmpty = true;
+          }
+          componentRef.current.showMainLoading = false;
+        })
+        .catch((error) => {
+          showErrorToast(error);
+          // e.detail.showToast('error', 'Error de servidor');
+        });
+    }
+  }, [insightsServices, categoryServices, userId]);
 
   useEffect(() => {
     const componentRefCurrent = componentRef.current;

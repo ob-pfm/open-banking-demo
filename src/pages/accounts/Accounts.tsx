@@ -6,7 +6,9 @@ import { AccountsClient, Account, AccountPayload } from '../../libs/sdk';
 import { IAccount } from '../../libs/sdk/interfaces';
 import '../../libs/wc/ob-accounts-component';
 import { API_KEY } from '../../constants';
+import { IOutletContext } from '../../interfaces';
 import styles from './style.css';
+import { showErrorToast } from '../../helpers';
 
 const FINANCIAL_ENTITIES = [
   {
@@ -53,7 +55,6 @@ const FINANCIAL_ENTITIES = [
   }
 ];
 
-const userId = 2230376;
 interface ISubmitEventData {
   account: {
     id?: number;
@@ -72,20 +73,21 @@ interface IDeleteEventData {
 }
 const AccountsComponent = () => {
   const componentRef = useRef<any>(null);
-  const { alertIsShown, alertText } = useOutletContext<{ alertIsShown: boolean; alertText: string }>();
+  const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
   const accountServices = useMemo(() => new AccountsClient(API_KEY, true), []);
   const [accounts, setAccounts] = useState<IAccount[]>([]);
   const getAccounts = useCallback(
-    (onSuccess: () => void, onError: (error: string) => void) => {
+    (currentUserId: number, onSuccess: () => void, onError: () => void) => {
       if (accountServices && componentRef.current !== null) {
         accountServices
-          .getList(userId)
+          .getList(currentUserId)
           .then((response: Account[]) => {
             setAccounts(response.map((account) => account.toObject()));
             onSuccess();
           })
           .catch((error) => {
-            onError(error && error.detail ? error.detail : 'Erro no sistema.');
+            showErrorToast(error);
+            onError();
           });
       }
     },
@@ -94,37 +96,49 @@ const AccountsComponent = () => {
 
   const handleSaveAccount = useCallback(
     (e: { detail: ISubmitEventData }) => {
-      const { account, onSuccess } = e.detail;
-      const { financialEntityId, ...rest } = account;
-      const newAccount = new AccountPayload({ userId, financialEntityId: parseInt(financialEntityId), ...rest });
-      accountServices.create(newAccount).then((response: Account) => {
-        toast.success('Conta adicionada.');
-        setAccounts([response.toObject(), ...accounts]);
-        onSuccess();
-      });
+      if (userId) {
+        const { account, onSuccess } = e.detail;
+        const { financialEntityId, ...rest } = account;
+        const newAccount = new AccountPayload({
+          userId,
+          financialEntityId: parseInt(financialEntityId),
+          ...rest
+        });
+        accountServices.create(newAccount).then((response: Account) => {
+          toast.success('Conta adicionada.');
+          setAccounts([response.toObject(), ...accounts]);
+          onSuccess();
+        });
+      }
     },
-    [accountServices, accounts]
+    [accountServices, accounts, userId]
   );
 
   const handleEditAccount = useCallback(
     (e: { detail: ISubmitEventData }) => {
-      const { account, onSuccess } = e.detail;
-      const { id, financialEntityId, ...rest } = account;
-      const editedAccount = new AccountPayload({ userId, financialEntityId: parseInt(financialEntityId), ...rest });
-      accountServices.edit(id!, editedAccount).then((response: Account) => {
-        toast.success('Alterações salvas.');
-        setAccounts(
-          accounts.map((accountItem) => {
-            if (accountItem.id === id) {
-              return response.toObject();
-            }
-            return accountItem;
-          })
-        );
-        onSuccess();
-      });
+      if (userId) {
+        const { account, onSuccess } = e.detail;
+        const { id, financialEntityId, ...rest } = account;
+        const editedAccount = new AccountPayload({
+          userId,
+          financialEntityId: parseInt(financialEntityId),
+          ...rest
+        });
+        accountServices.edit(id!, editedAccount).then((response: Account) => {
+          toast.success('Alterações salvas.');
+          setAccounts(
+            accounts.map((accountItem) => {
+              if (accountItem.id === id) {
+                return response.toObject();
+              }
+              return accountItem;
+            })
+          );
+          onSuccess();
+        });
+      }
     },
-    [accountServices, accounts]
+    [accountServices, accounts, userId]
   );
 
   const handleDeleteAccount = useCallback(
@@ -141,17 +155,19 @@ const AccountsComponent = () => {
     [accountServices, accounts]
   );
   useEffect(() => {
-    componentRef.current.showMainLoading = true;
-    componentRef.current.financialEntitiesData = FINANCIAL_ENTITIES;
-    getAccounts(
-      () => {
-        componentRef.current.showMainLoading = false;
-      },
-      (error: string) => {
-        toast.error(error);
-        componentRef.current.showMainLoading = false;
-      }
-    );
+    if (userId) {
+      componentRef.current.showMainLoading = true;
+      componentRef.current.financialEntitiesData = FINANCIAL_ENTITIES;
+      getAccounts(
+        userId,
+        () => {
+          componentRef.current.showMainLoading = false;
+        },
+        () => {
+          componentRef.current.showMainLoading = false;
+        }
+      );
+    }
   }, [getAccounts]);
 
   useEffect(() => {

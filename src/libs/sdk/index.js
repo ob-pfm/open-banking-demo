@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FilterOptions = exports.Resume = exports.ParentCategory = exports.Transaction = exports.Category = exports.Budget = exports.Bank = exports.Analysis = exports.Account = exports.TransactionPayload = exports.CategoryPayload = exports.BudgetPayload = exports.BankPayload = exports.AccountPayload = exports.UsersClient = exports.TransactionsClient = exports.InsightsClient = exports.CategoriesClient = exports.BudgetsClient = exports.BanksClient = exports.AccountsClient = exports.signUp = exports.buildClients = void 0;
+exports.User = exports.Error = exports.FilterOptions = exports.Resume = exports.ParentCategory = exports.Transaction = exports.Category = exports.Budget = exports.Bank = exports.Analysis = exports.Account = exports.TransactionPayload = exports.CategoryPayload = exports.BudgetPayload = exports.BankPayload = exports.AccountPayload = exports.UsersClient = exports.TransactionsClient = exports.InsightsClient = exports.CategoriesClient = exports.BudgetsClient = exports.BanksClient = exports.AccountsClient = exports.signUp = exports.buildClients = void 0;
 var helpers_1 = require("./helpers");
 Object.defineProperty(exports, "buildClients", { enumerable: true, get: function () { return helpers_1.buildClients; } });
 Object.defineProperty(exports, "signUp", { enumerable: true, get: function () { return helpers_1.signUp; } });
@@ -28,3 +28,5 @@ Object.defineProperty(exports, "Transaction", { enumerable: true, get: function 
 Object.defineProperty(exports, "ParentCategory", { enumerable: true, get: function () { return models_1.ParentCategory; } });
 Object.defineProperty(exports, "Resume", { enumerable: true, get: function () { return models_1.Resume; } });
 Object.defineProperty(exports, "FilterOptions", { enumerable: true, get: function () { return models_1.FilterOptions; } });
+Object.defineProperty(exports, "Error", { enumerable: true, get: function () { return models_1.Error; } });
+Object.defineProperty(exports, "User", { enumerable: true, get: function () { return models_1.User; } });

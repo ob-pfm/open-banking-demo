@@ -4,9 +4,10 @@ import { toast } from 'react-toastify';
 
 import { CategoriesClient, Category, CategoryPayload } from '../../libs/sdk';
 import { ICategory } from '../../libs/sdk/interfaces';
-import { API_KEY, USER_ID } from '../../constants';
+import { API_KEY } from '../../constants';
 
 import '../../libs/wc/ob-categories-component';
+import { IOutletContext } from '../../interfaces';
 
 interface ISubmitEventData {
   category: {
@@ -19,45 +20,49 @@ interface ISubmitEventData {
 }
 const CategoriesComponent = () => {
   const componentRef = useRef<any>(null);
-  const { alertIsShown, alertText } = useOutletContext<{ alertIsShown: boolean; alertText: string }>();
+  const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
   const categoriesServices = useMemo(() => new CategoriesClient(API_KEY, true), []);
   const [categories, setCategories] = useState<ICategory[]>([]);
   const getCategories = useCallback(
     (onSuccess: () => void) => {
       if (categoriesServices && componentRef.current !== null) {
-        categoriesServices.getListWithSubcategories(`${USER_ID}`).then((response: Category[]) => {
+        categoriesServices.getListWithSubcategories(`${userId}`).then((response: Category[]) => {
           setCategories(response.map((category) => category.toObject()));
           onSuccess();
         });
       }
     },
-    [categoriesServices, componentRef]
+    [categoriesServices, componentRef, userId]
   );
 
   const handleSaveCategory = useCallback(
     (e: { detail: ISubmitEventData }) => {
-      const { category, onSuccess } = e.detail;
-      const newCategory = new CategoryPayload({ userId: USER_ID, ...category });
-      categoriesServices.create(newCategory).then((response: Category) => {
-        toast.success('Categoria adicionada.');
-        setCategories([response.toObject(), ...categories]);
-        onSuccess();
-      });
+      if (userId) {
+        const { category, onSuccess } = e.detail;
+        const newCategory = new CategoryPayload({ userId, ...category });
+        categoriesServices.create(newCategory).then((response: Category) => {
+          toast.success('Categoria adicionada.');
+          setCategories([response.toObject(), ...categories]);
+          onSuccess();
+        });
+      }
     },
-    [categoriesServices, categories]
+    [categoriesServices, categories, userId]
   );
 
   const handleSaveSubcategory = useCallback(
     (e: { detail: ISubmitEventData }) => {
-      const { category, onSuccess } = e.detail;
-      const newCategory = new CategoryPayload({ userId: USER_ID, ...category });
-      categoriesServices.create(newCategory).then((response: Category) => {
-        toast.success('Subcategoria adicionada.');
-        setCategories([response.toObject(), ...categories]);
-        onSuccess();
-      });
+      if (userId) {
+        const { category, onSuccess } = e.detail;
+        const newCategory = new CategoryPayload({ userId, ...category });
+        categoriesServices.create(newCategory).then((response: Category) => {
+          toast.success('Subcategoria adicionada.');
+          setCategories([response.toObject(), ...categories]);
+          onSuccess();
+        });
+      }
     },
-    [categoriesServices, categories]
+    [categoriesServices, categories, userId]
   );
 
   /* const handleEditAccount = useCallback(

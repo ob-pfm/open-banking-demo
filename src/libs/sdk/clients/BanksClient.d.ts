@@ -3,6 +3,7 @@ import { Bank, BankAggStatus, ConsentCreateResponse, ConsumeConsentResponse, Res
 import Client from './Client';
 export default class BanksClient extends Client implements IBanksClient {
     private _isRunningPolling;
+    private _timer;
     private _path;
     constructor(apiKey: string, sandbox?: boolean);
     private aggStatusBankSubscribe;
@@ -14,4 +15,5 @@ export default class BanksClient extends Client implements IBanksClient {
     getAggregationStatus(bankId: string, userId: number | string): Promise<BankAggStatus>;
     aggregationStatusSubscribe(aggSubRequest: IAggSubRequest): void;
     aggregationStatusUnsubscribe(): void;
+    get isRunningPolling(): boolean;
 }
