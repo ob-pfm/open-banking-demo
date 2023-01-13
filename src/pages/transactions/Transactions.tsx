@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useOutletContext, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { ACCOUNT_ID, API_KEY } from '../../constants';
+import { API_KEY } from '../../constants';
 import { showErrorToast } from '../../helpers';
 import { IOutletContext } from '../../interfaces';
 
@@ -19,6 +19,8 @@ import {
 import { IListOptions } from '../../libs/sdk/interfaces';
 
 import '../../libs/wc/ob-transactions-component';
+
+const ACCOUNT_ID = 278020899;
 
 interface ISubmitEventData {
   transaction: {

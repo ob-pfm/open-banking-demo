@@ -10,8 +10,17 @@ const Menu: FC = () => {
         <div
           className={`menu__nav-item ${
             location &&
-            (location.pathname === '/pfm' || location.pathname === '/pfm/resumen') &&
+            (location.pathname === '/pfm' || location.pathname === '/pfm/contas') &&
             'menu__nav-item--selected'
+          }`}
+        >
+          <Link className="menu__nav-link" to="contas">
+            Contas
+          </Link>
+        </div>
+        <div
+          className={`menu__nav-item menu__nav-item--disabled ${
+            location && location.pathname === '/pfm/resumen' && 'menu__nav-item--selected'
           }`}
         >
           <Link className="menu__nav-link" to="resumen">
@@ -19,7 +28,7 @@ const Menu: FC = () => {
           </Link>
         </div>
         <div
-          className={`menu__nav-item ${
+          className={`menu__nav-item menu__nav-item--disabled ${
             location && location.pathname === '/pfm/movimientos' && 'menu__nav-item--selected'
           }`}
         >
@@ -27,15 +36,9 @@ const Menu: FC = () => {
             Movimientos
           </Link>
         </div>
+
         <div
-          className={`menu__nav-item ${location && location.pathname === '/pfm/contas' && 'menu__nav-item--selected'}`}
-        >
-          <Link className="menu__nav-link" to="contas">
-            Contas
-          </Link>
-        </div>
-        <div
-          className={`menu__nav-item ${
+          className={`menu__nav-item menu__nav-item--disabled ${
             location && location.pathname === '/pfm/categorias' && 'menu__nav-item--selected'
           }`}
         >
@@ -44,7 +47,7 @@ const Menu: FC = () => {
           </Link>
         </div>
         <div
-          className={`menu__nav-item ${
+          className={`menu__nav-item menu__nav-item--disabled ${
             location && location.pathname === '/pfm/presupuestos' && 'menu__nav-item--selected'
           }`}
         >
