@@ -1,5 +1,4 @@
 import IAccount from '../interfaces/IAccount';
-import { PlainObject } from '../types';
 export default class Account implements IAccount {
     private _id;
     private _providerId;
@@ -20,5 +19,5 @@ export default class Account implements IAccount {
     get chargeable(): boolean;
     get dateCreated(): string;
     get lastUpdated(): string;
-    getPlainObject(): PlainObject;
+    toObject(): IAccount;
 }

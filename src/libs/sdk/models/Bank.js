@@ -15,7 +15,7 @@ class Bank {
     get imagePath() {
         return this._imagePath;
     }
-    getPlainObject() {
+    toObject() {
         return {
             bankId: this._bankId,
             name: this._name,

@@ -11,7 +11,7 @@ class User {
     get cpf() {
         return this._cpf;
     }
-    getPlainObject() {
+    toObject() {
         return {
             userId: this._userId,
             cpf: this._cpf

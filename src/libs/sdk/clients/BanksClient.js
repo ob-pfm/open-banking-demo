@@ -13,54 +13,35 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const models_1 = require("../models");
-const constants_1 = require("../constants");
 const Client_1 = __importDefault(require("./Client"));
 class BanksClient extends Client_1.default {
     constructor(apiKey, sandbox) {
         super(apiKey, sandbox);
         this._path = '/open-banking/banks';
         this._isRunningPolling = false;
+        this._timer = 0;
     }
     aggStatusBankSubscribe(options) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { bankId, userId, onConsentRequestedStatus, onConsentGrantedStatus, onConsentDeletedStatus, onAggregationStartedStatus, onAggregationCompletedStatus, onFailedStatus, onServerError } = options;
+            const { bankId, userId, onResponse, onError } = options;
             if (this._isRunningPolling) {
-                const response = yield fetch(`${this._serverUrl}${this._path}/${bankId}/status?userId=${userId}`);
-                if (response.status == 502) {
-                    yield this.aggStatusBankSubscribe(options);
-                }
-                else if (response.status != 200) {
-                    if (onServerError) {
-                        onServerError(response);
+                const response = yield fetch(`${this._serverUrl}${this._path}/${bankId}/status?userId=${userId}`, {
+                    headers: {
+                        'X-api-key': this._apiKey
+                    }
+                });
+                if (response.status !== 200) {
+                    if (onError) {
+                        onError(response);
                     }
                     this.aggregationStatusUnsubscribe();
                 }
                 else {
                     const data = yield response.json();
-                    switch (data.status) {
-                        case constants_1.CONSENT_REQUESTED_STATUS:
-                            onConsentRequestedStatus && onConsentRequestedStatus();
-                            break;
-                        case constants_1.CONSENT_GRANTED_STATUS:
-                            onConsentGrantedStatus && onConsentGrantedStatus();
-                            break;
-                        case constants_1.CONSENT_DELETED_STATUS:
-                            onConsentDeletedStatus && onConsentDeletedStatus();
-                            break;
-                        case constants_1.AGGREGATION_STARTED_STATUS:
-                            onAggregationStartedStatus && onAggregationStartedStatus();
-                            break;
-                        case constants_1.AGGREGATION_COMPLETED_STATUS:
-                            onAggregationCompletedStatus && onAggregationCompletedStatus();
-                            break;
-                        case constants_1.PROCESS_FAILED_STATUS:
-                            onFailedStatus && onFailedStatus();
-                            break;
-                        default:
-                            onServerError && onServerError(response);
-                            this.aggregationStatusUnsubscribe();
-                    }
-                    yield this.aggStatusBankSubscribe(options);
+                    onResponse(data.status);
+                    this._timer = setTimeout(() => __awaiter(this, void 0, void 0, function* () {
+                        yield this.aggStatusBankSubscribe(options);
+                    }), options.time || 5000);
                 }
             }
         });
@@ -72,12 +53,20 @@ class BanksClient extends Client_1.default {
     }
     getAggregates(userId) {
         return this._apiCore.doGet(`${this._path}/aggregate?userId=${userId}`, (response) => {
+            if (!response) {
+                return [];
+            }
             return response.banks.map((bankData) => new models_1.Bank(bankData));
         });
     }
-    getConsent(bankId, userId, time) {
+    createConsent(bankId, userId, time) {
         return this._apiCore.doGet(`${this._path}/${bankId}/consents?userId=${userId}&time=${time}`, (response) => {
             return new models_1.ConsentCreateResponse(response);
+        });
+    }
+    consumeConsent(authCode, token, state) {
+        return this._apiCore.doPost(`${this._path}/consume-consents`, { authCode, token, state }, (response) => {
+            return new models_1.ConsumeConsentResponse(response);
         });
     }
     getResources(bankId, userId) {
@@ -96,8 +85,12 @@ class BanksClient extends Client_1.default {
     }
     aggregationStatusUnsubscribe() {
         if (this._isRunningPolling) {
+            clearTimeout(this._timer);
             this._isRunningPolling = false;
         }
+    }
+    get isRunningPolling() {
+        return this._isRunningPolling;
     }
 }
 exports.default = BanksClient;

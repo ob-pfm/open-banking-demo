@@ -35,7 +35,7 @@ class Category {
     get lastUpdated() {
         return this._lastUpdated;
     }
-    getPlainObject() {
+    toObject() {
         return {
             id: this._id,
             name: this._name,

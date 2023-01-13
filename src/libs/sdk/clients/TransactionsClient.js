@@ -36,8 +36,8 @@ class TransactionsClient extends Client_1.default {
     get(id) {
         return this._apiCore.doGet(`${this._path}/${id}`, this.processResponse);
     }
-    create(accountId, transactionToCreate) {
-        return this._apiCore.doPost(this._path, Object.assign({ accountId }, transactionToCreate.plainObject), this.processResponse, true);
+    create(transactionToCreate) {
+        return this._apiCore.doPost(this._path, transactionToCreate.toObject(), this.processResponse);
     }
     edit(id, transactionToUpdate) {
         return this._apiCore.doPut(`${this._path}/${id}`, transactionToUpdate, this.processResponse);

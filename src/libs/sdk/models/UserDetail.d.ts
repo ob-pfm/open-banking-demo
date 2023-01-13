@@ -1,5 +1,4 @@
 import IUserDetail from '../interfaces/IUserDetail';
-import { PlainObject } from '../types';
 export default class UserDetail implements IUserDetail {
     private _id;
     private _cpf;
@@ -8,5 +7,5 @@ export default class UserDetail implements IUserDetail {
     get id(): number;
     get cpf(): string;
     get dateCreated(): string;
-    getPlainObject(): PlainObject;
+    toObject(): IUserDetail;
 }

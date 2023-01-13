@@ -15,7 +15,7 @@ class UserDetail {
     get dateCreated() {
         return this._dateCreated;
     }
-    getPlainObject() {
+    toObject() {
         return {
             id: this._id,
             cpf: this._cpf,

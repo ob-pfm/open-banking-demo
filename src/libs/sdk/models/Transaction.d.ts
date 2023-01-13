@@ -1,5 +1,4 @@
 import ITransaction from '../interfaces/ITransaction';
-import { PlainObject } from '../types';
 export default class Transaction implements ITransaction {
     private _id;
     private _date;
@@ -21,5 +20,5 @@ export default class Transaction implements ITransaction {
     get lastUpdated(): number;
     get accountId(): number | undefined;
     set accountId(value: number | undefined);
-    getPlainObject(): PlainObject;
+    toObject(): ITransaction;
 }

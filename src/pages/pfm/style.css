@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   height: 73px;
-  background-color: #F1F2F5;
+  background-color: #f1f2f5;
   padding: 0 80px;
 }
 
@@ -27,17 +27,18 @@
   line-height: 73px;
   font-size: 14px;
   color: #000000;
-  font-family: "Lato", sans-serif;
+  font-family: 'Lato', sans-serif;
   font-weight: 500;
   text-decoration: none;
   transition: all 0.1s linear;
 }
 
 .menu__nav-item--selected > .menu__nav-link {
-  color: #3FD8AF;
+  color: #3fd8af;
 }
 
-.menu__nav-item--selected, .menu__nav-item--disabled {
+.menu__nav-item--selected,
+.menu__nav-item--disabled {
   pointer-events: none;
 }
 
@@ -45,6 +46,18 @@
   opacity: 0.3;
 }
 
-.menu__nav-item--selected:hover > .menu__nav-link{
+.menu__nav-item--selected:hover > .menu__nav-link {
   opacity: 1;
+}
+
+.close-button {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 24px;
+  height: 24px;
+  right: 24px;
+  top: 24px;
+  cursor: pointer;
 }

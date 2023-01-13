@@ -10,9 +10,9 @@
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "axios": "^0.26.1",
-    "rc-dialog": "^9.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-modal": "^3.16.1",
     "react-router-dom": "^6.4.3",
     "react-scripts": "5.0.1",
     "react-toastify": "^9.1.1",
@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@types/jest": "^27.0.1",
+    "@types/react-modal": "^3.13.1",
     "@types/react-test-renderer": "16.9.1",
     "@types/styled-components": "^5.1.20",
     "css-modules-typescript-loader": "^2.0.1",

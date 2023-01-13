@@ -1,24 +1,17 @@
-import { PlainObject } from '../types';
-interface ICategoryPayload {
-    userId?: number;
-    name: string;
-    color: string;
-    parentCategoryId: number | null;
-}
-export default class CategoryPayload {
+import ICategoryPayload from '../interfaces/ICategoryPayload';
+export default class CategoryPayload implements ICategoryPayload {
     private _userId?;
     private _name;
-    private _color;
-    private _parentCategoryId;
+    private _color?;
+    private _parentCategoryId?;
     constructor({ userId, name, color, parentCategoryId }: ICategoryPayload);
     get userId(): number | undefined;
     set userId(value: number | undefined);
     get name(): string;
     set name(value: string);
-    get color(): string;
-    set color(value: string);
-    get parentCategoryId(): number | null;
-    set parentCategoryId(value: number | null);
-    get plainObject(): PlainObject;
+    get color(): string | undefined;
+    set color(value: string | undefined);
+    get parentCategoryId(): number | null | undefined;
+    set parentCategoryId(value: number | null | undefined);
+    toObject(): ICategoryPayload;
 }
-export {};

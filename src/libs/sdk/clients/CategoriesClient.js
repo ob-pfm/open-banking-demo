@@ -15,7 +15,7 @@ class CategoriesClient extends Client_1.default {
     }
     getList(userId, cursor) {
         return this._apiCore.doGet(`${this._path}?userId=${userId}${cursor ? `&cursor=${cursor}` : ''}`, (response) => {
-            return response.data.map((bankData) => new models_1.Category(bankData));
+            return response.data.map((categoryData) => new models_1.Category(categoryData));
         });
     }
     getListWithSubcategories(userId, cursor) {
@@ -39,7 +39,7 @@ class CategoriesClient extends Client_1.default {
         return this._apiCore.doGet(`${this._path}/${id}`, this.processResponse);
     }
     create(categoryToCreate) {
-        return this._apiCore.doPost(this._path, categoryToCreate, this.processResponse);
+        return this._apiCore.doPost(this._path, categoryToCreate.toObject(), this.processResponse);
     }
     edit(id, categoryToUpdate) {
         return this._apiCore.doPut(`${this._path}/${id}`, categoryToUpdate, this.processResponse);

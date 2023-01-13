@@ -14,6 +14,9 @@ class AccountsClient extends Client_1.default {
         return response.data.map((accountData) => new Account_1.default(accountData));
     }
     processResponse(response) {
+        if (!response) {
+            return null;
+        }
         return new Account_1.default(response);
     }
     getList(userId) {
@@ -23,7 +26,7 @@ class AccountsClient extends Client_1.default {
         return this._apiCore.doGet(`${this._path}/${id}`, this.processResponse);
     }
     create(accountToCreate) {
-        return this._apiCore.doPost(this._path, accountToCreate, this.processResponse);
+        return this._apiCore.doPost(this._path, accountToCreate.toObject(), this.processResponse);
     }
     edit(id, accountToUpdate) {
         return this._apiCore.doPut(`${this._path}/${id}`, accountToUpdate, this.processResponse);

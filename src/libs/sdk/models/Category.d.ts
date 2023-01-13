@@ -1,5 +1,4 @@
 import ICategory from '../interfaces/ICategory';
-import { PlainObject } from '../types';
 export default class Category implements ICategory {
     protected _id: number;
     protected _name: string;
@@ -18,5 +17,5 @@ export default class Category implements ICategory {
     get userId(): number;
     get dateCreated(): string;
     get lastUpdated(): string;
-    getPlainObject(): PlainObject;
+    toObject(): ICategory;
 }

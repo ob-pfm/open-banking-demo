@@ -2,19 +2,8 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import {
-  CategoriesClient,
-  ParentCategory,
-  BudgetsClient,
-  Budget,
-  BudgetPayload,
-  CONSENT_REQUESTED_STATUS,
-  CONSENT_GRANTED_STATUS,
-  CONSENT_DELETED_STATUS,
-  AGGREGATION_STARTED_STATUS,
-  AGGREGATION_COMPLETED_STATUS,
-  PROCESS_FAILED_STATUS
-} from '../../libs/sdk';
+import { CategoriesClient, ParentCategory, BudgetsClient, Budget, BudgetPayload } from '../../libs/sdk';
+import { API_KEY } from '../../constants';
 
 import '../../libs/wc/ob-budget-component';
 
@@ -39,16 +28,16 @@ interface IDeleteEventData {
 
 const BudgetsComponent = () => {
   const componentRef = useRef<any>(null);
-  const { aggStatus } = useOutletContext<{ aggStatus: string | null }>();
-  const budgetsServices = useMemo(() => new BudgetsClient('XXXX-XXXX-XXXX', true), []);
-  const categoryServices = useMemo(() => new CategoriesClient('XXXX-XXXX-XXXX', true), []);
+  const { alertIsShown, alertText } = useOutletContext<{ alertIsShown: boolean; alertText: string }>();
+  const budgetsServices = useMemo(() => new BudgetsClient(API_KEY, true), []);
+  const categoryServices = useMemo(() => new CategoriesClient(API_KEY, true), []);
 
   const getBudgets = useCallback(
     (onSuccess: (response: boolean) => void, onError?: () => void) => {
       budgetsServices
         .getList(userId)
         .then((response: Budget[]) => {
-          componentRef.current.budgetData = response.map((budget) => budget.getPlainObject());
+          componentRef.current.budgetData = response.map((budget) => budget.toObject());
           onSuccess(response.length === 0);
         })
         .catch(() => {
@@ -128,8 +117,8 @@ const BudgetsComponent = () => {
       .getListWithSubcategories(userId)
       .then((response: ParentCategory[]) => {
         componentRef.current.categoriesData = response.map((category) => ({
-          ...category.getPlainObject(),
-          subcategories: category.subcategories.map((subcategory) => subcategory.getPlainObject())
+          ...category.toObject(),
+          subcategories: category.subcategories.map((subcategory) => subcategory.toObject())
         }));
         getBudgets((isEmpty: boolean) => {
           if (isEmpty) {
@@ -144,39 +133,6 @@ const BudgetsComponent = () => {
   }, [getBudgets, categoryServices]);
 
   useEffect(() => {
-    switch (aggStatus) {
-      case CONSENT_REQUESTED_STATUS:
-        toast.info('Consentimento solicitado.');
-        break;
-      case CONSENT_GRANTED_STATUS:
-        toast.success('Consentimento concedido.');
-        break;
-      case CONSENT_DELETED_STATUS:
-        toast.warn('Consentimento removido.');
-        break;
-      case AGGREGATION_STARTED_STATUS:
-        componentRef.current.alertType = 'warning';
-        componentRef.current.alertText = 'Agregação de banco em processo...';
-        componentRef.current.showAlert = true;
-        break;
-      case AGGREGATION_COMPLETED_STATUS:
-        if (componentRef.current.showAlert) {
-          componentRef.current.showAlert = false;
-        }
-        toast.success('Agregação de banco finalizada.');
-        break;
-      case PROCESS_FAILED_STATUS:
-        if (componentRef.current.showAlert) {
-          componentRef.current.showAlert = false;
-        }
-        toast.error('Consentimento removido.');
-        break;
-      default:
-        break;
-    }
-  }, [aggStatus]);
-
-  useEffect(() => {
     const componentRefCurrent = componentRef.current;
     componentRefCurrent.addEventListener('save-new', handleSaveBudget);
     componentRefCurrent.addEventListener('delete', handleDeleteBudget);
@@ -187,7 +143,18 @@ const BudgetsComponent = () => {
     };
   }, [handleSaveBudget, handleDeleteBudget]);
 
-  return <ob-budget-component ref={componentRef} fontFamily="Lato" lang="pt" currencyLang="pt-BR" currencyType="BRL" />;
+  return (
+    <ob-budget-component
+      alertType="warning"
+      showAlert={alertIsShown}
+      alertText={alertText}
+      ref={componentRef}
+      fontFamily="Lato"
+      lang="pt"
+      currencyLang="pt-BR"
+      currencyType="BRL"
+    />
+  );
 };
 
 export default BudgetsComponent;

@@ -1,5 +1,4 @@
 import IConsentCreateResponse from '../interfaces/IConsentCreateResponse';
-import { PlainObject } from '../types';
 export default class ConsentCreateResponse implements IConsentCreateResponse {
     private _bankId;
     private _userId;
@@ -8,5 +7,5 @@ export default class ConsentCreateResponse implements IConsentCreateResponse {
     get bankId(): string;
     get userId(): number;
     get url(): string;
-    getPlainObject(): PlainObject;
+    toObject(): IConsentCreateResponse;
 }

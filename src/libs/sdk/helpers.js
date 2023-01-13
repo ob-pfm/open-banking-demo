@@ -16,7 +16,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.signUp = exports.buildClients = exports.processErrors = exports.parseDateTextToUnix = exports.parseDateToUnix = void 0;
 const axios_1 = __importDefault(require("axios"));
-const constants_1 = require("./constants");
+const api_1 = require("./api");
 const clients_1 = require("./clients");
 const models_1 = require("./models");
 const createErrorList = (errorResponse) => {
@@ -47,7 +47,10 @@ const processErrors = (error, reject) => {
         if (error.response.status === 401) {
             return reject(createErrorItem(error.response.status, error.response.statusText));
         }
-        if (error.response.status === 400 || error.response.status === 404) {
+        if (error.response.status === 404) {
+            return reject(createErrorItem(error.response.status, 'Unauthorized'));
+        }
+        if (error.response.status === 400) {
             return reject(createErrorList(error.response.data));
         }
     }
@@ -77,7 +80,7 @@ const signUp = (userForm) => new Promise((resolve, reject) => {
         return reject(new models_1.Error('400', '', ''));
     }
     axios_1.default
-        .post(`${sandbox ? constants_1.SERVER_URL_SANDBOX : constants_1.SERVER_URL_PROD}/onboarding/signup`, rest, {
+        .post(`${sandbox ? api_1.SERVER_URL_SANDBOX : api_1.SERVER_URL_PROD}/onboarding/signup`, rest, {
         headers: {
             'X-api-key': apiKey
         }

@@ -1,5 +1,4 @@
 import IBank from '../interfaces/IBank';
-import { PlainObject } from '../types';
 export default class Bank implements IBank {
     private _bankId;
     private _name;
@@ -8,5 +7,5 @@ export default class Bank implements IBank {
     get bankId(): string;
     get name(): string;
     get imagePath(): string;
-    getPlainObject(): PlainObject;
+    toObject(): IBank;
 }

@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useOutletContext, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { API_KEY } from '../../constants';
+import { showErrorToast } from '../../helpers';
+import { IOutletContext } from '../../interfaces';
 
 import {
   AccountsClient,
@@ -11,20 +14,14 @@ import {
   TransactionsClient,
   Transaction,
   TransactionPayload,
-  FilterOptions,
-  CONSENT_REQUESTED_STATUS,
-  CONSENT_GRANTED_STATUS,
-  CONSENT_DELETED_STATUS,
-  AGGREGATION_STARTED_STATUS,
-  AGGREGATION_COMPLETED_STATUS,
-  PROCESS_FAILED_STATUS
+  FilterOptions
 } from '../../libs/sdk';
 import { IListOptions } from '../../libs/sdk/interfaces';
 
 import '../../libs/wc/ob-transactions-component';
 
-const userId = 2230376;
-const accountId = 9200;
+const ACCOUNT_ID = 278020899;
+
 interface ISubmitEventData {
   transaction: {
     id?: string;
@@ -45,11 +42,11 @@ interface IDeleteEventData {
 const TransactionsComponent = () => {
   const componentRef = useRef<any>(null);
   const [searchParams] = useSearchParams();
-  const { aggStatus } = useOutletContext<{ aggStatus: string | null }>();
+  const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
   const [filterOptions, setFilterOptions] = useState<FilterOptions>(new FilterOptions());
-  const accountServices = useMemo(() => new AccountsClient('XXXX-XXXX-XXXX', true), []);
-  const categoryServices = useMemo(() => new CategoriesClient('XXXX-XXXX-XXXX', true), []);
-  const transactionServices = useMemo(() => new TransactionsClient('XXXX-XXXX-XXXX', true), []);
+  const accountServices = useMemo(() => new AccountsClient(API_KEY, true), []);
+  const categoryServices = useMemo(() => new CategoriesClient(API_KEY, true), []);
+  const transactionServices = useMemo(() => new TransactionsClient(API_KEY, true), []);
 
   const getFilteredTransactions = useCallback(
     (transactions: Transaction[], categoryId?: string, subcategoryId?: string) => {
@@ -103,15 +100,15 @@ const TransactionsComponent = () => {
           }
         }
       }
-      transactionServices.getList(accountId, parsedFilterOptions).then((response: Transaction[]) => {
+      transactionServices.getList(ACCOUNT_ID, parsedFilterOptions).then((response: Transaction[]) => {
         const filteredTransactions: Transaction[] = getFilteredTransactions(
           response,
           filters.categoryId,
           filters.subcategoryId
         );
         componentRef.current.transactionsData = filteredTransactions.map((transaction) => ({
-          ...transaction.getPlainObject(),
-          accountId
+          ...transaction.toObject(),
+          accountId: ACCOUNT_ID
         }));
         onSuccess(response);
       });
@@ -124,7 +121,7 @@ const TransactionsComponent = () => {
       componentRef.current.showModalLoading = true;
       const { transaction, onSuccess } = e.detail;
       const newTransaction = new TransactionPayload({ ...transaction });
-      transactionServices.create(accountId, newTransaction).then(() => {
+      transactionServices.create(newTransaction).then(() => {
         filterTransactions(filterOptions, () => {
           onSuccess();
           toast.success('Nuevo Movimiento agregado.');
@@ -168,91 +165,60 @@ const TransactionsComponent = () => {
   );
 
   useEffect(() => {
-    const subcategoryId = searchParams.get('subcategory_id');
-    const categoryId = searchParams.get('category_id');
-    const dateFrom = searchParams.get('date_from');
-    const dateTo = searchParams.get('date_to');
+    if (userId) {
+      const subcategoryId = searchParams.get('subcategory_id');
+      const categoryId = searchParams.get('category_id');
+      const dateFrom = searchParams.get('date_from');
+      const dateTo = searchParams.get('date_to');
 
-    componentRef.current.showMainLoading = true;
-    componentRef.current.transactionsData = [];
-    componentRef.current.accountsData = [];
-    componentRef.current.categoriesData = [];
-    accountServices
-      .getList(userId)
-      .then((response: Account[]) => {
-        componentRef.current.accountsData = response.map((account: Account) => account.getPlainObject());
-        return categoryServices.getListWithSubcategories(userId);
-      })
-      .then((response: ParentCategory[]) => {
-        componentRef.current.categoriesData = response.map((category) => ({
-          ...category.getPlainObject(),
-          subcategories: category.subcategories.map((subcategory) => subcategory.getPlainObject())
-        }));
-        const tempOptions: FilterOptions = new FilterOptions();
-        if (categoryId) {
-          tempOptions.categoryId = categoryId;
-        }
-        if (subcategoryId) {
-          tempOptions.subcategoryId = subcategoryId;
-        }
-        if (dateFrom) {
-          const date = new Date(parseInt(dateFrom));
-          const [splittedDate] = date.toISOString().split('T');
-          tempOptions.dateFrom = splittedDate;
-        }
-        if (dateTo) {
-          const date = new Date(parseInt(dateTo));
-          const [splittedDate] = date.toISOString().split('T');
-          tempOptions.dateTo = splittedDate;
-        }
-        if (tempOptions) {
-          componentRef.current.defaultFilterOptions = tempOptions;
-          setFilterOptions(tempOptions);
-        }
-        filterTransactions(tempOptions, (transactionsRes: Transaction[]) => {
-          if (!transactionsRes.length) {
-            componentRef.current.isEmpty = true;
+      componentRef.current.showMainLoading = true;
+      componentRef.current.transactionsData = [];
+      componentRef.current.accountsData = [];
+      componentRef.current.categoriesData = [];
+      accountServices
+        .getList(userId)
+        .then((response: Account[]) => {
+          componentRef.current.accountsData = response.map((account: Account) => account.toObject());
+          return categoryServices.getListWithSubcategories(userId);
+        })
+        .then((response: ParentCategory[]) => {
+          componentRef.current.categoriesData = response.map((category) => ({
+            ...category.toObject(),
+            subcategories: category.subcategories.map((subcategory) => subcategory.toObject())
+          }));
+          const tempOptions: FilterOptions = new FilterOptions();
+          if (categoryId) {
+            tempOptions.categoryId = categoryId;
           }
-          componentRef.current.showMainLoading = false;
+          if (subcategoryId) {
+            tempOptions.subcategoryId = subcategoryId;
+          }
+          if (dateFrom) {
+            const date = new Date(parseInt(dateFrom));
+            const [splittedDate] = date.toISOString().split('T');
+            tempOptions.dateFrom = splittedDate;
+          }
+          if (dateTo) {
+            const date = new Date(parseInt(dateTo));
+            const [splittedDate] = date.toISOString().split('T');
+            tempOptions.dateTo = splittedDate;
+          }
+          if (tempOptions) {
+            componentRef.current.defaultFilterOptions = tempOptions;
+            setFilterOptions(tempOptions);
+          }
+          filterTransactions(tempOptions, (transactionsRes: Transaction[]) => {
+            if (!transactionsRes.length) {
+              componentRef.current.isEmpty = true;
+            }
+            componentRef.current.showMainLoading = false;
+          });
+        })
+        .catch((error) => {
+          showErrorToast(error);
         });
-      })
-      .catch(() => {
-        // e.detail.showToast('error', 'Error de servidor');
-      });
-  }, [filterTransactions, accountServices, categoryServices, searchParams]);
-
-  useEffect(() => {
-    switch (aggStatus) {
-      case CONSENT_REQUESTED_STATUS:
-        toast.info('Consentimento solicitado.');
-        break;
-      case CONSENT_GRANTED_STATUS:
-        toast.success('Consentimento concedido.');
-        break;
-      case CONSENT_DELETED_STATUS:
-        toast.warn('Consentimento removido.');
-        break;
-      case AGGREGATION_STARTED_STATUS:
-        componentRef.current.alertType = 'warning';
-        componentRef.current.alertText = 'Agregação de banco em processo...';
-        componentRef.current.showAlert = true;
-        break;
-      case AGGREGATION_COMPLETED_STATUS:
-        if (componentRef.current.showAlert) {
-          componentRef.current.showAlert = false;
-        }
-        toast.success('Agregação de banco finalizada.');
-        break;
-      case PROCESS_FAILED_STATUS:
-        if (componentRef.current.showAlert) {
-          componentRef.current.showAlert = false;
-        }
-        toast.error('Consentimento removido.');
-        break;
-      default:
-        break;
     }
-  }, [aggStatus]);
+  }, [filterTransactions, accountServices, categoryServices, searchParams, userId]);
 
   useEffect(() => {
     const componentRefCurrent = componentRef.current;
@@ -268,7 +234,16 @@ const TransactionsComponent = () => {
   }, [handleSaveTransaction, handleEditTransaction, handleDeleteTransaction]);
 
   return (
-    <ob-transactions-component ref={componentRef} fontFamily="Lato" lang="pt" currencyLang="pt-BR" currencyType="BRL" />
+    <ob-transactions-component
+      ref={componentRef}
+      alertType="warning"
+      showAlert={alertIsShown}
+      alertText={alertText}
+      fontFamily="Lato"
+      lang="pt"
+      currencyLang="pt-BR"
+      currencyType="BRL"
+    />
   );
 };
 

@@ -15,7 +15,7 @@ class ResourceDetailResponse {
     get resources() {
         return this._resources;
     }
-    getPlainObject() {
+    toObject() {
         return {
             bankId: this._bankId,
             userId: this._userId,

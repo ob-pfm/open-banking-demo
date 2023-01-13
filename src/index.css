@@ -3,7 +3,7 @@ body {
   height: 100vh;
   width: 100vw;
   margin: 0;
-  font-family: "Lato", sans-serif;
+  font-family: 'Lato', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #333;
@@ -27,4 +27,13 @@ body {
   display: flex;
   flex-direction: column;
   padding: 16px 32px 0 32px;
+}
+
+.ReactModal__Overlay {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  z-index: 31;
+}
+
+.ReactModal__Content {
+  inset: 80px 20% auto 20% !important;
 }

@@ -24,7 +24,7 @@ class BankPayload {
     set imagePath(value) {
         this._imagePath = value;
     }
-    get plainObject() {
+    toObject() {
         return {
             bankId: this._bankId,
             name: this._name,
