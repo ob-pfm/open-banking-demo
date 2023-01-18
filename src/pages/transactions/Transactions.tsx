@@ -184,7 +184,7 @@ const TransactionsComponent = () => {
         .then((response: ParentCategory[]) => {
           componentRef.current.categoriesData = response.map((category) => ({
             ...category.toObject(),
-            subcategories: category.subcategories.map((subcategory) => subcategory.toObject())
+            subcategories: category.subcategories.map((subcategory: any) => subcategory.toObject())
           }));
           const tempOptions: FilterOptions = new FilterOptions();
           if (categoryId) {
