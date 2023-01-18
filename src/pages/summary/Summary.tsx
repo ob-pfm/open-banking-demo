@@ -76,7 +76,7 @@ const SummaryComponent = () => {
         .then((response: ParentCategory[]) => {
           componentRef.current.categoriesData = response.map((category) => ({
             ...category.toObject(),
-            subcategories: category.subcategories.map((subcategory) => subcategory.toObject())
+            subcategories: category.subcategories.map((subcategory: any) => subcategory.toObject())
           }));
           return insightsServices.getResume(userId);
         })

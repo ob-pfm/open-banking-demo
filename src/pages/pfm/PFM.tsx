@@ -104,6 +104,11 @@ const PFMPage = () => {
           closeConsentWizard();
           window.open(consentResponse.url, 'Consentimento', 'width=800, height=500');
           handleSetAggBankId(selectedBankId);
+        })
+        .catch((error) => {
+          showErrorToast(error);
+          showAlert(false);
+          consentWizardComponentRef.current.showModalLoading = false;
         });
     },
     [banksClient, selectedBankId, closeConsentWizard, userId, handleSetAggBankId]

@@ -14,7 +14,7 @@ const Menu: FC = () => {
             'menu__nav-item--selected'
           }`}
         >
-          <Link className="menu__nav-link" to="contas">
+          <Link className="menu__nav-link" to="">
             Contas
           </Link>
         </div>
