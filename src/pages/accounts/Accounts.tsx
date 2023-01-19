@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { AccountsClient, Account, AccountPayload } from '../../libs/sdk';
@@ -74,6 +74,8 @@ interface IDeleteEventData {
 const AccountsComponent = () => {
   const componentRef = useRef<any>(null);
   const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
+  const navigate = useNavigate();
+
   const accountServices = useMemo(() => new AccountsClient(API_KEY, true), []);
   const [accounts, setAccounts] = useState<IAccount[]>([]);
   const getAccounts = useCallback(
@@ -154,6 +156,14 @@ const AccountsComponent = () => {
     },
     [accountServices, accounts]
   );
+
+  const handleClickAccount = useCallback(
+    (e: { detail: IDeleteEventData }) => {
+      navigate(`/pfm/movimientos?account_id=${e.detail}`);
+    },
+    [accountServices, accounts]
+  );
+
   useEffect(() => {
     if (userId) {
       componentRef.current.showMainLoading = true;
@@ -179,11 +189,13 @@ const AccountsComponent = () => {
     componentRefCurrent.addEventListener('save-new', handleSaveAccount);
     componentRefCurrent.addEventListener('save-edit', handleEditAccount);
     componentRefCurrent.addEventListener('delete', handleDeleteAccount);
+    componentRefCurrent.addEventListener('click-account-collapsible-section', handleClickAccount);
 
     return () => {
       componentRefCurrent.removeEventListener('save-new', handleSaveAccount);
       componentRefCurrent.removeEventListener('save-edit', handleEditAccount);
       componentRefCurrent.removeEventListener('delete', handleDeleteAccount);
+      componentRefCurrent.removeEventListener('click-account-collapsible-section', handleClickAccount);
     };
   }, [handleSaveAccount, handleEditAccount, handleDeleteAccount]);
 

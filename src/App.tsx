@@ -9,8 +9,8 @@ import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 import AccountsComponent from './pages/accounts/Accounts';
 import ConsumeConsentPage from './pages/subpages/ConsumeConsentPage';
-/* import CategoriesComponent from './pages/categories/Categories';
 import TransactionsComponent from './pages/transactions/Transactions';
+/* import CategoriesComponent from './pages/categories/Categories';
 import BudgetsComponent from './pages/budgets/Budgets';
 import SummaryComponent from './pages/summary/Summary'; */
 
@@ -30,8 +30,8 @@ function App() {
           <Route path="/consume-consent" element={<ConsumeConsentPage />} />
           <Route path="/pfm" element={<PFMPage />}>
             <Route path="" element={<AccountsComponent />} />
-            {/*  <Route path="resumen" element={<SummaryComponent />} />
-            <Route path="movimientos" element={<TransactionsComponent />} /> */}
+            <Route path="movimientos" element={<TransactionsComponent />} />
+            {/*  <Route path="resumen" element={<SummaryComponent />} /> */}
             {/* <Route path="categorias" element={<CategoriesComponent />} />
             <Route path="presupuestos" element={<BudgetsComponent />} /> */}
           </Route>

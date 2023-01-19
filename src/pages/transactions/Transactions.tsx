@@ -20,8 +20,6 @@ import { IListOptions } from '../../libs/sdk/interfaces';
 
 import '../../libs/wc/ob-transactions-component';
 
-const ACCOUNT_ID = 278020899;
-
 interface ISubmitEventData {
   transaction: {
     id?: string;
@@ -76,7 +74,17 @@ const TransactionsComponent = () => {
     (filters: FilterOptions, onSuccess: (response: Transaction[]) => void) => {
       const parsedFilterOptions: IListOptions = {};
       if (filters) {
-        const { withCharges, withDebits, categoryId, subcategoryId, dateFrom, dateTo, minAmount, maxAmount } = filters;
+        const {
+          withCharges,
+          withDebits,
+          categoryId,
+          subcategoryId,
+          dateFrom,
+          dateTo,
+          minAmount,
+          maxAmount,
+          accountId
+        } = filters;
         if (minAmount) {
           parsedFilterOptions.minAmount = parseFloat(minAmount);
         }
@@ -99,19 +107,19 @@ const TransactionsComponent = () => {
             parsedFilterOptions.categoryId = parseInt(categoryId);
           }
         }
+        transactionServices.getList(Number(accountId), parsedFilterOptions).then((response: Transaction[]) => {
+          const filteredTransactions: Transaction[] = getFilteredTransactions(
+            response,
+            filters.categoryId,
+            filters.subcategoryId
+          );
+          componentRef.current.transactionsData = filteredTransactions.map((transaction) => ({
+            ...transaction.toObject(),
+            accountId: Number(accountId)
+          }));
+          onSuccess(response);
+        });
       }
-      transactionServices.getList(ACCOUNT_ID, parsedFilterOptions).then((response: Transaction[]) => {
-        const filteredTransactions: Transaction[] = getFilteredTransactions(
-          response,
-          filters.categoryId,
-          filters.subcategoryId
-        );
-        componentRef.current.transactionsData = filteredTransactions.map((transaction) => ({
-          ...transaction.toObject(),
-          accountId: ACCOUNT_ID
-        }));
-        onSuccess(response);
-      });
     },
     [transactionServices, getFilteredTransactions]
   );
@@ -166,6 +174,7 @@ const TransactionsComponent = () => {
 
   useEffect(() => {
     if (userId) {
+      const accountId = searchParams.get('account_id');
       const subcategoryId = searchParams.get('subcategory_id');
       const categoryId = searchParams.get('category_id');
       const dateFrom = searchParams.get('date_from');
@@ -187,6 +196,9 @@ const TransactionsComponent = () => {
             subcategories: category.subcategories.map((subcategory: any) => subcategory.toObject())
           }));
           const tempOptions: FilterOptions = new FilterOptions();
+          if (accountId) {
+            tempOptions.accountId = accountId;
+          }
           if (categoryId) {
             tempOptions.categoryId = categoryId;
           }
