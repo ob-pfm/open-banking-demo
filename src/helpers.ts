@@ -1,5 +1,5 @@
 import { toast } from 'react-toastify';
-import { Error } from './libs/sdk/models';
+import { Error } from 'open-banking-pfm-sdk';
 
 export const showErrorToast = (error: Error | Error[]) => {
   if (Array.isArray(error)) {

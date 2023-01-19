@@ -2,8 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import { CategoriesClient, Category, CategoryPayload } from '../../libs/sdk';
-import { ICategory } from '../../libs/sdk/interfaces';
+import { CategoriesClient, Category, CategoryPayload } from 'open-banking-pfm-sdk';
+import { ICategory } from 'open-banking-pfm-sdk/interfaces';
 import { API_KEY } from '../../constants';
 
 import { IOutletContext } from '../../interfaces';
@@ -20,7 +20,7 @@ interface ISubmitEventData {
 const CategoriesComponent = () => {
   const componentRef = useRef<any>(null);
   const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
-  const categoriesServices = useMemo(() => new CategoriesClient(API_KEY, true), []);
+  const categoriesServices = useMemo(() => new CategoriesClient(API_KEY), []);
   const [categories, setCategories] = useState<ICategory[]>([]);
   const getCategories = useCallback(
     (onSuccess: () => void) => {

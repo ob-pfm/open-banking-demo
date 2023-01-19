@@ -2,8 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import { AccountsClient, Account, AccountPayload } from '../../libs/sdk';
-import { IAccount } from '../../libs/sdk/interfaces';
+import { AccountsClient, Account, AccountPayload } from 'open-banking-pfm-sdk';
+import { IAccount } from 'open-banking-pfm-sdk/interfaces';
 import { API_KEY } from '../../constants';
 import { IOutletContext } from '../../interfaces';
 import styles from './style.css';
@@ -73,7 +73,7 @@ interface IDeleteEventData {
 const AccountsComponent = () => {
   const componentRef = useRef<any>(null);
   const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
-  const accountServices = useMemo(() => new AccountsClient(API_KEY, true), []);
+  const accountServices = useMemo(() => new AccountsClient(API_KEY), []);
   const [accounts, setAccounts] = useState<IAccount[]>([]);
   const getAccounts = useCallback(
     (currentUserId: number, onSuccess: () => void, onError: () => void) => {

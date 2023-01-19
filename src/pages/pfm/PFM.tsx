@@ -3,8 +3,9 @@ import { Outlet } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Modal from 'react-modal';
 
+import { buildClients, Bank, Error, User } from 'open-banking-pfm-sdk';
+
 import Menu from './components/Menu';
-import { buildClients, Bank, Error, User } from '../../libs/sdk';
 import { API_KEY, AGG_IN_PROCESS, CONSENT_IN_PROCESS } from '../../constants';
 import { getUserId, showErrorToast } from '../../helpers';
 
@@ -13,7 +14,7 @@ import './style.css';
 const PFMPage = () => {
   const onboardingComponentRef = useRef<any>(null);
   const consentWizardComponentRef = useRef<any>(null);
-  const { banksClient, usersClient } = useMemo(() => buildClients(API_KEY, true), []);
+  const { banksClient, usersClient } = useMemo(() => buildClients(API_KEY), []);
   const [selectedBankId, selectBank] = useState<string | null>(null);
   const [aggBankId, setAggBankId] = useState<string | null>(localStorage.getItem('agg_bank_id'));
   const [userId, setUserId] = useState<number | null>(getUserId());

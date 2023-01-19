@@ -15,8 +15,8 @@ import {
   Transaction,
   TransactionPayload,
   FilterOptions
-} from '../../libs/sdk';
-import { IListOptions } from '../../libs/sdk/interfaces';
+} from 'open-banking-pfm-sdk';
+import { IListOptions } from 'open-banking-pfm-sdk/interfaces';
 
 const ACCOUNT_ID = 278020899;
 
@@ -42,9 +42,9 @@ const TransactionsComponent = () => {
   const [searchParams] = useSearchParams();
   const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
   const [filterOptions, setFilterOptions] = useState<FilterOptions>(new FilterOptions());
-  const accountServices = useMemo(() => new AccountsClient(API_KEY, true), []);
-  const categoryServices = useMemo(() => new CategoriesClient(API_KEY, true), []);
-  const transactionServices = useMemo(() => new TransactionsClient(API_KEY, true), []);
+  const accountServices = useMemo(() => new AccountsClient(API_KEY), []);
+  const categoryServices = useMemo(() => new CategoriesClient(API_KEY), []);
+  const transactionServices = useMemo(() => new TransactionsClient(API_KEY), []);
 
   const getFilteredTransactions = useCallback(
     (transactions: Transaction[], categoryId?: string, subcategoryId?: string) => {

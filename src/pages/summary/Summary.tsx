@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useOutletContext, createSearchParams, useNavigate } from 'react-router-dom';
 
-import { CategoriesClient, ParentCategory, InsightsClient, Resume } from '../../libs/sdk';
+import { CategoriesClient, ParentCategory, InsightsClient, Resume } from 'open-banking-pfm-sdk';
 import { API_KEY } from '../../constants';
 
 import { IOutletContext } from '../../interfaces';
@@ -25,8 +25,8 @@ const SummaryComponent = () => {
   const componentRef = useRef<any>(null);
   const navigate = useNavigate();
   const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
-  const categoryServices = useMemo(() => new CategoriesClient(API_KEY, true), []);
-  const insightsServices = useMemo(() => new InsightsClient(API_KEY, true), []);
+  const categoryServices = useMemo(() => new CategoriesClient(API_KEY), []);
+  const insightsServices = useMemo(() => new InsightsClient(API_KEY), []);
 
   const handleSubcategoryDetailClick = useCallback(
     (e: { detail: ISubmitEventData }) => {
