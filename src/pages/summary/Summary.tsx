@@ -4,7 +4,6 @@ import { useOutletContext, createSearchParams, useNavigate } from 'react-router-
 import { CategoriesClient, ParentCategory, InsightsClient, Resume } from '../../libs/sdk';
 import { API_KEY } from '../../constants';
 
-import '../../libs/wc/ob-summary-component';
 import { IOutletContext } from '../../interfaces';
 import { showErrorToast } from '../../helpers';
 

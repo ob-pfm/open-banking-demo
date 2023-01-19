@@ -3,9 +3,7 @@ import { useOutletContext } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { CategoriesClient, ParentCategory, BudgetsClient, Budget, BudgetPayload } from '../../libs/sdk';
-import { API_KEY } from '../../constants';
-
-import '../../libs/wc/ob-budget-component';
+import { API_KEY } from '../../constants'
 
 const userId = 2230376;
 interface IBudgetData {

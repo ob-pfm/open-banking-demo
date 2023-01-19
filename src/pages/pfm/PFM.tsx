@@ -5,8 +5,6 @@ import Modal from 'react-modal';
 
 import Menu from './components/Menu';
 import { buildClients, Bank, Error, User } from '../../libs/sdk';
-import '../../libs/wc/ob-onboarding-component';
-import '../../libs/wc/ob-consent-wizard-component';
 import { API_KEY, AGG_IN_PROCESS, CONSENT_IN_PROCESS } from '../../constants';
 import { getUserId, showErrorToast } from '../../helpers';
 

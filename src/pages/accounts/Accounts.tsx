@@ -4,7 +4,6 @@ import { toast } from 'react-toastify';
 
 import { AccountsClient, Account, AccountPayload } from '../../libs/sdk';
 import { IAccount } from '../../libs/sdk/interfaces';
-import '../../libs/wc/ob-accounts-component';
 import { API_KEY } from '../../constants';
 import { IOutletContext } from '../../interfaces';
 import styles from './style.css';

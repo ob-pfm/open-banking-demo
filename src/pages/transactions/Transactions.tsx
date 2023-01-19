@@ -18,8 +18,6 @@ import {
 } from '../../libs/sdk';
 import { IListOptions } from '../../libs/sdk/interfaces';
 
-import '../../libs/wc/ob-transactions-component';
-
 const ACCOUNT_ID = 278020899;
 
 interface ISubmitEventData {

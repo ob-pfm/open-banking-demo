@@ -6,7 +6,6 @@ import { CategoriesClient, Category, CategoryPayload } from '../../libs/sdk';
 import { ICategory } from '../../libs/sdk/interfaces';
 import { API_KEY } from '../../constants';
 
-import '../../libs/wc/ob-categories-component';
 import { IOutletContext } from '../../interfaces';
 
 interface ISubmitEventData {
