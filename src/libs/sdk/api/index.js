@@ -1,10 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ApiCore = exports.SERVER_URL_SANDBOX = exports.SERVER_URL_PROD = void 0;
+exports.ApiCore = exports.SERVER_URL = void 0;
 const helpers_1 = require("../helpers");
-const PROXY = 'https://cors-anywhere.herokuapp.com/';
-exports.SERVER_URL_PROD = 'http://tecbantest@ec2-3-21-18-54.us-east-2.compute.amazonaws.com:8081/api/v1/';
-exports.SERVER_URL_SANDBOX = `${PROXY}${'http://tecbantest@ec2-3-21-18-54.us-east-2.compute.amazonaws.com:8081/api/v1/'}`;
+exports.SERVER_URL = 'http://tecbantest@ec2-3-21-18-54.us-east-2.compute.amazonaws.com:8081/api/v1/';
 class ApiCore {
     constructor(apiSettings) {
         this.doGet = (url, success) => new Promise((resolve, reject) => {

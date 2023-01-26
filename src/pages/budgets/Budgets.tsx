@@ -29,8 +29,22 @@ interface IDeleteEventData {
 const BudgetsComponent = () => {
   const componentRef = useRef<any>(null);
   const { alertIsShown, alertText } = useOutletContext<{ alertIsShown: boolean; alertText: string }>();
-  const budgetsServices = useMemo(() => new BudgetsClient(API_KEY, true), []);
-  const categoryServices = useMemo(() => new CategoriesClient(API_KEY, true), []);
+  const budgetsServices = useMemo(
+    () =>
+      new BudgetsClient(
+        API_KEY,
+        'https://cors-anywhere.herokuapp.com/http://tecbantest@ec2-3-21-18-54.us-east-2.compute.amazonaws.com:8081/api/v1/'
+      ),
+    []
+  );
+  const categoryServices = useMemo(
+    () =>
+      new CategoriesClient(
+        API_KEY,
+        'https://cors-anywhere.herokuapp.com/http://tecbantest@ec2-3-21-18-54.us-east-2.compute.amazonaws.com:8081/api/v1/'
+      ),
+    []
+  );
 
   const getBudgets = useCallback(
     (onSuccess: (response: boolean) => void, onError?: () => void) => {

@@ -5,7 +5,7 @@ export default class BanksClient extends Client implements IBanksClient {
     private _isRunningPolling;
     private _timer;
     private _path;
-    constructor(apiKey: string, sandbox?: boolean);
+    constructor(apiKey: string, serverUrl?: string);
     private aggStatusBankSubscribe;
     getAvailables(): Promise<Bank[]>;
     getAggregates(userId: number | string): Promise<Bank[]>;

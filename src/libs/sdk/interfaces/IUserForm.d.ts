@@ -8,5 +8,5 @@ export default interface IUserForm {
     password: string;
     countryShortName: string;
     apiKey: string;
-    sandbox?: string;
+    serverUrl?: string;
 }

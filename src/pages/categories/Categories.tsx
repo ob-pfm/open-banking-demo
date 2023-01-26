@@ -21,7 +21,14 @@ interface ISubmitEventData {
 const CategoriesComponent = () => {
   const componentRef = useRef<any>(null);
   const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
-  const categoriesServices = useMemo(() => new CategoriesClient(API_KEY, true), []);
+  const categoriesServices = useMemo(
+    () =>
+      new CategoriesClient(
+        API_KEY,
+        'https://cors-anywhere.herokuapp.com/http://tecbantest@ec2-3-21-18-54.us-east-2.compute.amazonaws.com:8081/api/v1/'
+      ),
+    []
+  );
   const [categories, setCategories] = useState<ICategory[]>([]);
   const getCategories = useCallback(
     (onSuccess: () => void) => {

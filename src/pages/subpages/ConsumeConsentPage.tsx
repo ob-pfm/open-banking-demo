@@ -39,11 +39,15 @@ const ConsumeConsentPage = () => {
     const token = searchParams.get('id_token');
     const state = searchParams.get('state');
     if (authCode && token && state) {
-      const banksClient = new BanksClient(API_KEY, true);
+      const banksClient = new BanksClient(
+        API_KEY,
+        'https://cors-anywhere.herokuapp.com/http://tecbantest@ec2-3-21-18-54.us-east-2.compute.amazonaws.com:8081/api/v1/'
+      );
       banksClient
         .consumeConsent(authCode, token, state)
         .then(() => {
           setConsumeStatus(CONSUME_SUCCESSFUL);
+          window.close();
         })
         .catch((error) => {
           showErrorToast(error);

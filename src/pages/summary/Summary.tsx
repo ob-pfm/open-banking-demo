@@ -26,8 +26,22 @@ const SummaryComponent = () => {
   const componentRef = useRef<any>(null);
   const navigate = useNavigate();
   const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
-  const categoryServices = useMemo(() => new CategoriesClient(API_KEY, true), []);
-  const insightsServices = useMemo(() => new InsightsClient(API_KEY, true), []);
+  const categoryServices = useMemo(
+    () =>
+      new CategoriesClient(
+        API_KEY,
+        'https://cors-anywhere.herokuapp.com/http://tecbantest@ec2-3-21-18-54.us-east-2.compute.amazonaws.com:8081/api/v1/'
+      ),
+    []
+  );
+  const insightsServices = useMemo(
+    () =>
+      new InsightsClient(
+        API_KEY,
+        'https://cors-anywhere.herokuapp.com/http://tecbantest@ec2-3-21-18-54.us-east-2.compute.amazonaws.com:8081/api/v1/'
+      ),
+    []
+  );
 
   const handleSubcategoryDetailClick = useCallback(
     (e: { detail: ISubmitEventData }) => {

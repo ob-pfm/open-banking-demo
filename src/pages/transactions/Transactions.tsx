@@ -42,9 +42,30 @@ const TransactionsComponent = () => {
   const [searchParams] = useSearchParams();
   const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
   const [filterOptions, setFilterOptions] = useState<FilterOptions>(new FilterOptions());
-  const accountServices = useMemo(() => new AccountsClient(API_KEY, true), []);
-  const categoryServices = useMemo(() => new CategoriesClient(API_KEY, true), []);
-  const transactionServices = useMemo(() => new TransactionsClient(API_KEY, true), []);
+  const accountServices = useMemo(
+    () =>
+      new AccountsClient(
+        API_KEY,
+        'https://cors-anywhere.herokuapp.com/http://tecbantest@ec2-3-21-18-54.us-east-2.compute.amazonaws.com:8081/api/v1/'
+      ),
+    []
+  );
+  const categoryServices = useMemo(
+    () =>
+      new CategoriesClient(
+        API_KEY,
+        'https://cors-anywhere.herokuapp.com/http://tecbantest@ec2-3-21-18-54.us-east-2.compute.amazonaws.com:8081/api/v1/'
+      ),
+    []
+  );
+  const transactionServices = useMemo(
+    () =>
+      new TransactionsClient(
+        API_KEY,
+        'https://cors-anywhere.herokuapp.com/http://tecbantest@ec2-3-21-18-54.us-east-2.compute.amazonaws.com:8081/api/v1/'
+      ),
+    []
+  );
 
   const getFilteredTransactions = useCallback(
     (transactions: Transaction[], categoryId?: string, subcategoryId?: string) => {
@@ -174,7 +195,7 @@ const TransactionsComponent = () => {
 
   useEffect(() => {
     if (userId) {
-      const accountId = searchParams.get('account_id');
+      let accountId = searchParams.get('account_id');
       const subcategoryId = searchParams.get('subcategory_id');
       const categoryId = searchParams.get('category_id');
       const dateFrom = searchParams.get('date_from');
@@ -187,14 +208,18 @@ const TransactionsComponent = () => {
       accountServices
         .getList(userId)
         .then((response: Account[]) => {
-          componentRef.current.accountsData = response.map((account: Account) => account.toObject());
+          const accounts = response.map((account: Account) => account.toObject());
+          componentRef.current.accountsData = accounts;
+          if (!accountId) accountId = accounts[0].id.toString();
           return categoryServices.getListWithSubcategories(userId);
         })
         .then((response: ParentCategory[]) => {
-          componentRef.current.categoriesData = response.map((category) => ({
+          {
+            /** componentRef.current.categoriesData = response.map((category) => ({
             ...category.toObject(),
             subcategories: category.subcategories.map((subcategory: any) => subcategory.toObject())
-          }));
+          })); */
+          }
           const tempOptions: FilterOptions = new FilterOptions();
           if (accountId) {
             tempOptions.accountId = accountId;

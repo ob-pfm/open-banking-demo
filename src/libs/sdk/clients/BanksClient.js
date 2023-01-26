@@ -15,8 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const models_1 = require("../models");
 const Client_1 = __importDefault(require("./Client"));
 class BanksClient extends Client_1.default {
-    constructor(apiKey, sandbox) {
-        super(apiKey, sandbox);
+    constructor(apiKey, serverUrl) {
+        super(apiKey, serverUrl);
         this._path = '/open-banking/banks';
         this._isRunningPolling = false;
         this._timer = 0;

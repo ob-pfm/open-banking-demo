@@ -57,18 +57,18 @@ const processErrors = (error, reject) => {
     return reject(createErrorObject(error));
 };
 exports.processErrors = processErrors;
-const buildClients = (apiKey, sandbox) => ({
-    accountsClient: new clients_1.AccountsClient(apiKey, sandbox),
-    banksClient: new clients_1.BanksClient(apiKey, sandbox),
-    budgetsClient: new clients_1.BudgetsClient(apiKey, sandbox),
-    categoriesClient: new clients_1.CategoriesClient(apiKey, sandbox),
-    insightsClient: new clients_1.InsightsClient(apiKey, sandbox),
-    transactionsClient: new clients_1.TransactionsClient(apiKey, sandbox),
-    usersClient: new clients_1.UsersClient(apiKey, sandbox)
+const buildClients = (apiKey, serverUrl) => ({
+    accountsClient: new clients_1.AccountsClient(apiKey, serverUrl),
+    banksClient: new clients_1.BanksClient(apiKey, serverUrl),
+    budgetsClient: new clients_1.BudgetsClient(apiKey, serverUrl),
+    categoriesClient: new clients_1.CategoriesClient(apiKey, serverUrl),
+    insightsClient: new clients_1.InsightsClient(apiKey, serverUrl),
+    transactionsClient: new clients_1.TransactionsClient(apiKey, serverUrl),
+    usersClient: new clients_1.UsersClient(apiKey, serverUrl)
 });
 exports.buildClients = buildClients;
 const signUp = (userForm) => new Promise((resolve, reject) => {
-    const _a = userForm, { sandbox, apiKey } = _a, rest = __rest(_a, ["sandbox", "apiKey"]);
+    const _a = userForm, { serverUrl, apiKey } = _a, rest = __rest(_a, ["serverUrl", "apiKey"]);
     if (!rest.name ||
         !rest.firstLastName ||
         !rest.secondLastName ||
@@ -80,7 +80,7 @@ const signUp = (userForm) => new Promise((resolve, reject) => {
         return reject(new models_1.Error('400', '', ''));
     }
     axios_1.default
-        .post(`${sandbox ? api_1.SERVER_URL_SANDBOX : api_1.SERVER_URL_PROD}/onboarding/signup`, rest, {
+        .post(`${serverUrl || api_1.SERVER_URL}/onboarding/signup`, rest, {
         headers: {
             'X-api-key': apiKey
         }

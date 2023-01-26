@@ -3,7 +3,6 @@ import { useOutletContext, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { AccountsClient, Account, AccountPayload } from '../../libs/sdk';
-import { IAccount } from '../../libs/sdk/interfaces';
 import '../../libs/wc/ob-accounts-component';
 import { API_KEY } from '../../constants';
 import { IOutletContext } from '../../interfaces';
@@ -76,15 +75,22 @@ const AccountsComponent = () => {
   const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
   const navigate = useNavigate();
 
-  const accountServices = useMemo(() => new AccountsClient(API_KEY, true), []);
-  const [accounts, setAccounts] = useState<IAccount[]>([]);
+  const accountServices = useMemo(
+    () =>
+      new AccountsClient(
+        API_KEY,
+        'https://cors-anywhere.herokuapp.com/http://tecbantest@ec2-3-21-18-54.us-east-2.compute.amazonaws.com:8081/api/v1/'
+      ),
+    []
+  );
+  const [bankAccounts, setBankAccounts] = useState<any[]>([]);
   const getAccounts = useCallback(
     (currentUserId: number, onSuccess: () => void, onError: () => void) => {
       if (accountServices && componentRef.current !== null) {
         accountServices
           .getList(currentUserId)
           .then((response: Account[]) => {
-            setAccounts(response.map((account) => account.toObject()));
+            setBankAccounts([{ bank: null, accounts: response.map((account) => account.toObject()) }]);
             onSuccess();
           })
           .catch((error) => {
@@ -108,12 +114,12 @@ const AccountsComponent = () => {
         });
         accountServices.create(newAccount).then((response: Account) => {
           toast.success('Conta adicionada.');
-          setAccounts([response.toObject(), ...accounts]);
+          setBankAccounts([response.toObject(), ...bankAccounts]);
           onSuccess();
         });
       }
     },
-    [accountServices, accounts, userId]
+    [accountServices, bankAccounts, userId]
   );
 
   const handleEditAccount = useCallback(
@@ -128,8 +134,8 @@ const AccountsComponent = () => {
         });
         accountServices.edit(id!, editedAccount).then((response: Account) => {
           toast.success('Alterações salvas.');
-          setAccounts(
-            accounts.map((accountItem) => {
+          setBankAccounts(
+            bankAccounts.map((accountItem) => {
               if (accountItem.id === id) {
                 return response.toObject();
               }
@@ -140,7 +146,7 @@ const AccountsComponent = () => {
         });
       }
     },
-    [accountServices, accounts, userId]
+    [accountServices, bankAccounts, userId]
   );
 
   const handleDeleteAccount = useCallback(
@@ -149,19 +155,19 @@ const AccountsComponent = () => {
       accountServices.delete(accountId).then((response: boolean) => {
         if (response) {
           toast.success('Conta apagada.');
-          setAccounts(accounts.filter((accountItem) => accountItem.id !== accountId));
+          setBankAccounts(bankAccounts.filter((accountItem) => accountItem.id !== accountId));
           onSuccess();
         }
       });
     },
-    [accountServices, accounts]
+    [accountServices, bankAccounts]
   );
 
   const handleClickAccount = useCallback(
     (e: { detail: IDeleteEventData }) => {
       navigate(`/pfm/movimientos?account_id=${e.detail}`);
     },
-    [accountServices, accounts]
+    [accountServices, bankAccounts]
   );
 
   useEffect(() => {
@@ -181,8 +187,8 @@ const AccountsComponent = () => {
   }, [getAccounts]);
 
   useEffect(() => {
-    componentRef.current.accountsData = accounts;
-  }, [componentRef, accounts]);
+    componentRef.current.banksAccountData = bankAccounts;
+  }, [componentRef, bankAccounts]);
 
   useEffect(() => {
     const componentRefCurrent = componentRef.current;

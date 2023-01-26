@@ -8,5 +8,5 @@ export declare const processErrors: (error: AxiosError, reject: {
     (reason?: unknown): void;
     (arg0: AxiosError<unknown, unknown>): void;
 }) => void;
-export declare const buildClients: (apiKey: string, sandbox?: boolean) => ClientDictionary;
+export declare const buildClients: (apiKey: string, serverUrl?: string) => ClientDictionary;
 export declare const signUp: (userForm: IUserForm | unknown) => Promise<SignUpResponse>;
