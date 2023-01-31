@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useOutletContext, createSearchParams, useNavigate } from 'react-router-dom';
 
 import { CategoriesClient, ParentCategory, InsightsClient, Resume } from '../../libs/sdk';
-import { API_KEY } from '../../constants';
+import { API_KEY, URL_SERVER } from '../../constants';
 
 import '../../libs/wc/ob-summary-component';
 import { IOutletContext } from '../../interfaces';
@@ -26,22 +26,8 @@ const SummaryComponent = () => {
   const componentRef = useRef<any>(null);
   const navigate = useNavigate();
   const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
-  const categoryServices = useMemo(
-    () =>
-      new CategoriesClient(
-        API_KEY,
-        'https://cors-anywhere.herokuapp.com/http://tecbantest@ec2-3-21-18-54.us-east-2.compute.amazonaws.com:8081/api/v1/'
-      ),
-    []
-  );
-  const insightsServices = useMemo(
-    () =>
-      new InsightsClient(
-        API_KEY,
-        'https://cors-anywhere.herokuapp.com/http://tecbantest@ec2-3-21-18-54.us-east-2.compute.amazonaws.com:8081/api/v1/'
-      ),
-    []
-  );
+  const categoryServices = useMemo(() => new CategoriesClient(API_KEY, URL_SERVER), []);
+  const insightsServices = useMemo(() => new InsightsClient(API_KEY, URL_SERVER), []);
 
   const handleSubcategoryDetailClick = useCallback(
     (e: { detail: ISubmitEventData }) => {

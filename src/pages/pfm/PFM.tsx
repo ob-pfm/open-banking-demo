@@ -5,21 +5,14 @@ import { toast } from 'react-toastify';
 import Menu from './components/Menu';
 import { buildClients, Error, User } from '../../libs/sdk';
 import '../../libs/wc/ob-onboarding-component';
-import { API_KEY } from '../../constants';
+import { API_KEY, URL_SERVER } from '../../constants';
 import { getUserId, showErrorToast } from '../../helpers';
 
 import './style.css';
 
 const PFMPage = () => {
   const onboardingComponentRef = useRef<any>(null);
-  const { usersClient } = useMemo(
-    () =>
-      buildClients(
-        API_KEY,
-        'https://cors-anywhere.herokuapp.com/http://tecbantest@ec2-3-21-18-54.us-east-2.compute.amazonaws.com:8081/api/v1/'
-      ),
-    []
-  );
+  const { usersClient } = useMemo(() => buildClients(API_KEY, URL_SERVER), []);
 
   const [userId, setUserId] = useState<number | null>(getUserId());
   const [alertIsShown, showAlert] = useState<boolean>(false);

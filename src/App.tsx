@@ -11,8 +11,8 @@ import AccountsComponent from './pages/accounts/Accounts';
 import ConsumeConsentPage from './pages/subpages/ConsumeConsentPage';
 import TransactionsComponent from './pages/transactions/Transactions';
 import ConsentComponent from './pages/consentimiento/Consentimiento';
-/* import CategoriesComponent from './pages/categories/Categories';
 import BudgetsComponent from './pages/budgets/Budgets';
+/* import CategoriesComponent from './pages/categories/Categories';
 import SummaryComponent from './pages/summary/Summary'; */
 
 function App() {
@@ -33,9 +33,9 @@ function App() {
             <Route path="" element={<ConsentComponent />} />
             <Route path="cuentas" element={<AccountsComponent />} />
             <Route path="movimientos" element={<TransactionsComponent />} />
-            {/*  <Route path="resumen" element={<SummaryComponent />} /> */}
-            {/* <Route path="categorias" element={<CategoriesComponent />} />
-            <Route path="presupuestos" element={<BudgetsComponent />} /> */}
+            {/** <Route path="resumen" element={<SummaryComponent />} />
+             <Route path="categorias" element={<CategoriesComponent />} /> */}
+            <Route path="presupuestos" element={<BudgetsComponent />} />
           </Route>
         </Routes>
         <ToastContainer

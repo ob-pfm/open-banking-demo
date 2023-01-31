@@ -3,7 +3,7 @@ import { useNavigate, useOutletContext } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Modal from 'react-modal';
 import { showErrorToast } from '../../helpers';
-import { API_KEY, AGG_IN_PROCESS, CONSENT_IN_PROCESS } from '../../constants';
+import { API_KEY, AGG_IN_PROCESS, CONSENT_IN_PROCESS, URL_SERVER } from '../../constants';
 
 import { Bank, buildClients } from '../../libs/sdk';
 import '../../libs/wc/ob-consent-wizard-component';
@@ -12,14 +12,7 @@ import { IOutletContext } from '../../interfaces';
 const ConsentComponent = () => {
   const navigate = useNavigate();
   const { showAlert, setAlertText, userId, initConsent } = useOutletContext<IOutletContext>();
-  const { banksClient } = useMemo(
-    () =>
-      buildClients(
-        API_KEY,
-        'https://cors-anywhere.herokuapp.com/http://tecbantest@ec2-3-21-18-54.us-east-2.compute.amazonaws.com:8081/api/v1/'
-      ),
-    []
-  );
+  const { banksClient } = useMemo(() => buildClients(API_KEY, URL_SERVER), []);
   const consentWizardComponentRef = useRef<any>(null);
   const [aggBankId, setAggBankId] = useState<string | null>(localStorage.getItem('agg_bank_id'));
   const [selectedBank, selectBank] = useState<string | null>(null);
@@ -76,7 +69,6 @@ const ConsentComponent = () => {
           closeConsentWizard();
           window.open(consentResponse.url, 'Consentimento', 'width=800, height=500');
           handleSetAggBankId(selectedBank);
-          navigate('/pfm/cuentas');
         })
         .catch((error) => {
           showErrorToast(error);
@@ -142,8 +134,8 @@ const ConsentComponent = () => {
       case 'AGGREGATION_COMPLETED':
         showAlert(false);
         handleSetAggBankId(null);
-        toast.success('Agregação de banco finalizada. Recarregue a página.');
-        setTimeout(() => window.location.reload(), 3500);
+        toast.success('Agregação de banco finalizada.');
+        setTimeout(() => navigate('/pfm/cuentas'), 2000);
         banksClient.aggregationStatusUnsubscribe();
         break;
       case 'PROCESS_FAILED':
@@ -178,7 +170,7 @@ const ConsentComponent = () => {
 
   return (
     <>
-      <ob-consent-wizard-component ref={consentWizardComponentRef} fontFamily="Lato" lang="pt" />
+      <ob-consent-wizard-component ref={consentWizardComponentRef} fontFamily="Lato" lang="pt" title="" />
       <Modal isOpen={resourcesModalIsShown} onRequestClose={handleCloseModal} contentLabel="Example Modal">
         <div className="close-button" onClick={handleCloseModal} role="presentation">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">

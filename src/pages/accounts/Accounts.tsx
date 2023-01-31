@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 
 import { AccountsClient, Account, AccountPayload } from '../../libs/sdk';
 import '../../libs/wc/ob-accounts-component';
-import { API_KEY } from '../../constants';
+import { API_KEY, URL_SERVER } from '../../constants';
 import { IOutletContext } from '../../interfaces';
 import styles from './style.css';
 import { showErrorToast } from '../../helpers';
@@ -75,14 +75,7 @@ const AccountsComponent = () => {
   const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
   const navigate = useNavigate();
 
-  const accountServices = useMemo(
-    () =>
-      new AccountsClient(
-        API_KEY,
-        'https://cors-anywhere.herokuapp.com/http://tecbantest@ec2-3-21-18-54.us-east-2.compute.amazonaws.com:8081/api/v1/'
-      ),
-    []
-  );
+  const accountServices = useMemo(() => new AccountsClient(API_KEY, URL_SERVER), []);
   const [bankAccounts, setBankAccounts] = useState<any[]>([]);
   const getAccounts = useCallback(
     (currentUserId: number, onSuccess: () => void, onError: () => void) => {

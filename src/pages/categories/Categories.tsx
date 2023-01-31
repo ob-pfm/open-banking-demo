@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 
 import { CategoriesClient, Category, CategoryPayload } from '../../libs/sdk';
 import { ICategory } from '../../libs/sdk/interfaces';
-import { API_KEY } from '../../constants';
+import { API_KEY, URL_SERVER } from '../../constants';
 
 import '../../libs/wc/ob-categories-component';
 import { IOutletContext } from '../../interfaces';
@@ -21,14 +21,7 @@ interface ISubmitEventData {
 const CategoriesComponent = () => {
   const componentRef = useRef<any>(null);
   const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
-  const categoriesServices = useMemo(
-    () =>
-      new CategoriesClient(
-        API_KEY,
-        'https://cors-anywhere.herokuapp.com/http://tecbantest@ec2-3-21-18-54.us-east-2.compute.amazonaws.com:8081/api/v1/'
-      ),
-    []
-  );
+  const categoriesServices = useMemo(() => new CategoriesClient(API_KEY, URL_SERVER), []);
   const [categories, setCategories] = useState<ICategory[]>([]);
   const getCategories = useCallback(
     (onSuccess: () => void) => {

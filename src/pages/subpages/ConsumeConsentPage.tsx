@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { BanksClient } from '../../libs/sdk';
-import { API_KEY } from '../../constants';
+import { API_KEY, URL_SERVER } from '../../constants';
 import { showErrorToast } from '../../helpers';
 
 const CONSUME_IN_PROCESS = 'IN_PROCESS';
@@ -39,10 +39,7 @@ const ConsumeConsentPage = () => {
     const token = searchParams.get('id_token');
     const state = searchParams.get('state');
     if (authCode && token && state) {
-      const banksClient = new BanksClient(
-        API_KEY,
-        'https://cors-anywhere.herokuapp.com/http://tecbantest@ec2-3-21-18-54.us-east-2.compute.amazonaws.com:8081/api/v1/'
-      );
+      const banksClient = new BanksClient(API_KEY, URL_SERVER);
       banksClient
         .consumeConsent(authCode, token, state)
         .then(() => {
