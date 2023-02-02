@@ -1,10 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useOutletContext, useSearchParams } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { API_KEY } from '../../constants';
-import { showErrorToast } from '../../helpers';
-import { IOutletContext } from '../../interfaces';
-
 import {
   AccountsClient,
   Account,
@@ -17,6 +12,10 @@ import {
   FilterOptions
 } from 'open-banking-pfm-sdk';
 import { IListOptions } from 'open-banking-pfm-sdk/interfaces';
+import { toast } from 'react-toastify';
+import { API_KEY, SERVER_URL } from '../../constants';
+import { showErrorToast } from '../../helpers';
+import { IOutletContext } from '../../interfaces';
 
 const ACCOUNT_ID = 278020899;
 
@@ -42,9 +41,9 @@ const TransactionsComponent = () => {
   const [searchParams] = useSearchParams();
   const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
   const [filterOptions, setFilterOptions] = useState<FilterOptions>(new FilterOptions());
-  const accountServices = useMemo(() => new AccountsClient(API_KEY), []);
-  const categoryServices = useMemo(() => new CategoriesClient(API_KEY), []);
-  const transactionServices = useMemo(() => new TransactionsClient(API_KEY), []);
+  const accountServices = useMemo(() => new AccountsClient(API_KEY, SERVER_URL), []);
+  const categoryServices = useMemo(() => new CategoriesClient(API_KEY, SERVER_URL), []);
+  const transactionServices = useMemo(() => new TransactionsClient(API_KEY, SERVER_URL), []);
 
   const getFilteredTransactions = useCallback(
     (transactions: Transaction[], categoryId?: string, subcategoryId?: string) => {
