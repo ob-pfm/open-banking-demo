@@ -160,7 +160,7 @@ const AccountsComponent = () => {
     (e: { detail: IDeleteEventData }) => {
       navigate(`/pfm/movimientos?account_id=${e.detail}`);
     },
-    [accountServices, bankAccounts]
+    [navigate]
   );
 
   useEffect(() => {
@@ -177,7 +177,7 @@ const AccountsComponent = () => {
         }
       );
     }
-  }, [getAccounts]);
+  }, [getAccounts, userId]);
 
   useEffect(() => {
     componentRef.current.banksAccountData = bankAccounts;
@@ -196,7 +196,7 @@ const AccountsComponent = () => {
       componentRefCurrent.removeEventListener('delete', handleDeleteAccount);
       componentRefCurrent.removeEventListener('click-account-collapsible-section', handleClickAccount);
     };
-  }, [handleSaveAccount, handleEditAccount, handleDeleteAccount]);
+  }, [handleSaveAccount, handleEditAccount, handleDeleteAccount, handleClickAccount]);
 
   return (
     <ob-accounts-component

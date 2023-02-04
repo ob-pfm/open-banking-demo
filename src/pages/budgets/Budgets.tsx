@@ -6,9 +6,10 @@ import { CategoriesClient, ParentCategory, BudgetsClient, Budget, BudgetPayload 
 import { API_KEY, URL_SERVER } from '../../constants';
 
 import '../../libs/wc/ob-budget-component';
+import { IOutletContext } from '../../interfaces';
 
-const userId = 2230376;
 interface IBudgetData {
+  id: number;
   amount: number;
   categoryId: number;
   name: string;
@@ -28,23 +29,24 @@ interface IDeleteEventData {
 
 const BudgetsComponent = () => {
   const componentRef = useRef<any>(null);
-  const { alertIsShown, alertText } = useOutletContext<{ alertIsShown: boolean; alertText: string }>();
+  const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
   const budgetsServices = useMemo(() => new BudgetsClient(API_KEY, URL_SERVER), []);
   const categoryServices = useMemo(() => new CategoriesClient(API_KEY, URL_SERVER), []);
 
   const getBudgets = useCallback(
     (onSuccess: (response: boolean) => void, onError?: () => void) => {
-      budgetsServices
-        .getList(userId)
-        .then((response: Budget[]) => {
-          componentRef.current.budgetData = response.map((budget) => budget.toObject());
-          onSuccess(response.length === 0);
-        })
-        .catch(() => {
-          onError && onError();
-        });
+      if (userId)
+        budgetsServices
+          .getList(userId)
+          .then((response: Budget[]) => {
+            componentRef.current.budgetData = response.map((budget) => budget.toObject());
+            onSuccess(response.length === 0);
+          })
+          .catch(() => {
+            onError && onError();
+          });
     },
-    [budgetsServices]
+    [budgetsServices, userId]
   );
 
   const handleSaveBudget = useCallback(
@@ -55,26 +57,58 @@ const BudgetsComponent = () => {
         .map(
           ({ name, categoryId, amount }) =>
             new Promise((resolve, reject) => {
-              budgetsServices
-                .create(new BudgetPayload({ name, amount, warningPercentage: 0.5, categoryId, userId }))
-                .then(() => resolve(true))
-                .catch(() => reject());
+              if (userId)
+                budgetsServices
+                  .create(new BudgetPayload({ name, amount, warningPercentage: 0.5, categoryId, userId }))
+                  .then(() => resolve(true))
+                  .catch(() => reject());
             })
         );
       Promise.all(budgetPromises)
         .then(() => {
           getBudgets(() => {
             e.detail.onSuccess();
-            toast.success('Presupuesto agregado.');
+            toast.success('Orçamento adicionado.');
             componentRef.current.showModalLoading = false;
           });
         })
         .catch(() => {
-          toast.error('Error al guardar.');
+          toast.error('Um erro ocorreu.');
           componentRef.current.showModalLoading = false;
         });
     },
-    [budgetsServices, getBudgets]
+    [budgetsServices, getBudgets, userId]
+  );
+
+  const handleEditBudget = useCallback(
+    (e: { detail: ISubmitEventData }) => {
+      componentRef.current.showModalLoading = true;
+      const budgetPromises = e.detail.budgets
+        .filter(({ id }) => id)
+        .map(
+          ({ id, name, amount }) =>
+            new Promise((resolve, reject) => {
+              if (userId)
+                budgetsServices
+                  .edit(id, { name, amount, warningPercentage: 0.5 })
+                  .then(() => resolve(true))
+                  .catch(() => reject());
+            })
+        );
+      Promise.all(budgetPromises)
+        .then(() => {
+          getBudgets(() => {
+            e.detail.onSuccess();
+            toast.success('Orçamento atualizado.');
+            componentRef.current.showModalLoading = false;
+          });
+        })
+        .catch(() => {
+          toast.error('Um erro ocorreu.');
+          componentRef.current.showModalLoading = false;
+        });
+    },
+    [budgetsServices, getBudgets, userId]
   );
 
   const handleDeleteBudget = useCallback(
@@ -97,12 +131,12 @@ const BudgetsComponent = () => {
         .then(() => {
           getBudgets(() => {
             e.detail.onSuccess();
-            toast.success('Presupuestos eliminados.');
+            toast.success('Orçamentos excluídos.');
             componentRef.current.showModalLoading = false;
           });
         })
         .catch(() => {
-          toast.error('Error al eliminar.');
+          toast.error('Um erro ocorreu.');
           componentRef.current.showModalLoading = false;
         });
     },
@@ -113,35 +147,38 @@ const BudgetsComponent = () => {
     componentRef.current.showMainLoading = true;
     componentRef.current.budgetData = [];
     componentRef.current.categoriesData = [];
-    categoryServices
-      .getListWithSubcategories(userId)
-      .then((response: ParentCategory[]) => {
-        componentRef.current.categoriesData = response.map((category) => ({
-          ...category.toObject(),
-          subcategories: category.subcategories.map((subcategory) => subcategory.toObject())
-        }));
-        getBudgets((isEmpty: boolean) => {
-          if (isEmpty) {
-            componentRef.current.isEmpty = true;
-          }
-          componentRef.current.showMainLoading = false;
+    if (userId)
+      categoryServices
+        .getListWithSubcategories(userId)
+        .then((response: ParentCategory[]) => {
+          componentRef.current.categoriesData = response.map((category) => ({
+            ...category.toObject(),
+            subcategories: category.subcategories.map((subcategory) => subcategory.toObject())
+          }));
+          getBudgets((isEmpty: boolean) => {
+            if (isEmpty) {
+              componentRef.current.isEmpty = true;
+            }
+            componentRef.current.showMainLoading = false;
+          });
+        })
+        .catch(() => {
+          // e.detail.showToast('error', 'Error de servidor');
         });
-      })
-      .catch(() => {
-        // e.detail.showToast('error', 'Error de servidor');
-      });
-  }, [getBudgets, categoryServices]);
+  }, [getBudgets, categoryServices, userId]);
 
   useEffect(() => {
     const componentRefCurrent = componentRef.current;
     componentRefCurrent.addEventListener('save-new', handleSaveBudget);
+    componentRefCurrent.addEventListener('save-edit', handleEditBudget);
     componentRefCurrent.addEventListener('delete', handleDeleteBudget);
 
     return () => {
       componentRefCurrent.removeEventListener('save-new', handleSaveBudget);
+      componentRefCurrent.removeEventListener('save-edit', handleEditBudget);
       componentRefCurrent.removeEventListener('delete', handleDeleteBudget);
     };
-  }, [handleSaveBudget, handleDeleteBudget]);
+  }, [handleSaveBudget, handleDeleteBudget, handleEditBudget]);
 
   return (
     <ob-budget-component

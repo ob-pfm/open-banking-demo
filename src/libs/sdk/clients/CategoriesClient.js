@@ -22,12 +22,11 @@ class CategoriesClient extends Client_1.default {
         return this._apiCore.doGet(`${this._path}?userId=${userId}${cursor ? `&cursor=${cursor}` : ''}`, (response) => {
             let categories = [];
             if (response.data) {
-                const catsOrd = response.data.reverse();
-                categories = catsOrd
+                categories = response.data
                     .filter((cat) => !cat.parentCategoryId)
                     .map((cat) => new models_1.ParentCategory(cat));
                 categories.forEach((parcat) => {
-                    parcat.subcategories = catsOrd
+                    parcat.subcategories = response.data
                         .filter((rescat) => rescat.parentCategoryId === parcat.id)
                         .map((cat) => new models_1.Category(cat));
                 });

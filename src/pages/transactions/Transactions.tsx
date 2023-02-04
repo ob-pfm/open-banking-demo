@@ -7,18 +7,19 @@ import { IOutletContext } from '../../interfaces';
 
 import {
   AccountsClient,
-  Account,
   CategoriesClient,
   Category,
   ParentCategory,
   TransactionsClient,
   Transaction,
   TransactionPayload,
-  FilterOptions
+  FilterOptions,
+  Account
 } from '../../libs/sdk';
-import { IListOptions } from '../../libs/sdk/interfaces';
+import { IListOptions, ITransaction } from '../../libs/sdk/interfaces';
 
 import '../../libs/wc/ob-transactions-component';
+import { ITransactionFilterEvent } from './interfaces';
 
 interface ISubmitEventData {
   transaction: {
@@ -42,9 +43,43 @@ const TransactionsComponent = () => {
   const [searchParams] = useSearchParams();
   const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
   const [filterOptions, setFilterOptions] = useState<FilterOptions>(new FilterOptions());
+  const [filterText, setFilterText] = useState<string>('');
+  const [transactionsData, setTransactionsData] = useState<ITransaction[]>([]);
+  const [transactionsFilteredData, setTransactionsFilteredData] = useState<ITransaction[]>([]);
   const accountServices = useMemo(() => new AccountsClient(API_KEY, URL_SERVER), []);
   const categoryServices = useMemo(() => new CategoriesClient(API_KEY, URL_SERVER), []);
   const transactionServices = useMemo(() => new TransactionsClient(API_KEY, URL_SERVER), []);
+
+  const getFiltersFromObject = ({
+    accountId,
+    categoryId,
+    subcategoryId,
+    dateFrom,
+    dateTo
+  }: {
+    accountId?: string | null;
+    categoryId?: string | null;
+    subcategoryId?: string | null;
+    dateFrom?: string | null;
+    dateTo?: string | null;
+  }) => {
+    const tempOptions: FilterOptions = new FilterOptions();
+    if (accountId) tempOptions.accountId = accountId;
+    if (categoryId) tempOptions.categoryId = categoryId;
+    if (subcategoryId) tempOptions.subcategoryId = subcategoryId;
+    if (dateFrom) {
+      const date = new Date(parseInt(dateFrom));
+      const [splittedDate] = date.toISOString().split('T');
+      tempOptions.dateFrom = splittedDate;
+    }
+    if (dateTo) {
+      const date = new Date(parseInt(dateTo));
+      const [splittedDate] = date.toISOString().split('T');
+      tempOptions.dateTo = splittedDate;
+    }
+    componentRef.current.defaultFilterOptions = tempOptions;
+    return tempOptions;
+  };
 
   const getFilteredTransactions = useCallback(
     (transactions: Transaction[], categoryId?: string, subcategoryId?: string) => {
@@ -69,12 +104,12 @@ const TransactionsComponent = () => {
     },
     []
   );
-
   const filterTransactions = useCallback(
-    (filters: FilterOptions, onSuccess: (response: Transaction[]) => void) => {
+    (onSuccess: (response: Transaction[]) => void, filters?: FilterOptions) => {
       const parsedFilterOptions: IListOptions = {};
-      if (filters) {
+      if (filterOptions) {
         const {
+          accountId,
           withCharges,
           withDebits,
           categoryId,
@@ -82,9 +117,8 @@ const TransactionsComponent = () => {
           dateFrom,
           dateTo,
           minAmount,
-          maxAmount,
-          accountId
-        } = filters;
+          maxAmount
+        } = filterOptions;
         if (minAmount) {
           parsedFilterOptions.minAmount = parseFloat(minAmount);
         }
@@ -108,38 +142,68 @@ const TransactionsComponent = () => {
           }
         }
         transactionServices.getList(Number(accountId), parsedFilterOptions).then((response: Transaction[]) => {
-          const filteredTransactions: Transaction[] = getFilteredTransactions(
-            response,
-            filters.categoryId,
-            filters.subcategoryId
-          );
-          componentRef.current.transactionsData = filteredTransactions.map((transaction) => ({
-            ...transaction.toObject(),
-            accountId: Number(accountId)
-          }));
-          onSuccess(response);
+          const filteredTransactions: Transaction[] = getFilteredTransactions(response);
+          onSuccess(filteredTransactions);
         });
       }
     },
-    [transactionServices, getFilteredTransactions]
+    [filterOptions, transactionServices, getFilteredTransactions]
   );
-
   const handleSaveTransaction = useCallback(
     (e: { detail: ISubmitEventData }) => {
       componentRef.current.showModalLoading = true;
       const { transaction, onSuccess } = e.detail;
       const newTransaction = new TransactionPayload({ ...transaction });
       transactionServices.create(newTransaction).then(() => {
-        filterTransactions(filterOptions, () => {
+        filterTransactions(() => {
           onSuccess();
           toast.success('Nuevo Movimiento agregado.');
           componentRef.current.showModalLoading = false;
         });
       });
     },
-    [transactionServices, filterOptions, filterTransactions]
+    [transactionServices, filterTransactions]
   );
-
+  const handleFilterText = useCallback((e: { detail: ITransactionFilterEvent }) => {
+    const filter = e.detail.description.toLowerCase();
+    setFilterText(filter);
+  }, []);
+  const handleFilter = useCallback(
+    (e: { detail: ITransactionFilterEvent }) => {
+      const { accountId, categoryId, subcategoryId, minAmount, maxAmount, withCharges, withDebits, dateFrom, dateTo } =
+        e.detail;
+      const accountIdStr = Number(accountId);
+      let transactions = transactionsData;
+      if (accountId !== '') transactions = transactions.filter((tr) => tr.accountId === accountIdStr);
+      if (subcategoryId !== '') {
+        const subCatId = Number(subcategoryId);
+        transactions = transactions.filter((tr) => tr.categoryId === subCatId);
+      } else if (categoryId !== '') {
+        const catId = Number(categoryId);
+        transactions = transactions.filter((tr) => tr.categoryId === catId);
+      }
+      if (minAmount && minAmount !== '') {
+        const min = Number(minAmount);
+        transactions = transactions.filter((tr) => tr.amount >= min);
+      }
+      if (maxAmount && maxAmount !== '') {
+        const max = Number(maxAmount);
+        transactions = transactions.filter((tr) => tr.amount <= max);
+      }
+      if (dateFrom !== '') {
+        const from = new Date(dateFrom).getTime();
+        transactions = transactions.filter((tr) => tr.date >= from);
+      }
+      if (dateTo !== '') {
+        const to = new Date(dateTo).getTime();
+        transactions = transactions.filter((tr) => tr.date <= to);
+      }
+      if (withCharges === 'false') transactions = transactions.filter((tr) => !tr.charge);
+      else if (withDebits === 'false') transactions = transactions.filter((tr) => tr.charge);
+      setTransactionsFilteredData(transactions);
+    },
+    [transactionsData]
+  );
   const handleEditTransaction = useCallback(
     (e: { detail: ISubmitEventData }) => {
       componentRef.current.showModalLoading = true;
@@ -147,30 +211,46 @@ const TransactionsComponent = () => {
       const { id, ...rest } = transaction;
       const editedTransaction = new TransactionPayload({ ...rest });
       transactionServices.edit(id!, editedTransaction).then(() => {
-        filterTransactions(filterOptions, () => {
+        filterTransactions(() => {
           onSuccess();
           toast.success('Alterações salvas.');
           componentRef.current.showModalLoading = false;
         });
       });
     },
-    [transactionServices, filterOptions, filterTransactions]
+    [transactionServices, filterTransactions]
   );
-
   const handleDeleteTransaction = useCallback(
     (e: { detail: IDeleteEventData }) => {
       componentRef.current.showModalLoading = true;
       const { transactionId, onSuccess } = e.detail;
       transactionServices.delete(transactionId).then((response: boolean) => {
-        filterTransactions(filterOptions, () => {
+        filterTransactions(() => {
           onSuccess();
           toast.success('Conta apagada.');
           componentRef.current.showModalLoading = false;
         });
       });
     },
-    [transactionServices, filterOptions, filterTransactions]
+    [transactionServices, filterTransactions]
   );
+
+  useEffect(() => {
+    setTransactionsFilteredData(
+      transactionsData.filter((tr) => tr.description.toLowerCase().indexOf(filterText) !== -1)
+    );
+  }, [filterText, transactionsData]);
+
+  useEffect(() => {
+    if (userId) {
+      categoryServices.getListWithSubcategories(userId).then((response) => {
+        componentRef.current.categoriesData = response.map((category) => ({
+          ...category.toObject(),
+          subcategories: category.subcategories.map((subcategory: any) => subcategory.toObject())
+        }));
+      });
+    }
+  }, [categoryServices, userId]);
 
   useEffect(() => {
     if (userId) {
@@ -187,67 +267,57 @@ const TransactionsComponent = () => {
       accountServices
         .getList(userId)
         .then((response: Account[]) => {
-          const accounts = response.map((account: Account) => account.toObject());
+          const accounts = response.map((acc: Account) => acc.toObject());
           componentRef.current.accountsData = accounts;
           if (!accountId) accountId = accounts[0].id.toString();
-          return categoryServices.getListWithSubcategories(userId);
-        })
-        .then((response: ParentCategory[]) => {
-          {
-            /** componentRef.current.categoriesData = response.map((category) => ({
-            ...category.toObject(),
-            subcategories: category.subcategories.map((subcategory: any) => subcategory.toObject())
-          })); */
-          }
-          const tempOptions: FilterOptions = new FilterOptions();
-          if (accountId) {
-            tempOptions.accountId = accountId;
-          }
-          if (categoryId) {
-            tempOptions.categoryId = categoryId;
-          }
-          if (subcategoryId) {
-            tempOptions.subcategoryId = subcategoryId;
-          }
-          if (dateFrom) {
-            const date = new Date(parseInt(dateFrom));
-            const [splittedDate] = date.toISOString().split('T');
-            tempOptions.dateFrom = splittedDate;
-          }
-          if (dateTo) {
-            const date = new Date(parseInt(dateTo));
-            const [splittedDate] = date.toISOString().split('T');
-            tempOptions.dateTo = splittedDate;
-          }
-          if (tempOptions) {
-            componentRef.current.defaultFilterOptions = tempOptions;
-            setFilterOptions(tempOptions);
-          }
-          filterTransactions(tempOptions, (transactionsRes: Transaction[]) => {
-            if (!transactionsRes.length) {
-              componentRef.current.isEmpty = true;
-            }
-            componentRef.current.showMainLoading = false;
-          });
+          setFilterOptions(
+            getFiltersFromObject({
+              accountId,
+              categoryId,
+              subcategoryId,
+              dateFrom,
+              dateTo
+            })
+          );
         })
         .catch((error) => {
           showErrorToast(error);
         });
     }
-  }, [filterTransactions, accountServices, categoryServices, searchParams, userId]);
+  }, [accountServices, searchParams, userId]);
+  useEffect(() => {
+    if (filterOptions.accountId) {
+      filterTransactions((transactionsRes: Transaction[]) => {
+        if (transactionsRes.length) {
+          setTransactionsData(transactionsRes);
+          setTransactionsFilteredData(transactionsRes);
+        } else {
+          componentRef.current.isEmpty = true;
+        }
+        componentRef.current.showMainLoading = false;
+      });
+    }
+  }, [filterOptions.accountId, filterTransactions]);
 
   useEffect(() => {
     const componentRefCurrent = componentRef.current;
     componentRefCurrent.addEventListener('save-new', handleSaveTransaction);
     componentRefCurrent.addEventListener('save-edit', handleEditTransaction);
     componentRefCurrent.addEventListener('delete', handleDeleteTransaction);
+    componentRefCurrent.addEventListener('filter-trigger', handleFilter);
+    componentRefCurrent.addEventListener('filter-text-trigger', handleFilterText);
 
     return () => {
       componentRefCurrent.removeEventListener('save-new', handleSaveTransaction);
       componentRefCurrent.removeEventListener('save-edit', handleEditTransaction);
       componentRefCurrent.removeEventListener('delete', handleDeleteTransaction);
+      componentRefCurrent.addEventListener('filter-trigger', handleFilter);
+      componentRefCurrent.addEventListener('filter-text-trigger', handleFilterText);
     };
-  }, [handleSaveTransaction, handleEditTransaction, handleDeleteTransaction]);
+  }, [handleSaveTransaction, handleEditTransaction, handleDeleteTransaction, handleFilter, handleFilterText]);
+  useEffect(() => {
+    componentRef.current.transactionsData = transactionsFilteredData;
+  }, [transactionsFilteredData]);
 
   return (
     <ob-transactions-component
@@ -259,6 +329,7 @@ const TransactionsComponent = () => {
       lang="pt"
       currencyLang="pt-BR"
       currencyType="BRL"
+      searchDebounceTime={500}
     />
   );
 };

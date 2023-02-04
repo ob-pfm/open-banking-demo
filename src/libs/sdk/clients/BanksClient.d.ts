@@ -12,6 +12,7 @@ export default class BanksClient extends Client implements IBanksClient {
     createConsent(bankId: string, userId: number | string, time: number | string): Promise<ConsentCreateResponse>;
     consumeConsent(authCode: string, token: string, state: string): Promise<ConsumeConsentResponse>;
     getResources(bankId: string, userId: number | string): Promise<ResourceDetailResponse>;
+    synchronize(bankId: string, userId: number | string): Promise<boolean>;
     getAggregationStatus(bankId: string, userId: number | string): Promise<BankAggStatus>;
     aggregationStatusSubscribe(aggSubRequest: IAggSubRequest): void;
     aggregationStatusUnsubscribe(): void;

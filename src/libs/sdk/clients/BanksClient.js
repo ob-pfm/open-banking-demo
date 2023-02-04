@@ -74,6 +74,11 @@ class BanksClient extends Client_1.default {
             return new models_1.ResourceDetailResponse(response);
         });
     }
+    synchronize(bankId, userId) {
+        return this._apiCore.doPost(`${this._path}/${bankId}/synchronize?userId=${userId}`, {}, (_response) => {
+            return true;
+        });
+    }
     getAggregationStatus(bankId, userId) {
         return this._apiCore.doGet(`${this._path}/${bankId}/status?userId=${userId}`, (response) => {
             return new models_1.BankAggStatus(response);

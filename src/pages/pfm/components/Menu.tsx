@@ -40,7 +40,7 @@ const Menu = ({ userId }: { userId: number | null }) => {
           </Link>
         </div>
         <div
-          className={`menu__nav-item menu__nav-item--disabled ${
+          className={`menu__nav-item ${
             location && location.pathname === '/pfm/presupuestos' && 'menu__nav-item--selected'
           }`}
         >
