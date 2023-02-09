@@ -13,13 +13,24 @@ import {
   TransactionsClient,
   Transaction,
   TransactionPayload,
-  FilterOptions,
   Account
 } from '../../libs/sdk';
-import { IListOptions, ITransaction } from '../../libs/sdk/interfaces';
+import { IAccount, IListOptions, ITransaction } from '../../libs/sdk/interfaces';
 
 import '../../libs/wc/ob-transactions-component';
 import { ITransactionFilterEvent } from './interfaces';
+
+interface TransactionsOptions {
+  accounts: string[];
+  minAmount: string;
+  maxAmount: string;
+  categoryId: string;
+  subcategoryId: string;
+  withCharges: string;
+  withDebits: string;
+  dateFrom: string;
+  dateTo: string;
+}
 
 interface ISubmitEventData {
   transaction: {
@@ -42,7 +53,17 @@ const TransactionsComponent = () => {
   const componentRef = useRef<any>(null);
   const [searchParams] = useSearchParams();
   const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
-  const [filterOptions, setFilterOptions] = useState<FilterOptions>(new FilterOptions());
+  const [filterOptions, setFilterOptions] = useState<TransactionsOptions>({
+    accounts: [],
+    minAmount: '',
+    maxAmount: '',
+    categoryId: '',
+    subcategoryId: '',
+    withCharges: '',
+    withDebits: '',
+    dateFrom: '',
+    dateTo: ''
+  });
   const [filterText, setFilterText] = useState<string>('');
   const [transactionsData, setTransactionsData] = useState<ITransaction[]>([]);
   const [transactionsFilteredData, setTransactionsFilteredData] = useState<ITransaction[]>([]);
@@ -51,20 +72,20 @@ const TransactionsComponent = () => {
   const transactionServices = useMemo(() => new TransactionsClient(API_KEY, URL_SERVER), []);
 
   const getFiltersFromObject = ({
-    accountId,
+    accounts,
     categoryId,
     subcategoryId,
     dateFrom,
     dateTo
   }: {
-    accountId?: string | null;
+    accounts?: string[] | null;
     categoryId?: string | null;
     subcategoryId?: string | null;
     dateFrom?: string | null;
     dateTo?: string | null;
   }) => {
-    const tempOptions: FilterOptions = new FilterOptions();
-    if (accountId) tempOptions.accountId = accountId;
+    const tempOptions: any = {};
+    if (accounts) tempOptions.accounts = accounts;
     if (categoryId) tempOptions.categoryId = categoryId;
     if (subcategoryId) tempOptions.subcategoryId = subcategoryId;
     if (dateFrom) {
@@ -105,20 +126,11 @@ const TransactionsComponent = () => {
     []
   );
   const filterTransactions = useCallback(
-    (onSuccess: (response: Transaction[]) => void, filters?: FilterOptions) => {
+    (onSuccess: (response: Transaction[]) => void) => {
       const parsedFilterOptions: IListOptions = {};
       if (filterOptions) {
-        const {
-          accountId,
-          withCharges,
-          withDebits,
-          categoryId,
-          subcategoryId,
-          dateFrom,
-          dateTo,
-          minAmount,
-          maxAmount
-        } = filterOptions;
+        const { accounts, withCharges, withDebits, categoryId, subcategoryId, dateFrom, dateTo, minAmount, maxAmount } =
+          filterOptions;
         if (minAmount) {
           parsedFilterOptions.minAmount = parseFloat(minAmount);
         }
@@ -141,13 +153,33 @@ const TransactionsComponent = () => {
             parsedFilterOptions.categoryId = parseInt(categoryId);
           }
         }
-        transactionServices.getList(Number(accountId), parsedFilterOptions).then((response: Transaction[]) => {
-          const filteredTransactions: Transaction[] = getFilteredTransactions(response);
-          onSuccess(filteredTransactions);
-        });
+        const transPromises: Promise<Transaction[]>[] = accounts.map(
+          (accountId: string) =>
+            new Promise((resolve, reject) => {
+              if (userId)
+                transactionServices
+                  .getList(Number(accountId), parsedFilterOptions)
+                  .then((response) => {
+                    const filteredTransactions: Transaction[] = getFilteredTransactions(response);
+                    resolve(filteredTransactions);
+                  })
+                  .catch(() => reject());
+            })
+        );
+        Promise.all(transPromises)
+          .then((response) => {
+            const transactions: Transaction[] = [];
+            response.forEach((trArray) => transactions.push(...trArray));
+            onSuccess(transactions);
+            componentRef.current.showModalLoading = false;
+          })
+          .catch(() => {
+            toast.error('Um erro ocorreu.');
+            componentRef.current.showModalLoading = false;
+          });
       }
     },
-    [filterOptions, transactionServices, getFilteredTransactions]
+    [filterOptions, transactionServices, getFilteredTransactions, userId]
   );
   const handleSaveTransaction = useCallback(
     (e: { detail: ISubmitEventData }) => {
@@ -254,7 +286,7 @@ const TransactionsComponent = () => {
 
   useEffect(() => {
     if (userId) {
-      let accountId = searchParams.get('account_id');
+      const accountId = searchParams.get('account_id');
       const subcategoryId = searchParams.get('subcategory_id');
       const categoryId = searchParams.get('category_id');
       const dateFrom = searchParams.get('date_from');
@@ -269,16 +301,26 @@ const TransactionsComponent = () => {
         .then((response: Account[]) => {
           const accounts = response.map((acc: Account) => acc.toObject());
           componentRef.current.accountsData = accounts;
-          if (!accountId) accountId = accounts[0].id.toString();
-          setFilterOptions(
-            getFiltersFromObject({
-              accountId,
-              categoryId,
-              subcategoryId,
-              dateFrom,
-              dateTo
-            })
-          );
+          if (!accountId)
+            setFilterOptions(
+              getFiltersFromObject({
+                accounts: accounts.map((acc: IAccount) => acc.id.toString()),
+                categoryId,
+                subcategoryId,
+                dateFrom,
+                dateTo
+              })
+            );
+          else
+            setFilterOptions(
+              getFiltersFromObject({
+                accounts: [accountId],
+                categoryId,
+                subcategoryId,
+                dateFrom,
+                dateTo
+              })
+            );
         })
         .catch((error) => {
           showErrorToast(error);
@@ -286,7 +328,7 @@ const TransactionsComponent = () => {
     }
   }, [accountServices, searchParams, userId]);
   useEffect(() => {
-    if (filterOptions.accountId) {
+    if (filterOptions.accounts.length > 0) {
       filterTransactions((transactionsRes: Transaction[]) => {
         if (transactionsRes.length) {
           setTransactionsData(transactionsRes);
@@ -297,7 +339,7 @@ const TransactionsComponent = () => {
         componentRef.current.showMainLoading = false;
       });
     }
-  }, [filterOptions.accountId, filterTransactions]);
+  }, [filterOptions.accounts, filterTransactions, filterOptions]);
 
   useEffect(() => {
     const componentRefCurrent = componentRef.current;

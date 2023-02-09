@@ -39,7 +39,10 @@ const BudgetsComponent = () => {
         budgetsServices
           .getList(userId)
           .then((response: Budget[]) => {
-            componentRef.current.budgetData = response.map((budget) => budget.toObject());
+            if (response.length > 0) {
+              componentRef.current.budgetData = response.map((budget) => budget.toObject());
+              componentRef.current.isEmpty = false;
+            } else componentRef.current.isEmpty = true;
             onSuccess(response.length === 0);
           })
           .catch(() => {

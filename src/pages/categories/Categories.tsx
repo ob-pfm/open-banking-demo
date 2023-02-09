@@ -3,20 +3,23 @@ import { useOutletContext } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { CategoriesClient, Category, CategoryPayload } from '../../libs/sdk';
-import { ICategory } from '../../libs/sdk/interfaces';
+import { ICategory, ICategoryUpdatePayload } from '../../libs/sdk/interfaces';
 import { API_KEY, URL_SERVER } from '../../constants';
 
 import '../../libs/wc/ob-categories-component';
 import { IOutletContext } from '../../interfaces';
 
 interface ISubmitEventData {
-  category: {
-    id?: number;
+  category?: {
+    id: number;
     name: string;
     color: string;
     parentCategoryId: number | null;
+    subcategories: any[];
   };
+  id?: number;
   onSuccess: () => void;
+  showToast: () => void;
 }
 const CategoriesComponent = () => {
   const componentRef = useRef<any>(null);
@@ -39,65 +42,101 @@ const CategoriesComponent = () => {
     (e: { detail: ISubmitEventData }) => {
       if (userId) {
         const { category, onSuccess } = e.detail;
-        const newCategory = new CategoryPayload({ userId, ...category });
-        categoriesServices.create(newCategory).then((response: Category) => {
+        const newCategory = new CategoryPayload({ userId, ...category! });
+        categoriesServices.create(newCategory).then(() => {
           toast.success('Categoria adicionada.');
-          setCategories([response.toObject(), ...categories]);
-          onSuccess();
+          getCategories(() => onSuccess());
         });
       }
     },
-    [categoriesServices, categories, userId]
+    [categoriesServices, userId, getCategories]
   );
 
   const handleSaveSubcategory = useCallback(
     (e: { detail: ISubmitEventData }) => {
       if (userId) {
         const { category, onSuccess } = e.detail;
-        const newCategory = new CategoryPayload({ userId, ...category });
-        categoriesServices.create(newCategory).then((response: Category) => {
+        const newCategory = new CategoryPayload({ userId, ...category! });
+        categoriesServices.create(newCategory).then((_response: Category) => {
           toast.success('Subcategoria adicionada.');
-          setCategories([response.toObject(), ...categories]);
-          onSuccess();
+          getCategories(() => onSuccess());
         });
       }
     },
-    [categoriesServices, categories, userId]
+    [categoriesServices, userId, getCategories]
   );
 
-  /* const handleEditAccount = useCallback(
+  const handleEditCategory = useCallback(
     (e: { detail: ISubmitEventData }) => {
-      const { account, onSuccess } = e.detail;
-      const { id, financialEntityId, ...rest } = account;
-      const editedAccount = new CategoryPayload({ userId, financialEntityId: parseInt(financialEntityId), ...rest });
-      categoriesServices.edit(id!, editedAccount).then((response: Category) => {
-        setCategories(
-          categories.map((categoryItem) => {
-            if (categoryItem.id === id) {
-              return response.getPlainObject();
-            }
-            return categoryItem;
-          })
-        );
-        onSuccess();
+      const { category, onSuccess } = e.detail;
+      const { id, name, color, parentCategoryId } = category!;
+      const editedCategory: ICategoryUpdatePayload = { name, color, parentCategoryId };
+      categoriesServices.edit(id, editedCategory).then(() => {
+        toast.success('Categoria editada.');
+        getCategories(() => onSuccess());
       });
     },
-    [categoriesServices, categories]
+    [categoriesServices, getCategories]
   );
 
-  const handleDeleteAccount = useCallback(
-    (e: { detail: IDeleteEventData }) => {
-      const { accountId, onSuccess } = e.detail;
-      categoriesServices.delete(accountId).then((response: boolean) => {
-        if (response) {
-          setCategories(categories.filter((categoryItem) => categoryItem.id !== accountId));
-          onSuccess();
-          toast.success('Conta apagada.');
-        }
+  const handleEditSubCategory = useCallback(
+    (e: { detail: ISubmitEventData }) => {
+      const { category, onSuccess } = e.detail;
+      const { id, name, color, parentCategoryId } = category!;
+      const editedCategory: ICategoryUpdatePayload = { name, color, parentCategoryId };
+      categoriesServices.edit(id, editedCategory).then(() => {
+        toast.success('Subcategoria editada.');
+        getCategories(() => onSuccess());
       });
     },
-    [categoriesServices, categories]
-  ); */
+    [categoriesServices, getCategories]
+  );
+
+  const handleDeleteCategory = useCallback(
+    (e: { detail: ISubmitEventData }) => {
+      componentRef.current.showModalLoading = true;
+      const { id, onSuccess } = e.detail;
+      if (id)
+        categoriesServices
+          .delete(id)
+          .then((response: boolean) => {
+            if (response) {
+              getCategories(() => onSuccess());
+              onSuccess();
+              toast.success('Categoria apagada.');
+            }
+            componentRef.current.showModalLoading = false;
+          })
+          .catch(() => {
+            toast.error('Um erro ocorreu.');
+            componentRef.current.showModalLoading = false;
+          });
+    },
+    [categoriesServices, getCategories]
+  );
+
+  const handleDeleteSubCategory = useCallback(
+    (e: { detail: ISubmitEventData }) => {
+      componentRef.current.showModalLoading = true;
+      const { id, onSuccess } = e.detail;
+      if (id)
+        categoriesServices
+          .delete(id)
+          .then((response: boolean) => {
+            if (response) {
+              getCategories(() => onSuccess());
+              onSuccess();
+              toast.success('Subcategoria apagada.');
+            }
+            componentRef.current.showModalLoading = false;
+          })
+          .catch(() => {
+            toast.error('Um erro ocorreu.');
+            componentRef.current.showModalLoading = false;
+          });
+    },
+    [categoriesServices, getCategories]
+  );
 
   useEffect(() => {
     componentRef.current.showMainLoading = true;
@@ -114,15 +153,26 @@ const CategoriesComponent = () => {
     const componentRefCurrent = componentRef.current;
     componentRefCurrent.addEventListener('save-new', handleSaveCategory);
     componentRefCurrent.addEventListener('save-new-subcategory', handleSaveSubcategory);
-
-    /* componentRefCurrent.addEventListener('save-edit', handleEditAccount);
-    componentRefCurrent.addEventListener('delete', handleDeleteAccount) */ return () => {
+    componentRefCurrent.addEventListener('delete-own-category', handleDeleteCategory);
+    componentRefCurrent.addEventListener('delete-own-subcategory', handleDeleteSubCategory);
+    componentRefCurrent.addEventListener('edit-category', handleEditCategory);
+    componentRefCurrent.addEventListener('edit-subcategory', handleEditSubCategory);
+    return () => {
       componentRefCurrent.removeEventListener('save-new', handleSaveCategory);
       componentRefCurrent.removeEventListener('save-new-subcategory', handleSaveSubcategory);
-      /* componentRefCurrent.removeEventListener('save-edit', handleEditAccount);
-      componentRefCurrent.removeEventListener('delete', handleDeleteAccount); */
+      componentRefCurrent.removeEventListener('delete-own-category', handleDeleteCategory);
+      componentRefCurrent.addEventListener('delete-own-subcategory', handleDeleteSubCategory);
+      componentRefCurrent.addEventListener('edit-category', handleEditCategory);
+      componentRefCurrent.addEventListener('edit-subcategory', handleEditSubCategory);
     };
-  }, [handleSaveCategory, handleSaveSubcategory]);
+  }, [
+    handleSaveCategory,
+    handleSaveSubcategory,
+    handleDeleteCategory,
+    handleDeleteSubCategory,
+    handleEditCategory,
+    handleEditSubCategory
+  ]);
 
   return (
     <ob-categories-component
@@ -133,6 +183,9 @@ const CategoriesComponent = () => {
       lang="pt"
       currencyLang="pt-BR"
       currencyType="BRL"
+      deleteCategoryDisabled
+      editCategoryDisabled
+      editSubcategoryDisabled
     />
   );
 };

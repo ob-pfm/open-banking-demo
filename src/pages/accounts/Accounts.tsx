@@ -72,7 +72,7 @@ interface IDeleteEventData {
 }
 const AccountsComponent = () => {
   const componentRef = useRef<any>(null);
-  const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
+  const { isProcessing, userId } = useOutletContext<IOutletContext>();
   const navigate = useNavigate();
 
   const accountServices = useMemo(() => new AccountsClient(API_KEY, URL_SERVER), []);
@@ -184,6 +184,10 @@ const AccountsComponent = () => {
   }, [componentRef, bankAccounts]);
 
   useEffect(() => {
+    componentRef.current.showMainLoading = isProcessing;
+  }, [isProcessing]);
+
+  useEffect(() => {
     const componentRefCurrent = componentRef.current;
     componentRefCurrent.addEventListener('save-new', handleSaveAccount);
     componentRefCurrent.addEventListener('save-edit', handleEditAccount);
@@ -202,8 +206,6 @@ const AccountsComponent = () => {
     <ob-accounts-component
       ref={componentRef}
       alertType="warning"
-      showAlert={alertIsShown}
-      alertText={alertText}
       fontFamily="Lato"
       lang="pt"
       currencyLang="pt-BR"

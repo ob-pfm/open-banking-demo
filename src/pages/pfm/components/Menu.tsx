@@ -49,7 +49,7 @@ const Menu = ({ userId }: { userId: number | null }) => {
           </Link>
         </div>
         <div
-          className={`menu__nav-item menu__nav-item--disabled ${
+          className={`menu__nav-item ${
             location && location.pathname === '/pfm/categorias' && 'menu__nav-item--selected'
           } ${!userId && 'menu__nav-item--disabled'}`}
         >

@@ -1,4 +1,4 @@
-export const API_KEY = 'f478e603-8999-4370-97d6-db21a2b28cbe';
+export const API_KEY = '90544fd4-4e49-4e8e-a7cf-70f14b05a3d7';
 export const AGG_IN_PROCESS = 'Agregação de banco em processo...';
 export const CONSENT_IN_PROCESS = 'Solicitação de consentimento em andamento...';
 export const URL_SERVER =

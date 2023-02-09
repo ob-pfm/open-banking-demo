@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useOutletContext, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Modal from 'react-modal';
 import { showErrorToast } from '../../helpers';
-import { API_KEY, AGG_IN_PROCESS, CONSENT_IN_PROCESS, URL_SERVER } from '../../constants';
+import { API_KEY, URL_SERVER } from '../../constants';
 
 import { Bank, buildClients } from '../../libs/sdk';
 import '../../libs/wc/ob-consent-wizard-component';
@@ -11,14 +11,19 @@ import { IOutletContext } from '../../interfaces';
 
 const ConsentComponent = () => {
   const navigate = useNavigate();
-  const { showAlert, setAlertText, userId, initConsent } = useOutletContext<IOutletContext>();
+  const {
+    setIsProcessing,
+    resources,
+    userId,
+    initConsent,
+    selectBank,
+    resourcesModalIsShown,
+    showResourcesModal,
+    selectedBank,
+    handleSetAggBankId
+  } = useOutletContext<IOutletContext>();
   const { banksClient } = useMemo(() => buildClients(API_KEY, URL_SERVER), []);
   const consentWizardComponentRef = useRef<any>(null);
-  const [aggBankId, setAggBankId] = useState<string | null>(localStorage.getItem('agg_bank_id'));
-  const [selectedBank, selectBank] = useState<string | null>(null);
-  const [resourcesModalIsShown, showResourcesModal] = useState<boolean>(false);
-  const [resources, setResources] = useState<string[]>([]);
-  const [currentBankStatus, setCurrentBankStatus] = useState<string | null>(null);
 
   const openModalConsent = useCallback(() => {
     consentWizardComponentRef.current.isShown = true;
@@ -37,14 +42,6 @@ const ConsentComponent = () => {
       selectBank(e.detail);
     },
     [selectBank]
-  );
-
-  const handleSetAggBankId = useCallback(
-    (value: string | null) => {
-      localStorage.setItem('agg_bank_id', value || '');
-      setAggBankId(value);
-    },
-    [setAggBankId]
   );
 
   const handleCloseModal = useCallback(() => {
@@ -68,89 +65,18 @@ const ConsentComponent = () => {
           toast.success('Consentimento criado.');
           consentWizardComponentRef.current.showModalLoading = false;
           closeConsentWizard();
-          window.open(consentResponse.url, 'Consentimento', 'width=800, height=500');
+          window.open(consentResponse.url, 'Consentimento', 'width=800, height=600');
           handleSetAggBankId(selectedBank);
+          setTimeout(() => navigate('/pfm/cuentas'), 1000);
         })
         .catch((error) => {
           showErrorToast(error);
-          showAlert(false);
+          setIsProcessing(false);
           consentWizardComponentRef.current.showModalLoading = false;
         });
     },
-    [banksClient, selectedBank, closeConsentWizard, userId, handleSetAggBankId, showAlert]
+    [banksClient, selectedBank, closeConsentWizard, userId, handleSetAggBankId, setIsProcessing]
   );
-
-  useEffect(() => {
-    if (userId && aggBankId && !banksClient.isRunningPolling) {
-      banksClient.aggregationStatusSubscribe({
-        bankId: aggBankId,
-        userId,
-        time: 15000,
-        onResponse: (status) => {
-          setCurrentBankStatus(status);
-        },
-        onError: (error) => {
-          showAlert(false);
-          toast.error(JSON.stringify(error));
-        }
-      });
-    }
-  }, [userId, aggBankId, banksClient, showAlert]);
-
-  useEffect(() => {
-    if (selectedBank && userId)
-      switch (currentBankStatus) {
-        case 'CONSENT_REQUESTED':
-          toast.info('Consentimento solicitado.');
-          setAlertText(CONSENT_IN_PROCESS);
-          showAlert(true);
-          break;
-        case 'CONSENT_AUTHORISED':
-          banksClient
-            .getResources(selectedBank, userId)
-            .then((resourcesResponse) => {
-              toast.success('Consentimento concedido.');
-              setResources(resourcesResponse.resources);
-              showResourcesModal(true);
-              showAlert(false);
-              banksClient.synchronize(selectedBank, userId);
-            })
-            .catch((error) => {
-              showErrorToast(error);
-              showAlert(false);
-            });
-          break;
-        case 'CONSENT_REJECTED':
-          toast.warn('Consentimento recusado.');
-          handleSetAggBankId(null);
-          showAlert(false);
-          break;
-        case 'CONSENT_DELETED':
-          toast.warn('Consentimento removido.');
-          handleSetAggBankId(null);
-          showAlert(false);
-          break;
-        case 'AGGREGATION_STARTED':
-          setAlertText(AGG_IN_PROCESS);
-          showAlert(true);
-          break;
-        case 'AGGREGATION_COMPLETED':
-          showAlert(false);
-          handleSetAggBankId(null);
-          banksClient.aggregationStatusUnsubscribe();
-          toast.success('Agregação de banco finalizada.');
-          setTimeout(() => navigate('/pfm/cuentas'), 2000);
-          break;
-        case 'PROCESS_FAILED':
-          showAlert(false);
-          handleSetAggBankId(null);
-          banksClient.aggregationStatusUnsubscribe();
-          toast.error('Falha na solicitação de consentimento.');
-          break;
-        default:
-          break;
-      }
-  }, [currentBankStatus, banksClient, selectedBank, userId, handleSetAggBankId, navigate, setAlertText, showAlert]);
 
   useEffect(() => {
     const consentWizardComponentRefCurrent = consentWizardComponentRef.current;
