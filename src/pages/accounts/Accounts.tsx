@@ -185,10 +185,6 @@ const AccountsComponent = () => {
   }, [componentRef, bankAccounts]);
 
   useEffect(() => {
-    componentRef.current.showMainLoading = isProcessing;
-  }, [isProcessing]);
-
-  useEffect(() => {
     const componentRefCurrent = componentRef.current;
     componentRefCurrent.addEventListener('save-new', handleSaveAccount);
     componentRefCurrent.addEventListener('save-edit', handleEditAccount);

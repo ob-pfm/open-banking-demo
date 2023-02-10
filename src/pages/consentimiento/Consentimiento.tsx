@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import Modal from 'react-modal';
 import { showErrorToast } from '../../helpers';
 import { API_KEY, URL_SERVER } from '../../constants';
 
@@ -11,19 +10,10 @@ import { IOutletContext } from '../../interfaces';
 
 const ConsentComponent = () => {
   const navigate = useNavigate();
-  const {
-    setIsProcessing,
-    resources,
-    userId,
-    initConsent,
-    selectBank,
-    resourcesModalIsShown,
-    showResourcesModal,
-    selectedBank,
-    handleSetAggBankId
-  } = useOutletContext<IOutletContext>();
+  const { setIsProcessing, userId, initConsent, handleSetAggBankId } = useOutletContext<IOutletContext>();
   const { banksClient } = useMemo(() => buildClients(API_KEY, URL_SERVER), []);
   const consentWizardComponentRef = useRef<any>(null);
+  const [selectedBank, selectBank] = useState<string | null>(null);
 
   const openModalConsent = useCallback(() => {
     consentWizardComponentRef.current.isShown = true;
@@ -43,10 +33,6 @@ const ConsentComponent = () => {
     },
     [selectBank]
   );
-
-  const handleCloseModal = useCallback(() => {
-    showResourcesModal(false);
-  }, [showResourcesModal]);
 
   const closeConsentWizard = useCallback(() => {
     consentWizardComponentRef.current.isShown = false;
@@ -97,30 +83,7 @@ const ConsentComponent = () => {
     if (initConsent) openModalConsent();
   }, [initConsent, openModalConsent]);
 
-  return (
-    <>
-      <ob-consent-wizard-component ref={consentWizardComponentRef} fontFamily="Lato" lang="pt" title="" />
-      <Modal isOpen={resourcesModalIsShown} onRequestClose={handleCloseModal} contentLabel="Example Modal">
-        <div className="close-button" onClick={handleCloseModal} role="presentation">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M1 13L13 1M1 1L13 13"
-              stroke="#989DB3"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </div>
-        <h2>Consentimento</h2>
-        <ul>
-          {resources.map((resourceText) => (
-            <li key={`resource-list-item-${resourceText}`}>{resourceText}</li>
-          ))}
-        </ul>
-      </Modal>
-    </>
-  );
+  return <ob-consent-wizard-component ref={consentWizardComponentRef} fontFamily="Lato" lang="pt" title="" />;
 };
 
 export default ConsentComponent;
