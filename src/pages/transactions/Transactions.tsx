@@ -52,7 +52,7 @@ interface IDeleteEventData {
 const TransactionsComponent = () => {
   const componentRef = useRef<any>(null);
   const [searchParams] = useSearchParams();
-  const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
+  const { isProcessing, alertText, userId } = useOutletContext<IOutletContext>();
   const [filterOptions, setFilterOptions] = useState<TransactionsOptions>({
     accounts: [],
     minAmount: '',
@@ -66,6 +66,7 @@ const TransactionsComponent = () => {
   });
   const [filterText, setFilterText] = useState<string>('');
   const [transactionsData, setTransactionsData] = useState<ITransaction[]>([]);
+  const [cursors, setCursors] = useState<Map<string, number>>(new Map());
   const [transactionsFilteredData, setTransactionsFilteredData] = useState<ITransaction[]>([]);
   const accountServices = useMemo(() => new AccountsClient(API_KEY, URL_SERVER), []);
   const categoryServices = useMemo(() => new CategoriesClient(API_KEY, URL_SERVER), []);
@@ -125,6 +126,36 @@ const TransactionsComponent = () => {
     },
     []
   );
+  const loadMore = useCallback(() => {
+    const transPromises: Promise<Transaction[]>[] = [];
+    for (const [key, value] of cursors) {
+      if (value !== 0) {
+        transPromises.push(
+          new Promise((resolve, reject) => {
+            transactionServices
+              .getList(Number(key), { cursor: value })
+              .then((response) => {
+                setCursors(cursors?.set(key, response.nextCursor));
+                resolve(response.data);
+              })
+              .catch(() => reject());
+          })
+        );
+      }
+    }
+    Promise.all(transPromises)
+      .then((response) => {
+        const transactions: Transaction[] = [];
+        response.forEach((trArray) => transactions.push(...trArray));
+        setTransactionsData([...transactionsData, ...transactions]);
+        componentRef.current.showModalLoading = false;
+      })
+      .catch(() => {
+        toast.error('Um erro ocorreu.');
+        componentRef.current.showModalLoading = false;
+      });
+  }, [cursors, transactionServices, transactionsData, setCursors]);
+
   const filterTransactions = useCallback(
     (onSuccess: (response: Transaction[]) => void) => {
       const parsedFilterOptions: IListOptions = {};
@@ -160,7 +191,8 @@ const TransactionsComponent = () => {
                 transactionServices
                   .getList(Number(accountId), parsedFilterOptions)
                   .then((response) => {
-                    const filteredTransactions: Transaction[] = getFilteredTransactions(response);
+                    const filteredTransactions: Transaction[] = getFilteredTransactions(response.data);
+                    setCursors(cursors?.set(accountId, response.nextCursor));
                     resolve(filteredTransactions);
                   })
                   .catch(() => reject());
@@ -179,7 +211,7 @@ const TransactionsComponent = () => {
           });
       }
     },
-    [filterOptions, transactionServices, getFilteredTransactions, userId]
+    [filterOptions, transactionServices, getFilteredTransactions, userId, setCursors, cursors]
   );
   const handleSaveTransaction = useCallback(
     (e: { detail: ISubmitEventData }) => {
@@ -362,17 +394,24 @@ const TransactionsComponent = () => {
   }, [transactionsFilteredData]);
 
   return (
-    <ob-transactions-component
-      ref={componentRef}
-      alertType="warning"
-      showAlert={alertIsShown}
-      alertText={alertText}
-      fontFamily="Lato"
-      lang="pt"
-      currencyLang="pt-BR"
-      currencyType="BRL"
-      searchDebounceTime={500}
-    />
+    <>
+      <ob-transactions-component
+        ref={componentRef}
+        alertType="warning"
+        showAlert={isProcessing}
+        alertText={alertText}
+        fontFamily="Lato"
+        lang="pt"
+        currencyLang="pt-BR"
+        currencyType="BRL"
+        searchDebounceTime={500}
+      />
+      {Array.from(cursors.values()).filter((value) => value !== 0).length > 0 && (
+        <button onClick={() => loadMore()} type="button">
+          Mais
+        </button>
+      )}
+    </>
   );
 };
 

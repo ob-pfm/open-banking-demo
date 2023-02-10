@@ -29,7 +29,7 @@ interface IDeleteEventData {
 
 const BudgetsComponent = () => {
   const componentRef = useRef<any>(null);
-  const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
+  const { isProcessing, alertText, userId } = useOutletContext<IOutletContext>();
   const budgetsServices = useMemo(() => new BudgetsClient(API_KEY, URL_SERVER), []);
   const categoryServices = useMemo(() => new CategoriesClient(API_KEY, URL_SERVER), []);
 
@@ -186,7 +186,7 @@ const BudgetsComponent = () => {
   return (
     <ob-budget-component
       alertType="warning"
-      showAlert={alertIsShown}
+      showAlert={isProcessing}
       alertText={alertText}
       ref={componentRef}
       fontFamily="Lato"

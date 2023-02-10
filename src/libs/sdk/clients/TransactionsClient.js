@@ -24,9 +24,12 @@ class TransactionsClient extends Client_1.default {
     processListResponseBuild(accountId) {
         return (response) => {
             if (!response.data) {
-                return [];
+                return { data: [], nextCursor: 0 };
             }
-            return response.data.map((transaction) => new Transaction_1.default(Object.assign(Object.assign({}, transaction), { accountId })));
+            return {
+                data: response.data.map((transaction) => new Transaction_1.default(Object.assign(Object.assign({}, transaction), { accountId }))),
+                nextCursor: response.nextCursor || 0
+            };
         };
     }
     getList(accountId, listOptions) {

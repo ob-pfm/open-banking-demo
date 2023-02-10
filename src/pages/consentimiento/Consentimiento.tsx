@@ -75,7 +75,7 @@ const ConsentComponent = () => {
           consentWizardComponentRef.current.showModalLoading = false;
         });
     },
-    [banksClient, selectedBank, closeConsentWizard, userId, handleSetAggBankId, setIsProcessing]
+    [banksClient, selectedBank, closeConsentWizard, userId, handleSetAggBankId, setIsProcessing, navigate]
   );
 
   useEffect(() => {

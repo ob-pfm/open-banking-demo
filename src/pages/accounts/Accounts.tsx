@@ -72,11 +72,12 @@ interface IDeleteEventData {
 }
 const AccountsComponent = () => {
   const componentRef = useRef<any>(null);
-  const { isProcessing, userId } = useOutletContext<IOutletContext>();
+  const { isProcessing, userId, alertText } = useOutletContext<IOutletContext>();
   const navigate = useNavigate();
 
   const accountServices = useMemo(() => new AccountsClient(API_KEY, URL_SERVER), []);
   const [bankAccounts, setBankAccounts] = useState<any[]>([]);
+
   const getAccounts = useCallback(
     (currentUserId: number, onSuccess: () => void, onError: () => void) => {
       if (accountServices && componentRef.current !== null) {
@@ -205,6 +206,8 @@ const AccountsComponent = () => {
   return (
     <ob-accounts-component
       ref={componentRef}
+      showAlert={isProcessing}
+      alertText={alertText}
       alertType="warning"
       fontFamily="Lato"
       lang="pt"

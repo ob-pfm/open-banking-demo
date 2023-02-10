@@ -25,7 +25,7 @@ interface ISubmitEventData {
 const SummaryComponent = () => {
   const componentRef = useRef<any>(null);
   const navigate = useNavigate();
-  const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
+  const { isProcessing, alertText, userId } = useOutletContext<IOutletContext>();
   const categoryServices = useMemo(() => new CategoriesClient(API_KEY, URL_SERVER), []);
   const insightsServices = useMemo(() => new InsightsClient(API_KEY, URL_SERVER), []);
 
@@ -113,7 +113,7 @@ const SummaryComponent = () => {
     <ob-summary-component
       ref={componentRef}
       alertType="warning"
-      showAlert={alertIsShown}
+      showAlert={isProcessing}
       alertText={alertText}
       fontFamily="Lato"
       lang="pt"

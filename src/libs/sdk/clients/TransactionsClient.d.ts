@@ -7,7 +7,10 @@ export default class TransactionsClient extends Client implements ITransactionsC
     private getUriByOptions;
     private processResponse;
     private processListResponseBuild;
-    getList(accountId: number, listOptions?: IListOptions): Promise<Transaction[]>;
+    getList(accountId: number, listOptions?: IListOptions): Promise<{
+        data: Transaction[];
+        nextCursor: number;
+    }>;
     get(id: string | number): Promise<Transaction>;
     create(transactionToCreate: TransactionPayload): Promise<Transaction>;
     edit(id: string | number, transactionToUpdate: ITransactionUpdatePayload): Promise<Transaction>;

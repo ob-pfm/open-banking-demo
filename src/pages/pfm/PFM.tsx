@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import Menu from './components/Menu';
 import { buildClients, Error, User } from '../../libs/sdk';
 import '../../libs/wc/ob-onboarding-component';
-import { API_KEY, URL_SERVER } from '../../constants';
+import { API_KEY, CONSENT_IN_PROCESS, URL_SERVER, AGG_IN_PROCESS } from '../../constants';
 import { getUserId, showErrorToast } from '../../helpers';
 
 import './style.css';
@@ -67,18 +67,27 @@ const PFMPage = () => {
       switch (currentBankStatus) {
         case 'CONSENT_REQUESTED':
           toast.info('Consentimento solicitado.');
-          /** setAlertText(CONSENT_IN_PROCESS);
-          showAlert(true); */
+          setAlertText(CONSENT_IN_PROCESS);
           break;
         case 'CONSENT_AUTHORISED':
           banksClient
             .getResources(selectedBank, userId)
             .then((resourcesResponse) => {
               toast.success('Consentimento concedido.');
+              setAlertText(AGG_IN_PROCESS);
               setResources(resourcesResponse.resources);
               showResourcesModal(true);
               setIsProcessing(true);
-              banksClient.synchronize(selectedBank, userId);
+              banksClient
+                .synchronize(selectedBank, userId)
+                .then(() => toast.success('Agregação iniciada'))
+                .catch(() => {
+                  setIsProcessing(false);
+                  handleSetAggBankId(null);
+                  banksClient.aggregationStatusUnsubscribe();
+                  setAlertText('');
+                  toast.success('Falha ao iniciar a agregação');
+                });
             })
             .catch((error) => {
               showErrorToast(error);
@@ -87,30 +96,34 @@ const PFMPage = () => {
           break;
         case 'CONSENT_REJECTED':
           toast.warn('Consentimento recusado.');
+          setAlertText('');
           handleSetAggBankId(null);
           setIsProcessing(false);
           break;
         case 'CONSENT_DELETED':
           toast.warn('Consentimento removido.');
+          setAlertText('');
           handleSetAggBankId(null);
           setIsProcessing(false);
           break;
         case 'AGGREGATION_STARTED':
-          toast.success('Agregação iniciada');
+          toast.success('Agregação em andamento');
           setIsProcessing(true);
           break;
         case 'AGGREGATION_COMPLETED':
           setIsProcessing(false);
           handleSetAggBankId(null);
           banksClient.aggregationStatusUnsubscribe();
+          setAlertText('');
           toast.success('Agregação de banco finalizada.');
-          setTimeout(() => window.location.reload(), 1500);
+          setTimeout(() => window.location.reload(), 3000);
           break;
         case 'PROCESS_FAILED':
           setIsProcessing(false);
           handleSetAggBankId(null);
-          /** banksClient.aggregationStatusUnsubscribe(); */
-          toast.error('Falha na solicitação de consentimento.');
+          banksClient.aggregationStatusUnsubscribe();
+          setAlertText('');
+          toast.error('Falha na agregação.');
           break;
         default:
           break;

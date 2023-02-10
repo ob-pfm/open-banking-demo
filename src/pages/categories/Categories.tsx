@@ -23,7 +23,7 @@ interface ISubmitEventData {
 }
 const CategoriesComponent = () => {
   const componentRef = useRef<any>(null);
-  const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
+  const { isProcessing, alertText, userId } = useOutletContext<IOutletContext>();
   const categoriesServices = useMemo(() => new CategoriesClient(API_KEY, URL_SERVER), []);
   const [categories, setCategories] = useState<ICategory[]>([]);
   const getCategories = useCallback(
@@ -177,7 +177,7 @@ const CategoriesComponent = () => {
   return (
     <ob-categories-component
       alertType="warning"
-      showAlert={alertIsShown}
+      showAlert={isProcessing}
       alertText={alertText}
       ref={componentRef}
       lang="pt"
