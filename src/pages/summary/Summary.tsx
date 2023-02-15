@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useOutletContext, createSearchParams, useNavigate } from 'react-router-dom';
 
-import { CategoriesClient, ParentCategory, InsightsClient, Resume } from '../../libs/sdk';
+import { CategoriesClient, ParentCategory, InsightsClient, Resume, AccountsClient, Account } from '../../libs/sdk';
 import { API_KEY, URL_SERVER } from '../../constants';
 
 import '../../libs/wc/ob-summary-component';
@@ -28,6 +28,7 @@ const SummaryComponent = () => {
   const { isProcessing, alertText, userId } = useOutletContext<IOutletContext>();
   const categoryServices = useMemo(() => new CategoriesClient(API_KEY, URL_SERVER), []);
   const insightsServices = useMemo(() => new InsightsClient(API_KEY, URL_SERVER), []);
+  const accountServices = useMemo(() => new AccountsClient(API_KEY, URL_SERVER), []);
 
   const handleSubcategoryDetailClick = useCallback(
     (e: { detail: ISubmitEventData }) => {
@@ -71,31 +72,31 @@ const SummaryComponent = () => {
         expenses: [],
         balances: []
       };
-      categoryServices
-        .getListWithSubcategories(userId)
-        .then((response: ParentCategory[]) => {
-          componentRef.current.categoriesData = response.map((category) => ({
+      Promise.all([accountServices.getList(userId), categoryServices.getListWithSubcategories(userId)]).then(
+        (responses: [Account[], ParentCategory[]]) => {
+          componentRef.current.categoriesData = responses[1].map((category) => ({
             ...category.toObject(),
             subcategories: category.subcategories.map((subcategory: any) => subcategory.toObject())
           }));
-          return insightsServices.getResume(userId);
-        })
-        .then((response: Resume) => {
-          if (response && response.balances && response.expenses && response.incomes) {
-            componentRef.current.summaryData = {
-              balances: response.balances,
-              expenses: response.expenses,
-              incomes: response.incomes
-            };
-          } else {
-            componentRef.current.isEmpty = true;
-          }
-          componentRef.current.showMainLoading = false;
-        })
-        .catch((error) => {
-          showErrorToast(error);
-          // e.detail.showToast('error', 'Error de servidor');
-        });
+          insightsServices
+            .getResume(userId, { accountId: responses[0][1].id })
+            .then((response: Resume) => {
+              if (response && response.balances && response.expenses && response.incomes) {
+                componentRef.current.summaryData = {
+                  balances: response.balances,
+                  expenses: response.expenses,
+                  incomes: response.incomes
+                };
+              } else {
+                componentRef.current.isEmpty = true;
+              }
+              componentRef.current.showMainLoading = false;
+            })
+            .catch((error) => {
+              showErrorToast(error);
+            });
+        }
+      );
     }
   }, [insightsServices, categoryServices, userId]);
 

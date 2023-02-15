@@ -12,12 +12,12 @@ class InsightsClient extends Client_1.default {
     }
     getAnalysis(userId, insightsOptions) {
         const { accountId, dateFrom, dateTo } = insightsOptions || {};
-        const uri = `${this._path}/analysis?userId=${userId}${accountId ? `?accountId=${accountId}` : ''}${dateFrom ? `?dateFrom=${dateFrom}` : ''}${dateTo ? `?dateTo=${dateTo}` : ''}`;
+        const uri = `${this._path}/analysis?userId=${userId}${accountId ? `&accountId=${accountId}` : ''}${dateFrom ? `?dateFrom=${dateFrom}` : ''}${dateTo ? `?dateTo=${dateTo}` : ''}`;
         return this._apiCore.doGet(uri, (response) => response.data.map((analysis) => new models_1.Analysis(analysis)));
     }
     getResume(userId, insightsOptions) {
         const { accountId, dateFrom, dateTo } = insightsOptions || {};
-        const uri = `${this._path}/resume?userId=${userId}${accountId ? `?accountId=${accountId}` : ''}${dateFrom ? `?dateFrom=${dateFrom}` : ''}${dateTo ? `?dateTo=${dateTo}` : ''}`;
+        const uri = `${this._path}/resume?userId=${userId}${accountId ? `&accountId=${accountId}` : ''}${dateFrom ? `?dateFrom=${dateFrom}` : ''}${dateTo ? `?dateTo=${dateTo}` : ''}`;
         return this._apiCore.doGet(uri, (response) => new models_1.Resume(response));
     }
 }
