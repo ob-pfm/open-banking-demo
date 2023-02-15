@@ -98,7 +98,7 @@ const SummaryComponent = () => {
         }
       );
     }
-  }, [insightsServices, categoryServices, userId]);
+  }, [insightsServices, categoryServices, userId, accountServices]);
 
   useEffect(() => {
     const componentRefCurrent = componentRef.current;
