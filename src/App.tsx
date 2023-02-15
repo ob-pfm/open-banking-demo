@@ -9,10 +9,11 @@ import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 import AccountsComponent from './pages/accounts/Accounts';
 import ConsumeConsentPage from './pages/subpages/ConsumeConsentPage';
-/* import CategoriesComponent from './pages/categories/Categories';
 import TransactionsComponent from './pages/transactions/Transactions';
+import ConsentComponent from './pages/consentimiento/Consentimiento';
 import BudgetsComponent from './pages/budgets/Budgets';
-import SummaryComponent from './pages/summary/Summary'; */
+import CategoriesComponent from './pages/categories/Categories';
+import SummaryComponent from './pages/summary/Summary';
 
 function App() {
   const { pathname } = useLocation();
@@ -29,11 +30,12 @@ function App() {
           <Route path="/meus-investimentos" element={<MyInvestmentsPage />} />
           <Route path="/consume-consent" element={<ConsumeConsentPage />} />
           <Route path="/pfm" element={<PFMPage />}>
-            <Route path="" element={<AccountsComponent />} />
-            {/*  <Route path="resumen" element={<SummaryComponent />} />
-            <Route path="movimientos" element={<TransactionsComponent />} /> */}
-            {/* <Route path="categorias" element={<CategoriesComponent />} />
-            <Route path="presupuestos" element={<BudgetsComponent />} /> */}
+            <Route path="" element={<ConsentComponent />} />
+            <Route path="cuentas" element={<AccountsComponent />} />
+            <Route path="movimientos" element={<TransactionsComponent />} />
+            <Route path="resumen" element={<SummaryComponent />} />
+            <Route path="categorias" element={<CategoriesComponent />} />
+            <Route path="presupuestos" element={<BudgetsComponent />} />
           </Route>
         </Routes>
         <ToastContainer

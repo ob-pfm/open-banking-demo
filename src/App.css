@@ -10,3 +10,13 @@
 .success-text {
   color: #01855a;
 }
+
+button {
+  margin: 0 auto;
+  background-color: #00113d;
+  color: #fff;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border: 8px;
+  margin-bottom: 1rem;
+}

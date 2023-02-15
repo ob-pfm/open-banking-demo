@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { BanksClient } from 'open-banking-pfm-sdk';
-import { API_KEY, SERVER_URL } from '../../constants';
+import { API_KEY, URL_SERVER } from '../../constants';
 import { showErrorToast } from '../../helpers';
 
 const CONSUME_IN_PROCESS = 'IN_PROCESS';
@@ -39,11 +39,12 @@ const ConsumeConsentPage = () => {
     const token = searchParams.get('id_token');
     const state = searchParams.get('state');
     if (authCode && token && state) {
-      const banksClient = new BanksClient(API_KEY, SERVER_URL);
+      const banksClient = new BanksClient(API_KEY, URL_SERVER);
       banksClient
         .consumeConsent(authCode, token, state)
         .then(() => {
           setConsumeStatus(CONSUME_SUCCESSFUL);
+          window.close();
         })
         .catch((error) => {
           showErrorToast(error);
