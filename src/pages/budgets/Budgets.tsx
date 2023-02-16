@@ -3,7 +3,6 @@ import { useOutletContext } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { CategoriesClient, ParentCategory, BudgetsClient, Budget, BudgetPayload } from 'open-banking-pfm-sdk';
-import { API_KEY, URL_SERVER } from '../../constants';
 
 import '../../libs/wc/ob-budget-component';
 import { IOutletContext } from '../../interfaces';
@@ -30,8 +29,14 @@ interface IDeleteEventData {
 const BudgetsComponent = () => {
   const componentRef = useRef<any>(null);
   const { isProcessing, alertText, userId } = useOutletContext<IOutletContext>();
-  const budgetsServices = useMemo(() => new BudgetsClient(API_KEY, URL_SERVER), []);
-  const categoryServices = useMemo(() => new CategoriesClient(API_KEY, URL_SERVER), []);
+  const budgetsServices = useMemo(
+    () => new BudgetsClient(localStorage.getItem('API_KEY') || '', localStorage.getItem('SERVER_URL') || ''),
+    []
+  );
+  const categoryServices = useMemo(
+    () => new CategoriesClient(localStorage.getItem('API_KEY') || '', localStorage.getItem('SERVER_URL') || ''),
+    []
+  );
 
   const getBudgets = useCallback(
     (onSuccess: (response: boolean) => void, onError?: () => void) => {

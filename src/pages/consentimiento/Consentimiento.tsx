@@ -3,7 +3,6 @@ import { useOutletContext, useNavigate } from 'react-router-dom';
 import { Bank, buildClients } from 'open-banking-pfm-sdk';
 import { toast } from 'react-toastify';
 import { showErrorToast } from '../../helpers';
-import { API_KEY, URL_SERVER } from '../../constants';
 
 import '../../libs/wc/ob-consent-wizard-component';
 import { IOutletContext } from '../../interfaces';
@@ -11,7 +10,10 @@ import { IOutletContext } from '../../interfaces';
 const ConsentComponent = () => {
   const navigate = useNavigate();
   const { setIsProcessing, userId, initConsent, handleSetAggBankId } = useOutletContext<IOutletContext>();
-  const { banksClient } = useMemo(() => buildClients(API_KEY, URL_SERVER), []);
+  const { banksClient } = useMemo(
+    () => buildClients(localStorage.getItem('API_KEY') || '', localStorage.getItem('SERVER_URL') || ''),
+    []
+  );
   const consentWizardComponentRef = useRef<any>(null);
   const [selectedBank, selectBank] = useState<string | null>(null);
 

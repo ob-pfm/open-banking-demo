@@ -9,7 +9,6 @@ import {
   AccountsClient,
   Account
 } from 'open-banking-pfm-sdk';
-import { API_KEY, URL_SERVER } from '../../constants';
 
 import { IOutletContext } from '../../interfaces';
 import { showErrorToast } from '../../helpers';
@@ -32,9 +31,18 @@ const SummaryComponent = () => {
   const componentRef = useRef<any>(null);
   const navigate = useNavigate();
   const { isProcessing, alertText, userId } = useOutletContext<IOutletContext>();
-  const categoryServices = useMemo(() => new CategoriesClient(API_KEY, URL_SERVER), []);
-  const insightsServices = useMemo(() => new InsightsClient(API_KEY, URL_SERVER), []);
-  const accountServices = useMemo(() => new AccountsClient(API_KEY, URL_SERVER), []);
+  const categoryServices = useMemo(
+    () => new CategoriesClient(localStorage.getItem('API_KEY') || '', localStorage.getItem('SERVER_URL') || ''),
+    []
+  );
+  const insightsServices = useMemo(
+    () => new InsightsClient(localStorage.getItem('API_KEY') || '', localStorage.getItem('SERVER_URL') || ''),
+    []
+  );
+  const accountServices = useMemo(
+    () => new AccountsClient(localStorage.getItem('API_KEY') || '', localStorage.getItem('SERVER_URL') || ''),
+    []
+  );
 
   const handleSubcategoryDetailClick = useCallback(
     (e: { detail: ISubmitEventData }) => {

@@ -7,9 +7,7 @@ import { buildClients, Error, User } from 'open-banking-pfm-sdk';
 import Menu from './components/Menu';
 import '../../libs/wc/ob-onboarding-component';
 import {
-  API_KEY,
   CONSENT_IN_PROCESS,
-  URL_SERVER,
   AGG_IN_PROCESS,
   CONSENT_REQUESTED,
   CONSENT_AUTHORISED,
@@ -25,8 +23,12 @@ import './style.css';
 
 const PFMPage = () => {
   const navigate = useNavigate();
+
   const onboardingComponentRef = useRef<any>(null);
-  const { usersClient, banksClient } = useMemo(() => buildClients(API_KEY, URL_SERVER), []);
+  const { usersClient, banksClient } = useMemo(
+    () => buildClients(localStorage.getItem('API_KEY') || '', localStorage.getItem('SERVER_URL') || ''),
+    []
+  );
 
   const [userId, setUserId] = useState<number | null>(getUserId());
   const [isProcessing, setIsProcessing] = useState<boolean>(false);

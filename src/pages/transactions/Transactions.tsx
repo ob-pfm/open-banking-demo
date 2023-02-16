@@ -13,7 +13,6 @@ import {
 } from 'open-banking-pfm-sdk';
 import { IAccount, IListOptions, ITransaction } from 'open-banking-pfm-sdk/interfaces';
 
-import { API_KEY, URL_SERVER } from '../../constants';
 import { showErrorToast } from '../../helpers';
 import { IOutletContext } from '../../interfaces';
 import '../../libs/wc/ob-transactions-component';
@@ -50,6 +49,7 @@ interface IDeleteEventData {
 
 const TransactionsComponent = () => {
   const componentRef = useRef<any>(null);
+
   const [searchParams] = useSearchParams();
   const { isProcessing, alertText, userId } = useOutletContext<IOutletContext>();
   const [filterOptions, setFilterOptions] = useState<TransactionsOptions>({
@@ -67,9 +67,18 @@ const TransactionsComponent = () => {
   const [transactionsData, setTransactionsData] = useState<ITransaction[]>([]);
   const [cursors, setCursors] = useState<Map<string, number>>(new Map());
   const [transactionsFilteredData, setTransactionsFilteredData] = useState<ITransaction[]>([]);
-  const accountServices = useMemo(() => new AccountsClient(API_KEY, URL_SERVER), []);
-  const categoryServices = useMemo(() => new CategoriesClient(API_KEY, URL_SERVER), []);
-  const transactionServices = useMemo(() => new TransactionsClient(API_KEY, URL_SERVER), []);
+  const accountServices = useMemo(
+    () => new AccountsClient(localStorage.getItem('API_KEY') || '', localStorage.getItem('SERVER_URL') || ''),
+    []
+  );
+  const categoryServices = useMemo(
+    () => new CategoriesClient(localStorage.getItem('API_KEY') || '', localStorage.getItem('SERVER_URL') || ''),
+    []
+  );
+  const transactionServices = useMemo(
+    () => new TransactionsClient(localStorage.getItem('API_KEY') || '', localStorage.getItem('SERVER_URL') || ''),
+    []
+  );
 
   const getFiltersFromObject = ({
     accounts,
