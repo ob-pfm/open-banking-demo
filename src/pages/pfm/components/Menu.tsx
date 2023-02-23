@@ -13,13 +13,6 @@ const Menu = ({ userId }: { userId: number | null }) => {
           </Link>
         </div>
         <div
-          className={`menu__nav-item ${location && location.pathname === '/pfm/resumen' && 'menu__nav-item--selected'}`}
-        >
-          <Link className="menu__nav-link" to="resumen">
-            Resumo
-          </Link>
-        </div>
-        <div
           className={`menu__nav-item ${!userId && 'menu__nav-item--disabled'} ${
             location && location.pathname === '/pfm/cuentas' && 'menu__nav-item--selected'
           }`}
@@ -53,6 +46,15 @@ const Menu = ({ userId }: { userId: number | null }) => {
         >
           <Link className="menu__nav-link" to="categorias">
             Categorias
+          </Link>
+        </div>
+        <div
+          className={`menu__nav-item ${!userId && 'menu__nav-item--disabled'} ${
+            location && location.pathname === '/pfm/resumen' && 'menu__nav-item--selected'
+          }`}
+        >
+          <Link className="menu__nav-link" to="resumen">
+            Resumo
           </Link>
         </div>
       </nav>

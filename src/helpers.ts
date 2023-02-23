@@ -17,3 +17,11 @@ export const getUserId = () => {
   }
   return null;
 };
+
+export const getApiKey = () => {
+  const value = localStorage.getItem('key');
+  if (value) {
+    return value;
+  }
+  return null;
+};

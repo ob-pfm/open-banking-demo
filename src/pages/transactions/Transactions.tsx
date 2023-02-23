@@ -12,9 +12,10 @@ import {
   Account
 } from 'open-banking-pfm-sdk';
 import { IAccount, IListOptions, ITransaction } from 'open-banking-pfm-sdk/interfaces';
-
+import { URL_SERVER } from '../../constants';
 import { showErrorToast } from '../../helpers';
 import { IOutletContext } from '../../interfaces';
+
 import '../../libs/wc/ob-transactions-component';
 import { ITransactionFilterEvent } from './interfaces';
 
@@ -51,7 +52,7 @@ const TransactionsComponent = () => {
   const componentRef = useRef<any>(null);
 
   const [searchParams] = useSearchParams();
-  const { isProcessing, alertText, userId } = useOutletContext<IOutletContext>();
+  const { isProcessing, alertText, userId, apiKey } = useOutletContext<IOutletContext>();
   const [filterOptions, setFilterOptions] = useState<TransactionsOptions>({
     accounts: [],
     minAmount: '',
@@ -67,18 +68,9 @@ const TransactionsComponent = () => {
   const [transactionsData, setTransactionsData] = useState<ITransaction[]>([]);
   const [cursors, setCursors] = useState<Map<string, number>>(new Map());
   const [transactionsFilteredData, setTransactionsFilteredData] = useState<ITransaction[]>([]);
-  const accountServices = useMemo(
-    () => new AccountsClient(localStorage.getItem('API_KEY') || '', localStorage.getItem('SERVER_URL') || ''),
-    []
-  );
-  const categoryServices = useMemo(
-    () => new CategoriesClient(localStorage.getItem('API_KEY') || '', localStorage.getItem('SERVER_URL') || ''),
-    []
-  );
-  const transactionServices = useMemo(
-    () => new TransactionsClient(localStorage.getItem('API_KEY') || '', localStorage.getItem('SERVER_URL') || ''),
-    []
-  );
+  const accountServices = useMemo(() => new AccountsClient(apiKey, URL_SERVER), [apiKey]);
+  const categoryServices = useMemo(() => new CategoriesClient(apiKey, URL_SERVER), [apiKey]);
+  const transactionServices = useMemo(() => new TransactionsClient(apiKey, URL_SERVER), [apiKey]);
 
   const getFiltersFromObject = ({
     accounts,
@@ -226,13 +218,21 @@ const TransactionsComponent = () => {
       componentRef.current.showModalLoading = true;
       const { transaction, onSuccess } = e.detail;
       const newTransaction = new TransactionPayload({ ...transaction });
-      transactionServices.create(newTransaction).then(() => {
-        filterTransactions(() => {
-          onSuccess();
-          toast.success('Nuevo Movimiento agregado.');
+      transactionServices
+        .create(newTransaction)
+        .then(() => {
+          filterTransactions((transactionsRes: Transaction[]) => {
+            setTransactionsData(transactionsRes);
+            setTransactionsFilteredData(transactionsRes);
+            onSuccess();
+            toast.success('Nuevo Movimiento agregado.');
+            componentRef.current.showModalLoading = false;
+          });
+        })
+        .catch(() => {
+          toast.error('Um erro ocorreu.');
           componentRef.current.showModalLoading = false;
         });
-      });
     },
     [transactionServices, filterTransactions]
   );
@@ -282,13 +282,21 @@ const TransactionsComponent = () => {
       const { transaction, onSuccess } = e.detail;
       const { id, ...rest } = transaction;
       const editedTransaction = new TransactionPayload({ ...rest });
-      transactionServices.edit(id!, editedTransaction).then(() => {
-        filterTransactions(() => {
-          onSuccess();
-          toast.success('Alterações salvas.');
+      transactionServices
+        .edit(id!, editedTransaction)
+        .then(() => {
+          filterTransactions((transactionsRes: Transaction[]) => {
+            setTransactionsData(transactionsRes);
+            setTransactionsFilteredData(transactionsRes);
+            onSuccess();
+            toast.success('Alterações salvas.');
+            componentRef.current.showModalLoading = false;
+          });
+        })
+        .catch(() => {
+          toast.error('Um erro ocorreu.');
           componentRef.current.showModalLoading = false;
         });
-      });
     },
     [transactionServices, filterTransactions]
   );
@@ -296,13 +304,21 @@ const TransactionsComponent = () => {
     (e: { detail: IDeleteEventData }) => {
       componentRef.current.showModalLoading = true;
       const { transactionId, onSuccess } = e.detail;
-      transactionServices.delete(transactionId).then((response: boolean) => {
-        filterTransactions(() => {
-          onSuccess();
-          toast.success('Conta apagada.');
+      transactionServices
+        .delete(transactionId)
+        .then(() => {
+          filterTransactions((transactionsRes: Transaction[]) => {
+            setTransactionsData(transactionsRes);
+            setTransactionsFilteredData(transactionsRes);
+            onSuccess();
+            toast.success('Movimiento apagado.');
+            componentRef.current.showModalLoading = false;
+          });
+        })
+        .catch(() => {
+          toast.error('Um erro ocorreu.');
           componentRef.current.showModalLoading = false;
         });
-      });
     },
     [transactionServices, filterTransactions]
   );

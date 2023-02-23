@@ -1,8 +1,8 @@
-export const API_KEY = '0d8e5af4-435e-4289-9f27-f221978ed8ad';
+export const API_KEY = 'd19a8bba-c6ff-4743-a147-22d1ca3156cb';
+export const API_KEY_SIGNUP = 'dGVjYmFuOmludGVncmF0aW9u';
 export const AGG_IN_PROCESS = 'Agregação de banco em processo...';
 export const CONSENT_IN_PROCESS = 'Solicitação de consentimento em andamento...';
-export const URL_SERVER =
-  'https://cors-anywhere.herokuapp.com/https://api-pfm-openbanking-v1.finerioconnect.com/api/v1/';
+export const URL_SERVER = 'https://api-pfm-openbanking-v1.finerioconnect.com/api/v1/';
 export const CONSENT_REQUESTED = 'CONSENT_REQUESTED';
 export const CONSENT_AUTHORISED = 'CONSENT_AUTHORISED';
 export const CONSENT_REJECTED = 'CONSENT_REJECTED';

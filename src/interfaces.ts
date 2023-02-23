@@ -14,4 +14,5 @@ export interface IOutletContext {
   selectedBank: string | null;
   showResourcesModal: React.Dispatch<React.SetStateAction<boolean>>;
   handleSetAggBankId: (value: string | null) => void;
+  apiKey: string;
 }

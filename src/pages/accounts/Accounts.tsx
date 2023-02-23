@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 
 import { AccountsClient, Account, AccountPayload } from 'open-banking-pfm-sdk';
 import '../../libs/wc/ob-accounts-component';
+import { URL_SERVER } from '../../constants';
 import { IOutletContext } from '../../interfaces';
 import styles from './style.css';
 import { showErrorToast } from '../../helpers';
@@ -71,13 +72,10 @@ interface IDeleteEventData {
 }
 const AccountsComponent = () => {
   const componentRef = useRef<any>(null);
-  const { isProcessing, userId, alertText } = useOutletContext<IOutletContext>();
+  const { isProcessing, userId, alertText, apiKey } = useOutletContext<IOutletContext>();
   const navigate = useNavigate();
 
-  const accountServices = useMemo(
-    () => new AccountsClient(localStorage.getItem('API_KEY') || '', localStorage.getItem('SERVER_URL') || ''),
-    []
-  );
+  const accountServices = useMemo(() => new AccountsClient(apiKey, URL_SERVER), [apiKey]);
   const [bankAccounts, setBankAccounts] = useState<any[]>([]);
 
   const getAccounts = useCallback(

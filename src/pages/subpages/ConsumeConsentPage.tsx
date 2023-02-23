@@ -1,15 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import { BanksClient } from 'open-banking-pfm-sdk';
-import { showErrorToast } from '../../helpers';
+import { URL_SERVER } from '../../constants';
+import { getApiKey, showErrorToast } from '../../helpers';
 
 const CONSUME_IN_PROCESS = 'IN_PROCESS';
 const CONSUME_FAILED = 'FAILED';
 const CONSUME_SUCCESSFUL = 'SUCCESSFUL';
 
 const ConsumeConsentPage = () => {
-  const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const apiKey = getApiKey();
+
   const [consumeStatus, setConsumeStatus] = useState(CONSUME_IN_PROCESS);
   const message = useMemo(() => {
     switch (consumeStatus) {
@@ -34,28 +37,29 @@ const ConsumeConsentPage = () => {
   }, [consumeStatus]);
 
   useEffect(() => {
-    const authCode = searchParams.get('code');
-    const token = searchParams.get('id_token');
-    const state = searchParams.get('state');
-    if (authCode && token && state) {
-      const banksClient = new BanksClient(
-        localStorage.getItem('API_KEY') || '',
-        localStorage.getItem('SERVER_URL') || ''
-      );
-      banksClient
-        .consumeConsent(authCode, token, state)
-        .then(() => {
-          setConsumeStatus(CONSUME_SUCCESSFUL);
-          window.close();
-        })
-        .catch((error) => {
-          showErrorToast(error);
-          setConsumeStatus(CONSUME_FAILED);
-        });
-    } else {
-      setConsumeStatus(CONSUME_FAILED);
+    if (location.hash) {
+      const params = location.hash.split('&');
+      const authCode = params.find((el) => el.indexOf('code') !== -1)?.split('=')[1];
+      const token = params.find((el) => el.indexOf('id_token') !== -1)?.split('=')[1];
+      const state = params.find((el) => el.indexOf('state') !== -1)?.split('=')[1];
+
+      if (authCode && token && state && apiKey) {
+        const banksClient = new BanksClient(apiKey, URL_SERVER);
+        banksClient
+          .consumeConsent(authCode, token, state)
+          .then(() => {
+            setConsumeStatus(CONSUME_SUCCESSFUL);
+            window.close();
+          })
+          .catch((error) => {
+            showErrorToast(error);
+            setConsumeStatus(CONSUME_FAILED);
+          });
+      } else {
+        setConsumeStatus(CONSUME_FAILED);
+      }
     }
-  }, [searchParams]);
+  }, [location, apiKey]);
 
   return (
     <div className="container">

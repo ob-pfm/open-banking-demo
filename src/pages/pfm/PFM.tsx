@@ -15,9 +15,10 @@ import {
   CONSENT_DELETED,
   AGGREGATION_STARTED,
   AGGREGATION_COMPLETED,
-  PROCESS_FAILED
+  PROCESS_FAILED,
+  URL_SERVER
 } from '../../constants';
-import { getUserId, showErrorToast } from '../../helpers';
+import { getApiKey, getUserId, showErrorToast } from '../../helpers';
 
 import './style.css';
 
@@ -25,10 +26,9 @@ const PFMPage = () => {
   const navigate = useNavigate();
 
   const onboardingComponentRef = useRef<any>(null);
-  const { usersClient, banksClient } = useMemo(
-    () => buildClients(localStorage.getItem('API_KEY') || '', localStorage.getItem('SERVER_URL') || ''),
-    []
-  );
+  const apiKey = getApiKey();
+
+  const { usersClient, banksClient } = useMemo(() => buildClients(apiKey || '', URL_SERVER), [apiKey]);
 
   const [userId, setUserId] = useState<number | null>(getUserId());
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
@@ -235,7 +235,8 @@ const PFMPage = () => {
           resources,
           resourcesModalIsShown,
           handleSetAggBankId,
-          showResourcesModal
+          showResourcesModal,
+          apiKey
         }}
       />
       <ob-onboarding-component ref={onboardingComponentRef} fontFamily="Lato" lang="pt" />

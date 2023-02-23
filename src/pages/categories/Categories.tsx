@@ -4,7 +4,9 @@ import { toast } from 'react-toastify';
 
 import { CategoriesClient, Category, CategoryPayload } from 'open-banking-pfm-sdk';
 import { ICategory, ICategoryUpdatePayload } from 'open-banking-pfm-sdk/interfaces';
+import { URL_SERVER } from '../../constants';
 
+import '../../libs/wc/ob-categories-component';
 import { IOutletContext } from '../../interfaces';
 
 interface ISubmitEventData {
@@ -21,11 +23,8 @@ interface ISubmitEventData {
 }
 const CategoriesComponent = () => {
   const componentRef = useRef<any>(null);
-  const { isProcessing, alertText, userId } = useOutletContext<IOutletContext>();
-  const categoriesServices = useMemo(
-    () => new CategoriesClient(localStorage.getItem('API_KEY') || '', localStorage.getItem('SERVER_URL') || ''),
-    []
-  );
+  const { isProcessing, alertText, userId, apiKey } = useOutletContext<IOutletContext>();
+  const categoriesServices = useMemo(() => new CategoriesClient(apiKey, URL_SERVER), [apiKey]);
   const [categories, setCategories] = useState<ICategory[]>([]);
   const getCategories = useCallback(
     (onSuccess: () => void) => {
