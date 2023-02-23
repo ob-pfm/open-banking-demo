@@ -1,4 +1,4 @@
-import { IListOptions, ITransactionsClient, ITransactionUpdatePayload } from '../interfaces';
+import { IListOptions, ITransactionsClient } from '../interfaces';
 import Transaction from '../models/Transaction';
 import TransactionPayload from '../payloads/TransactionPayload';
 import Client from './Client';
@@ -13,7 +13,7 @@ export default class TransactionsClient extends Client implements ITransactionsC
     }>;
     get(id: string | number): Promise<Transaction>;
     create(transactionToCreate: TransactionPayload): Promise<Transaction>;
-    edit(id: string | number, transactionToUpdate: ITransactionUpdatePayload): Promise<Transaction>;
+    edit(id: string | number, transactionToUpdate: TransactionPayload): Promise<Transaction>;
     delete(id: string | number): Promise<boolean>;
     deleteAll(accountId: string | number): Promise<boolean>;
 }

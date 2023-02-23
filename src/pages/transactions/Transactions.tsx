@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useOutletContext, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { API_KEY, URL_SERVER } from '../../constants';
+import { URL_SERVER } from '../../constants';
 import { showErrorToast } from '../../helpers';
 import { IOutletContext } from '../../interfaces';
 
@@ -52,7 +52,7 @@ interface IDeleteEventData {
 const TransactionsComponent = () => {
   const componentRef = useRef<any>(null);
   const [searchParams] = useSearchParams();
-  const { isProcessing, alertText, userId } = useOutletContext<IOutletContext>();
+  const { isProcessing, alertText, userId, apiKey } = useOutletContext<IOutletContext>();
   const [filterOptions, setFilterOptions] = useState<TransactionsOptions>({
     accounts: [],
     minAmount: '',
@@ -68,9 +68,9 @@ const TransactionsComponent = () => {
   const [transactionsData, setTransactionsData] = useState<ITransaction[]>([]);
   const [cursors, setCursors] = useState<Map<string, number>>(new Map());
   const [transactionsFilteredData, setTransactionsFilteredData] = useState<ITransaction[]>([]);
-  const accountServices = useMemo(() => new AccountsClient(API_KEY, URL_SERVER), []);
-  const categoryServices = useMemo(() => new CategoriesClient(API_KEY, URL_SERVER), []);
-  const transactionServices = useMemo(() => new TransactionsClient(API_KEY, URL_SERVER), []);
+  const accountServices = useMemo(() => new AccountsClient(apiKey, URL_SERVER), [apiKey]);
+  const categoryServices = useMemo(() => new CategoriesClient(apiKey, URL_SERVER), [apiKey]);
+  const transactionServices = useMemo(() => new TransactionsClient(apiKey, URL_SERVER), [apiKey]);
 
   const getFiltersFromObject = ({
     accounts,
@@ -218,13 +218,21 @@ const TransactionsComponent = () => {
       componentRef.current.showModalLoading = true;
       const { transaction, onSuccess } = e.detail;
       const newTransaction = new TransactionPayload({ ...transaction });
-      transactionServices.create(newTransaction).then(() => {
-        filterTransactions(() => {
-          onSuccess();
-          toast.success('Nuevo Movimiento agregado.');
+      transactionServices
+        .create(newTransaction)
+        .then(() => {
+          filterTransactions((transactionsRes: Transaction[]) => {
+            setTransactionsData(transactionsRes);
+            setTransactionsFilteredData(transactionsRes);
+            onSuccess();
+            toast.success('Nuevo Movimiento agregado.');
+            componentRef.current.showModalLoading = false;
+          });
+        })
+        .catch(() => {
+          toast.error('Um erro ocorreu.');
           componentRef.current.showModalLoading = false;
         });
-      });
     },
     [transactionServices, filterTransactions]
   );
@@ -274,13 +282,21 @@ const TransactionsComponent = () => {
       const { transaction, onSuccess } = e.detail;
       const { id, ...rest } = transaction;
       const editedTransaction = new TransactionPayload({ ...rest });
-      transactionServices.edit(id!, editedTransaction).then(() => {
-        filterTransactions(() => {
-          onSuccess();
-          toast.success('Alterações salvas.');
+      transactionServices
+        .edit(id!, editedTransaction)
+        .then(() => {
+          filterTransactions((transactionsRes: Transaction[]) => {
+            setTransactionsData(transactionsRes);
+            setTransactionsFilteredData(transactionsRes);
+            onSuccess();
+            toast.success('Alterações salvas.');
+            componentRef.current.showModalLoading = false;
+          });
+        })
+        .catch(() => {
+          toast.error('Um erro ocorreu.');
           componentRef.current.showModalLoading = false;
         });
-      });
     },
     [transactionServices, filterTransactions]
   );
@@ -288,13 +304,21 @@ const TransactionsComponent = () => {
     (e: { detail: IDeleteEventData }) => {
       componentRef.current.showModalLoading = true;
       const { transactionId, onSuccess } = e.detail;
-      transactionServices.delete(transactionId).then((response: boolean) => {
-        filterTransactions(() => {
-          onSuccess();
-          toast.success('Conta apagada.');
+      transactionServices
+        .delete(transactionId)
+        .then(() => {
+          filterTransactions((transactionsRes: Transaction[]) => {
+            setTransactionsData(transactionsRes);
+            setTransactionsFilteredData(transactionsRes);
+            onSuccess();
+            toast.success('Movimiento apagado.');
+            componentRef.current.showModalLoading = false;
+          });
+        })
+        .catch(() => {
+          toast.error('Um erro ocorreu.');
           componentRef.current.showModalLoading = false;
         });
-      });
     },
     [transactionServices, filterTransactions]
   );

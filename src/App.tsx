@@ -14,21 +14,24 @@ import ConsentComponent from './pages/consentimiento/Consentimiento';
 import BudgetsComponent from './pages/budgets/Budgets';
 import CategoriesComponent from './pages/categories/Categories';
 import SummaryComponent from './pages/summary/Summary';
+import SignUp from './pages/signup/Signup';
 
 function App() {
   const { pathname } = useLocation();
+
   return (
     <>
       {pathname !== '/consume-consent' && <Header />}
       <div className="main-container">
         <Routes>
-          <Route path="/" element={<MyProductsPage />} />
+          <Route path="/" element={<SignUp />} />
           <Route path="/meus-produtos" element={<MyProductsPage />} />
           <Route path="/contas" element={<AccountsPage />} />
           <Route path="/cartoes" element={<CardsPage />} />
           <Route path="/meus-emprestimos" element={<MyLoansPage />} />
           <Route path="/meus-investimentos" element={<MyInvestmentsPage />} />
           <Route path="/consume-consent" element={<ConsumeConsentPage />} />
+          <Route path="/signup" element={<SignUp />} />
           <Route path="/pfm" element={<PFMPage />}>
             <Route path="" element={<ConsentComponent />} />
             <Route path="cuentas" element={<AccountsComponent />} />
@@ -38,6 +41,7 @@ function App() {
             <Route path="presupuestos" element={<BudgetsComponent />} />
           </Route>
         </Routes>
+
         <ToastContainer
           position="top-right"
           autoClose={5000}

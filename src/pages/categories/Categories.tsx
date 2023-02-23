@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 
 import { CategoriesClient, Category, CategoryPayload } from '../../libs/sdk';
 import { ICategory, ICategoryUpdatePayload } from '../../libs/sdk/interfaces';
-import { API_KEY, URL_SERVER } from '../../constants';
+import { URL_SERVER } from '../../constants';
 
 import '../../libs/wc/ob-categories-component';
 import { IOutletContext } from '../../interfaces';
@@ -23,8 +23,8 @@ interface ISubmitEventData {
 }
 const CategoriesComponent = () => {
   const componentRef = useRef<any>(null);
-  const { isProcessing, alertText, userId } = useOutletContext<IOutletContext>();
-  const categoriesServices = useMemo(() => new CategoriesClient(API_KEY, URL_SERVER), []);
+  const { isProcessing, alertText, userId, apiKey } = useOutletContext<IOutletContext>();
+  const categoriesServices = useMemo(() => new CategoriesClient(apiKey, URL_SERVER), [apiKey]);
   const [categories, setCategories] = useState<ICategory[]>([]);
   const getCategories = useCallback(
     (onSuccess: () => void) => {

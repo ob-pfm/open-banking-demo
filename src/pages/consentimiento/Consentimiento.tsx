@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { showErrorToast } from '../../helpers';
-import { API_KEY, URL_SERVER } from '../../constants';
+import { URL_SERVER } from '../../constants';
 
 import { Bank, buildClients } from '../../libs/sdk';
 import '../../libs/wc/ob-consent-wizard-component';
@@ -10,8 +10,8 @@ import { IOutletContext } from '../../interfaces';
 
 const ConsentComponent = () => {
   const navigate = useNavigate();
-  const { setIsProcessing, userId, initConsent, handleSetAggBankId } = useOutletContext<IOutletContext>();
-  const { banksClient } = useMemo(() => buildClients(API_KEY, URL_SERVER), []);
+  const { setIsProcessing, userId, initConsent, handleSetAggBankId, apiKey } = useOutletContext<IOutletContext>();
+  const { banksClient } = useMemo(() => buildClients(apiKey, URL_SERVER), [apiKey]);
   const consentWizardComponentRef = useRef<any>(null);
   const [selectedBank, selectBank] = useState<string | null>(null);
 

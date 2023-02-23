@@ -7,7 +7,6 @@ import Menu from './components/Menu';
 import { buildClients, Error, User } from '../../libs/sdk';
 import '../../libs/wc/ob-onboarding-component';
 import {
-  API_KEY,
   CONSENT_IN_PROCESS,
   URL_SERVER,
   AGG_IN_PROCESS,
@@ -19,14 +18,16 @@ import {
   AGGREGATION_COMPLETED,
   PROCESS_FAILED
 } from '../../constants';
-import { getUserId, showErrorToast } from '../../helpers';
+import { getApiKey, getUserId, showErrorToast } from '../../helpers';
 
 import './style.css';
 
 const PFMPage = () => {
   const navigate = useNavigate();
   const onboardingComponentRef = useRef<any>(null);
-  const { usersClient, banksClient } = useMemo(() => buildClients(API_KEY, URL_SERVER), []);
+  const apiKey = getApiKey();
+  
+  const { usersClient, banksClient } = useMemo(() => buildClients(apiKey || '', URL_SERVER), [apiKey]);
 
   const [userId, setUserId] = useState<number | null>(getUserId());
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
@@ -233,7 +234,8 @@ const PFMPage = () => {
           resources,
           resourcesModalIsShown,
           handleSetAggBankId,
-          showResourcesModal
+          showResourcesModal,
+          apiKey
         }}
       />
       <ob-onboarding-component ref={onboardingComponentRef} fontFamily="Lato" lang="pt" />

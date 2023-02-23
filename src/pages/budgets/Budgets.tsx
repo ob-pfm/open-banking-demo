@@ -3,7 +3,7 @@ import { useOutletContext } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { CategoriesClient, ParentCategory, BudgetsClient, Budget, BudgetPayload } from '../../libs/sdk';
-import { API_KEY, URL_SERVER } from '../../constants';
+import { URL_SERVER } from '../../constants';
 
 import '../../libs/wc/ob-budget-component';
 import { IOutletContext } from '../../interfaces';
@@ -29,9 +29,9 @@ interface IDeleteEventData {
 
 const BudgetsComponent = () => {
   const componentRef = useRef<any>(null);
-  const { isProcessing, alertText, userId } = useOutletContext<IOutletContext>();
-  const budgetsServices = useMemo(() => new BudgetsClient(API_KEY, URL_SERVER), []);
-  const categoryServices = useMemo(() => new CategoriesClient(API_KEY, URL_SERVER), []);
+  const { isProcessing, alertText, userId, apiKey } = useOutletContext<IOutletContext>();
+  const budgetsServices = useMemo(() => new BudgetsClient(apiKey, URL_SERVER), [apiKey]);
+  const categoryServices = useMemo(() => new CategoriesClient(apiKey, URL_SERVER), [apiKey]);
 
   const getBudgets = useCallback(
     (onSuccess: (response: boolean) => void, onError?: () => void) => {

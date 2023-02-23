@@ -1,12 +1,14 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useOutletContext, createSearchParams, useNavigate } from 'react-router-dom';
 
-import { CategoriesClient, ParentCategory, InsightsClient, Resume, AccountsClient, Account } from '../../libs/sdk';
-import { API_KEY, URL_SERVER } from '../../constants';
+import { CategoriesClient, InsightsClient, AccountsClient, Account } from '../../libs/sdk';
+import { URL_SERVER } from '../../constants';
 
 import '../../libs/wc/ob-summary-component';
 import { IOutletContext } from '../../interfaces';
 import { showErrorToast } from '../../helpers';
+
+import './summary.css';
 
 const getDateRange = (date: Date) => {
   const month = date.getMonth();
@@ -25,10 +27,12 @@ interface ISubmitEventData {
 const SummaryComponent = () => {
   const componentRef = useRef<any>(null);
   const navigate = useNavigate();
-  const { isProcessing, alertText, userId } = useOutletContext<IOutletContext>();
-  const categoryServices = useMemo(() => new CategoriesClient(API_KEY, URL_SERVER), []);
-  const insightsServices = useMemo(() => new InsightsClient(API_KEY, URL_SERVER), []);
-  const accountServices = useMemo(() => new AccountsClient(API_KEY, URL_SERVER), []);
+  const { isProcessing, alertText, userId, apiKey } = useOutletContext<IOutletContext>();
+  const categoryServices = useMemo(() => new CategoriesClient(apiKey, URL_SERVER), [apiKey]);
+  const insightsServices = useMemo(() => new InsightsClient(apiKey, URL_SERVER), [apiKey]);
+  const accountServices = useMemo(() => new AccountsClient(apiKey, URL_SERVER), [apiKey]);
+  const [accountId, setAccountId] = useState<number>(0);
+  const [accountsList, setAccountsList] = useState<Account[]>([]);
 
   const handleSubcategoryDetailClick = useCallback(
     (e: { detail: ISubmitEventData }) => {
@@ -63,42 +67,69 @@ const SummaryComponent = () => {
     [navigate]
   );
 
+  const handleChangeAccount = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    setAccountId(Number(e.target.value));
+  }, []);
+
+  useEffect(() => {
+    if (userId) {
+      accountServices
+        .getList(userId)
+        .then((response) => {
+          setAccountsList(response);
+          if (response.length > 0) setAccountId(response[0].id);
+        })
+        .catch(() => setAccountsList([]));
+    }
+  }, [accountServices, userId]);
+
   useEffect(() => {
     if (userId) {
       componentRef.current.showMainLoading = true;
       componentRef.current.categoriesData = [];
+      categoryServices
+        .getListWithSubcategories(userId)
+        .then((response) => {
+          componentRef.current.categoriesData = response.map((category) => ({
+            ...category.toObject(),
+            subcategories: category.subcategories.map((subcategory: any) => subcategory.toObject())
+          }));
+          componentRef.current.showMainLoading = false;
+        })
+        .catch((error) => {
+          showErrorToast(error);
+        });
+    }
+  }, [categoryServices, userId]);
+
+  useEffect(() => {
+    if (userId) {
+      componentRef.current.showMainLoading = true;
       componentRef.current.summaryData = {
         incomes: [],
         expenses: [],
         balances: []
       };
-      Promise.all([accountServices.getList(userId), categoryServices.getListWithSubcategories(userId)]).then(
-        (responses: [Account[], ParentCategory[]]) => {
-          componentRef.current.categoriesData = responses[1].map((category) => ({
-            ...category.toObject(),
-            subcategories: category.subcategories.map((subcategory: any) => subcategory.toObject())
-          }));
-          insightsServices
-            .getResume(userId, { accountId: responses[0][1].id })
-            .then((response: Resume) => {
-              if (response && response.balances && response.expenses && response.incomes) {
-                componentRef.current.summaryData = {
-                  balances: response.balances,
-                  expenses: response.expenses,
-                  incomes: response.incomes
-                };
-              } else {
-                componentRef.current.isEmpty = true;
-              }
-              componentRef.current.showMainLoading = false;
-            })
-            .catch((error) => {
-              showErrorToast(error);
-            });
-        }
-      );
+      if (accountId !== 0) {
+        insightsServices
+          .getResume(userId, { accountId })
+          .then((insights) => {
+            if (insights) {
+              componentRef.current.summaryData = {
+                balances: insights.balances,
+                expenses: insights.expenses,
+                incomes: insights.incomes
+              };
+            } else componentRef.current.isEmpty = true;
+
+            componentRef.current.showMainLoading = false;
+          })
+          .catch((error) => {
+            showErrorToast(error);
+          });
+      }
     }
-  }, [insightsServices, categoryServices, userId, accountServices]);
+  }, [insightsServices, categoryServices, userId, accountServices, accountId]);
 
   useEffect(() => {
     const componentRefCurrent = componentRef.current;
@@ -111,16 +142,23 @@ const SummaryComponent = () => {
     };
   }, [handleSubcategoryDetailClick, handleTransactionDetailClick]);
   return (
-    <ob-summary-component
-      ref={componentRef}
-      alertType="warning"
-      showAlert={isProcessing}
-      alertText={alertText}
-      fontFamily="Lato"
-      lang="pt"
-      currencyLang="pt-BR"
-      currencyType="BRL"
-    />
+    <>
+      <div className="selectContainer">
+        <select onChange={handleChangeAccount}>
+          {accountsList && accountsList.map((account) => <option value={account.id}>{account.name}</option>)}
+        </select>
+      </div>
+      <ob-summary-component
+        ref={componentRef}
+        alertType="warning"
+        showAlert={isProcessing}
+        alertText={alertText}
+        fontFamily="Lato"
+        lang="pt"
+        currencyLang="pt-BR"
+        currencyType="BRL"
+      />
+    </>
   );
 };
 
