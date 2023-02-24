@@ -2,57 +2,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import { AccountsClient, Account, AccountPayload } from 'open-banking-pfm-sdk';
+import { AccountsClient, Account, AccountPayload, BanksClient } from 'open-banking-pfm-sdk';
+import { Bank, BankAggregated } from 'open-banking-pfm-sdk/models';
 import '../../libs/wc/ob-accounts-component';
 import { URL_SERVER } from '../../constants';
 import { IOutletContext } from '../../interfaces';
 import styles from './style.css';
 import { showErrorToast } from '../../helpers';
-
-const FINANCIAL_ENTITIES = [
-  {
-    id: 1115178,
-    dateCreated: 1645212328040,
-    lastUpdated: 1645212328040,
-    name: 'Kuhic Group',
-    code: 'GXNEKNN1'
-  },
-  {
-    id: 1115177,
-    dateCreated: 1645211573026,
-    lastUpdated: 1645211573026,
-    name: 'Rutherford, Connelly and Walker',
-    code: 'TLSABMB1741'
-  },
-  {
-    id: 1115176,
-    dateCreated: 1645211391192,
-    lastUpdated: 1645211391192,
-    name: 'Friesen - Feil',
-    code: 'QFFOUGO1056'
-  },
-  {
-    id: 1115175,
-    dateCreated: 1645207289843,
-    lastUpdated: 1645207289843,
-    name: 'Shanahan - Swift',
-    code: 'XUNAZWV1101'
-  },
-  {
-    id: 1115173,
-    dateCreated: 1645206949178,
-    lastUpdated: 1645206949178,
-    name: 'Blanda Inc',
-    code: 'YJTABGL1079'
-  },
-  {
-    id: 1115171,
-    dateCreated: 1645206890169,
-    lastUpdated: 1645206890169,
-    name: 'Feest Inc',
-    code: 'SSROCDE1'
-  }
-];
 
 interface ISubmitEventData {
   account: {
@@ -76,25 +32,8 @@ const AccountsComponent = () => {
   const navigate = useNavigate();
 
   const accountServices = useMemo(() => new AccountsClient(apiKey, URL_SERVER), [apiKey]);
+  const banksServices = useMemo(() => new BanksClient(apiKey, URL_SERVER), [apiKey]);
   const [bankAccounts, setBankAccounts] = useState<any[]>([]);
-
-  const getAccounts = useCallback(
-    (currentUserId: number, onSuccess: () => void, onError: () => void) => {
-      if (accountServices && componentRef.current !== null) {
-        accountServices
-          .getList(currentUserId)
-          .then((response: Account[]) => {
-            setBankAccounts([{ bank: null, accounts: response.map((account) => account.toObject()) }]);
-            onSuccess();
-          })
-          .catch((error) => {
-            showErrorToast(error);
-            onError();
-          });
-      }
-    },
-    [accountServices, componentRef]
-  );
 
   const handleSaveAccount = useCallback(
     (e: { detail: ISubmitEventData }) => {
@@ -167,22 +106,34 @@ const AccountsComponent = () => {
   useEffect(() => {
     if (userId) {
       componentRef.current.showMainLoading = true;
-      componentRef.current.financialEntitiesData = FINANCIAL_ENTITIES;
-      getAccounts(
-        userId,
-        () => {
+      const promises = [
+        accountServices.getList(userId),
+        banksServices.getAggregates(userId),
+        banksServices.getAvailables()
+      ];
+      Promise.all(promises)
+        .then((response) => {
+          const accounts: Account[] = response[0] as Account[];
+          const aggregated: BankAggregated[] = response[1] as BankAggregated[];
+          const banks: Bank[] = response[2] as unknown as Bank[];
+          const bankAccount: any[] = [];
+          aggregated.forEach((bankAgg) =>
+            bankAccount.push({
+              bank: banks.find((bank) => bankAgg.targetInstitution === bank.bankId),
+              accounts
+            })
+          );
+          componentRef.current.banksData = banks;
+          componentRef.current.banksAccountData = bankAccount;
           componentRef.current.showMainLoading = false;
-        },
-        () => {
-          componentRef.current.showMainLoading = false;
-        }
-      );
+        })
+        .catch((error) => {
+          componentRef.current.banksData = [];
+          componentRef.current.banksAccountData = [];
+          showErrorToast(error);
+        });
     }
-  }, [getAccounts, userId]);
-
-  useEffect(() => {
-    componentRef.current.banksAccountData = bankAccounts;
-  }, [componentRef, bankAccounts]);
+  }, [componentRef, accountServices, banksServices, userId]);
 
   useEffect(() => {
     const componentRefCurrent = componentRef.current;
