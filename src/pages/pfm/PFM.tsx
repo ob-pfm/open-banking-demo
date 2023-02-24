@@ -77,7 +77,7 @@ const PFMPage = () => {
       banksClient.aggregationStatusSubscribe({
         bankId: aggBankId,
         userId,
-        time: 15000,
+        time: 5000,
         onResponse: (status) => {
           setCurrentBankStatus(status);
         },
