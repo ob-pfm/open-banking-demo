@@ -1,59 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import { AccountsClient, Account, AccountPayload } from '../../libs/sdk';
-import { IAccount } from '../../libs/sdk/interfaces';
+import { AccountsClient, Account, AccountPayload, BanksClient } from 'open-banking-pfm-sdk';
+import { Bank, BankAggregated } from 'open-banking-pfm-sdk/models';
 import '../../libs/wc/ob-accounts-component';
-import { API_KEY } from '../../constants';
+import { URL_SERVER } from '../../constants';
 import { IOutletContext } from '../../interfaces';
 import styles from './style.css';
 import { showErrorToast } from '../../helpers';
-
-const FINANCIAL_ENTITIES = [
-  {
-    id: 1115178,
-    dateCreated: 1645212328040,
-    lastUpdated: 1645212328040,
-    name: 'Kuhic Group',
-    code: 'GXNEKNN1'
-  },
-  {
-    id: 1115177,
-    dateCreated: 1645211573026,
-    lastUpdated: 1645211573026,
-    name: 'Rutherford, Connelly and Walker',
-    code: 'TLSABMB1741'
-  },
-  {
-    id: 1115176,
-    dateCreated: 1645211391192,
-    lastUpdated: 1645211391192,
-    name: 'Friesen - Feil',
-    code: 'QFFOUGO1056'
-  },
-  {
-    id: 1115175,
-    dateCreated: 1645207289843,
-    lastUpdated: 1645207289843,
-    name: 'Shanahan - Swift',
-    code: 'XUNAZWV1101'
-  },
-  {
-    id: 1115173,
-    dateCreated: 1645206949178,
-    lastUpdated: 1645206949178,
-    name: 'Blanda Inc',
-    code: 'YJTABGL1079'
-  },
-  {
-    id: 1115171,
-    dateCreated: 1645206890169,
-    lastUpdated: 1645206890169,
-    name: 'Feest Inc',
-    code: 'SSROCDE1'
-  }
-];
 
 interface ISubmitEventData {
   account: {
@@ -73,26 +28,12 @@ interface IDeleteEventData {
 }
 const AccountsComponent = () => {
   const componentRef = useRef<any>(null);
-  const { alertIsShown, alertText, userId } = useOutletContext<IOutletContext>();
-  const accountServices = useMemo(() => new AccountsClient(API_KEY, true), []);
-  const [accounts, setAccounts] = useState<IAccount[]>([]);
-  const getAccounts = useCallback(
-    (currentUserId: number, onSuccess: () => void, onError: () => void) => {
-      if (accountServices && componentRef.current !== null) {
-        accountServices
-          .getList(currentUserId)
-          .then((response: Account[]) => {
-            setAccounts(response.map((account) => account.toObject()));
-            onSuccess();
-          })
-          .catch((error) => {
-            showErrorToast(error);
-            onError();
-          });
-      }
-    },
-    [accountServices, componentRef]
-  );
+  const { isProcessing, userId, alertText, apiKey } = useOutletContext<IOutletContext>();
+  const navigate = useNavigate();
+
+  const accountServices = useMemo(() => new AccountsClient(apiKey, URL_SERVER), [apiKey]);
+  const banksServices = useMemo(() => new BanksClient(apiKey, URL_SERVER), [apiKey]);
+  const [bankAccounts, setBankAccounts] = useState<any[]>([]);
 
   const handleSaveAccount = useCallback(
     (e: { detail: ISubmitEventData }) => {
@@ -106,12 +47,12 @@ const AccountsComponent = () => {
         });
         accountServices.create(newAccount).then((response: Account) => {
           toast.success('Conta adicionada.');
-          setAccounts([response.toObject(), ...accounts]);
+          setBankAccounts([response.toObject(), ...bankAccounts]);
           onSuccess();
         });
       }
     },
-    [accountServices, accounts, userId]
+    [accountServices, bankAccounts, userId]
   );
 
   const handleEditAccount = useCallback(
@@ -126,8 +67,8 @@ const AccountsComponent = () => {
         });
         accountServices.edit(id!, editedAccount).then((response: Account) => {
           toast.success('Alterações salvas.');
-          setAccounts(
-            accounts.map((accountItem) => {
+          setBankAccounts(
+            bankAccounts.map((accountItem) => {
               if (accountItem.id === id) {
                 return response.toObject();
               }
@@ -138,7 +79,7 @@ const AccountsComponent = () => {
         });
       }
     },
-    [accountServices, accounts, userId]
+    [accountServices, bankAccounts, userId]
   );
 
   const handleDeleteAccount = useCallback(
@@ -147,52 +88,74 @@ const AccountsComponent = () => {
       accountServices.delete(accountId).then((response: boolean) => {
         if (response) {
           toast.success('Conta apagada.');
-          setAccounts(accounts.filter((accountItem) => accountItem.id !== accountId));
+          setBankAccounts(bankAccounts.filter((accountItem) => accountItem.id !== accountId));
           onSuccess();
         }
       });
     },
-    [accountServices, accounts]
+    [accountServices, bankAccounts]
   );
+
+  const handleClickAccount = useCallback(
+    (e: { detail: IDeleteEventData }) => {
+      navigate(`/pfm/movimientos?account_id=${e.detail}`);
+    },
+    [navigate]
+  );
+
   useEffect(() => {
     if (userId) {
       componentRef.current.showMainLoading = true;
-      componentRef.current.financialEntitiesData = FINANCIAL_ENTITIES;
-      getAccounts(
-        userId,
-        () => {
+      const promises = [
+        accountServices.getList(userId),
+        banksServices.getAggregates(userId),
+        banksServices.getAvailables()
+      ];
+      Promise.all(promises)
+        .then((response) => {
+          const accounts: Account[] = response[0] as Account[];
+          const aggregated: BankAggregated[] = response[1] as BankAggregated[];
+          const banks: Bank[] = response[2] as unknown as Bank[];
+          const bankAccount: any[] = [];
+          aggregated.forEach((bankAgg) =>
+            bankAccount.push({
+              bank: banks.find((bank) => bankAgg.targetInstitution === bank.bankId),
+              accounts
+            })
+          );
+          componentRef.current.banksData = banks;
+          componentRef.current.banksAccountData = bankAccount;
           componentRef.current.showMainLoading = false;
-        },
-        () => {
-          componentRef.current.showMainLoading = false;
-        }
-      );
+        })
+        .catch((error) => {
+          componentRef.current.banksData = [];
+          componentRef.current.banksAccountData = [];
+          showErrorToast(error);
+        });
     }
-  }, [getAccounts]);
-
-  useEffect(() => {
-    componentRef.current.accountsData = accounts;
-  }, [componentRef, accounts]);
+  }, [componentRef, accountServices, banksServices, userId]);
 
   useEffect(() => {
     const componentRefCurrent = componentRef.current;
     componentRefCurrent.addEventListener('save-new', handleSaveAccount);
     componentRefCurrent.addEventListener('save-edit', handleEditAccount);
     componentRefCurrent.addEventListener('delete', handleDeleteAccount);
+    componentRefCurrent.addEventListener('click-account-collapsible-section', handleClickAccount);
 
     return () => {
       componentRefCurrent.removeEventListener('save-new', handleSaveAccount);
       componentRefCurrent.removeEventListener('save-edit', handleEditAccount);
       componentRefCurrent.removeEventListener('delete', handleDeleteAccount);
+      componentRefCurrent.removeEventListener('click-account-collapsible-section', handleClickAccount);
     };
-  }, [handleSaveAccount, handleEditAccount, handleDeleteAccount]);
+  }, [handleSaveAccount, handleEditAccount, handleDeleteAccount, handleClickAccount]);
 
   return (
     <ob-accounts-component
       ref={componentRef}
-      alertType="warning"
-      showAlert={alertIsShown}
+      showAlert={isProcessing}
       alertText={alertText}
+      alertType="warning"
       fontFamily="Lato"
       lang="pt"
       currencyLang="pt-BR"

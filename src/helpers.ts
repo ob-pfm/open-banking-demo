@@ -1,5 +1,5 @@
 import { toast } from 'react-toastify';
-import { Error } from './libs/sdk/models';
+import { Error } from 'open-banking-pfm-sdk';
 
 export const showErrorToast = (error: Error | Error[]) => {
   if (Array.isArray(error)) {
@@ -14,6 +14,14 @@ export const getUserId = () => {
   const value = localStorage.getItem('user_id');
   if (value) {
     return parseInt(value);
+  }
+  return null;
+};
+
+export const getApiKey = () => {
+  const value = localStorage.getItem('key');
+  if (value) {
+    return value;
   }
   return null;
 };
