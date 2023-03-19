@@ -67,6 +67,7 @@ const TransactionsComponent = () => {
   const [filterText, setFilterText] = useState<string>('');
   const [transactionsData, setTransactionsData] = useState<ITransaction[]>([]);
   const [transactionsFilteredData, setTransactionsFilteredData] = useState<ITransaction[]>([]);
+  const [page, setPage] = useState(0);
   const accountServices = useMemo(() => new AccountsClient(apiKey, URL_SERVER), [apiKey]);
   const categoryServices = useMemo(() => new CategoriesClient(apiKey, URL_SERVER), [apiKey]);
   const transactionServices = useMemo(() => new TransactionsClient(apiKey, URL_SERVER), [apiKey]);
@@ -145,7 +146,7 @@ const TransactionsComponent = () => {
 
         if (userId)
           transactionServices
-            .getList(Number(accountId), parsedFilterOptions)
+            .getList(Number(accountId), { ...parsedFilterOptions, page })
             .then((response) => {
               onSuccess(response.data);
               componentRef.current.totalPages = response.totalPages;
@@ -157,24 +158,14 @@ const TransactionsComponent = () => {
             });
       }
     },
-    [filterOptions, transactionServices, userId]
+    [filterOptions, transactionServices, userId, page]
   );
 
   const handleClickPage = useCallback(
     (e: { detail: number }) => {
       if (filterOptions.accountId) {
         componentRef.current.showModalLoading = true;
-        transactionServices
-          .getList(Number(filterOptions.accountId), { page: e.detail - 1 })
-          .then((response) => {
-            setTransactionsData(response.data);
-            setTransactionsFilteredData(response.data);
-            componentRef.current.showModalLoading = false;
-          })
-          .catch(() => {
-            toast.error('Um erro ocorreu.');
-            componentRef.current.showModalLoading = false;
-          });
+        setPage(e.detail - 1);
       }
     },
     [filterOptions.accountId, transactionServices]
