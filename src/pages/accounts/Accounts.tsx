@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import { AccountsClient, Account, AccountPayload, BanksClient } from 'open-banking-pfm-sdk';
-import { Bank, BankAggregated } from 'open-banking-pfm-sdk/models';
+import { Bank } from 'open-banking-pfm-sdk/models';
+import { BanksClient, Account, AccountsClient, AccountPayload } from 'open-banking-pfm-sdk';
 import '../../libs/wc/ob-accounts-component';
 import { URL_SERVER } from '../../constants';
 import { IOutletContext } from '../../interfaces';
@@ -33,94 +33,22 @@ const AccountsComponent = () => {
 
   const accountServices = useMemo(() => new AccountsClient(apiKey, URL_SERVER), [apiKey]);
   const banksServices = useMemo(() => new BanksClient(apiKey, URL_SERVER), [apiKey]);
-  const [bankAccounts, setBankAccounts] = useState<any[]>([]);
 
-  const handleSaveAccount = useCallback(
-    (e: { detail: ISubmitEventData }) => {
-      if (userId) {
-        const { account, onSuccess } = e.detail;
-        const { financialEntityId, ...rest } = account;
-        const newAccount = new AccountPayload({
-          userId,
-          financialEntityId: parseInt(financialEntityId),
-          ...rest
-        });
-        accountServices.create(newAccount).then((response: Account) => {
-          toast.success('Conta adicionada.');
-          setBankAccounts([response.toObject(), ...bankAccounts]);
-          onSuccess();
-        });
-      }
-    },
-    [accountServices, bankAccounts, userId]
-  );
-
-  const handleEditAccount = useCallback(
-    (e: { detail: ISubmitEventData }) => {
-      if (userId) {
-        const { account, onSuccess } = e.detail;
-        const { id, financialEntityId, ...rest } = account;
-        const editedAccount = new AccountPayload({
-          userId,
-          financialEntityId: parseInt(financialEntityId),
-          ...rest
-        });
-        accountServices.edit(id!, editedAccount).then((response: Account) => {
-          toast.success('Alterações salvas.');
-          setBankAccounts(
-            bankAccounts.map((accountItem) => {
-              if (accountItem.id === id) {
-                return response.toObject();
-              }
-              return accountItem;
-            })
-          );
-          onSuccess();
-        });
-      }
-    },
-    [accountServices, bankAccounts, userId]
-  );
-
-  const handleDeleteAccount = useCallback(
-    (e: { detail: IDeleteEventData }) => {
-      const { accountId, onSuccess } = e.detail;
-      accountServices.delete(accountId).then((response: boolean) => {
-        if (response) {
-          toast.success('Conta apagada.');
-          setBankAccounts(bankAccounts.filter((accountItem) => accountItem.id !== accountId));
-          onSuccess();
-        }
-      });
-    },
-    [accountServices, bankAccounts]
-  );
-
-  const handleClickAccount = useCallback(
-    (e: { detail: IDeleteEventData }) => {
-      navigate(`/pfm/movimientos?account_id=${e.detail}`);
-    },
-    [navigate]
-  );
-
-  useEffect(() => {
+  const loadAccounts = useCallback(() => {
     if (userId) {
       componentRef.current.showMainLoading = true;
-      const promises = [
-        accountServices.getList(userId),
-        banksServices.getAggregates(userId),
-        banksServices.getAvailables()
-      ];
+      const promises = [accountServices.getList(userId), banksServices.getAvailables()];
       Promise.all(promises)
         .then((response) => {
           const accounts: Account[] = response[0] as Account[];
-          const aggregated: BankAggregated[] = response[1] as BankAggregated[];
-          const banks: Bank[] = response[2] as unknown as Bank[];
+          const banks: Bank[] = response[1] as unknown as Bank[];
           const bankAccount: any[] = [];
-          aggregated.forEach((bankAgg) =>
+          const financialEntityIds: number[] = [...new Set(accounts.map((account) => account.financialEntityId))];
+
+          financialEntityIds.forEach((financialEntityId) =>
             bankAccount.push({
-              bank: banks.find((bank) => bankAgg.targetInstitution === bank.bankId),
-              accounts
+              bank: banks.find((bank) => financialEntityId === bank.financialEntityId),
+              accounts: accounts.filter((account) => account.financialEntityId === financialEntityId)
             })
           );
           componentRef.current.banksData = banks;
@@ -134,6 +62,95 @@ const AccountsComponent = () => {
         });
     }
   }, [componentRef, accountServices, banksServices, userId]);
+
+  const handleSaveAccount = useCallback(
+    (e: { detail: ISubmitEventData }) => {
+      if (userId) {
+        componentRef.current.showMainLoading = true;
+        const { account, onSuccess } = e.detail;
+        onSuccess();
+        const { financialEntityId, ...rest } = account;
+        const newAccount = new AccountPayload({
+          userId,
+          financialEntityId: parseInt(financialEntityId),
+          ...rest
+        });
+        accountServices
+          .create(newAccount)
+          .then((_response: Account) => {
+            loadAccounts();
+            toast.success('Conta adicionada.');
+            componentRef.current.showMainLoading = false;
+          })
+          .catch((_error) => {
+            toast.error('Um erro ocorreu.');
+            componentRef.current.showMainLoading = false;
+          });
+      }
+    },
+    [accountServices, userId, loadAccounts]
+  );
+
+  const handleEditAccount = useCallback(
+    (e: { detail: ISubmitEventData }) => {
+      if (userId) {
+        componentRef.current.showMainLoading = true;
+        const { account, onSuccess } = e.detail;
+        onSuccess();
+        const { id, financialEntityId, ...rest } = account;
+        const editedAccount = new AccountPayload({
+          userId,
+          financialEntityId: parseInt(financialEntityId),
+          ...rest
+        });
+        accountServices
+          .edit(id!, editedAccount)
+          .then((_response: Account) => {
+            loadAccounts();
+            toast.success('Alterações salvas.');
+            componentRef.current.showMainLoading = false;
+          })
+          .catch((_error) => {
+            toast.error('Um erro ocorreu.');
+            componentRef.current.showMainLoading = false;
+          });
+      }
+    },
+    [accountServices, userId, loadAccounts]
+  );
+
+  const handleDeleteAccount = useCallback(
+    (e: { detail: IDeleteEventData }) => {
+      componentRef.current.showMainLoading = true;
+      const { accountId, onSuccess } = e.detail;
+      onSuccess();
+      accountServices
+        .delete(accountId)
+        .then((response: boolean) => {
+          if (response) {
+            loadAccounts();
+            toast.success('Conta apagada.');
+            componentRef.current.showMainLoading = false;
+          }
+        })
+        .catch((_error) => {
+          toast.error('Um erro ocorreu.');
+          componentRef.current.showMainLoading = false;
+        });
+    },
+    [accountServices, loadAccounts]
+  );
+
+  const handleClickAccount = useCallback(
+    (e: { detail: IDeleteEventData }) => {
+      navigate(`/pfm/movimientos?account_id=${e.detail}`);
+    },
+    [navigate]
+  );
+
+  useEffect(() => {
+    loadAccounts();
+  }, [loadAccounts]);
 
   useEffect(() => {
     const componentRefCurrent = componentRef.current;
