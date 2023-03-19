@@ -1,3 +1,4 @@
+import 'object.assign/auto';
 import { useEffect, useCallback, useRef, useMemo, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';

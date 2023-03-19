@@ -40,13 +40,10 @@ const ConsentComponent = () => {
 
   const handleSubmitConsent = useCallback(
     (e: { detail: string }) => {
-      const fromDate = new Date();
-      const toDate = new Date();
       const months = parseInt(e.detail);
-      toDate.setMonth(fromDate.getMonth() + months);
       consentWizardComponentRef.current.showModalLoading = true;
       banksClient
-        .createConsent(selectedBank!, userId!, toDate.getTime() - fromDate.getTime())
+        .createConsent(selectedBank!, userId!, Number(months))
         .then((consentResponse) => {
           toast.success('Consentimento criado.');
           consentWizardComponentRef.current.showModalLoading = false;

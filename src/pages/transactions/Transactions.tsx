@@ -4,8 +4,6 @@ import { toast } from 'react-toastify';
 import {
   AccountsClient,
   CategoriesClient,
-  Category,
-  ParentCategory,
   TransactionsClient,
   Transaction,
   TransactionPayload,
@@ -20,7 +18,8 @@ import '../../libs/wc/ob-transactions-component';
 import { ITransactionFilterEvent } from './interfaces';
 
 interface TransactionsOptions {
-  accounts: string[];
+  accounts: IAccount[];
+  accountId: number;
   minAmount: string;
   maxAmount: string;
   categoryId: string;
@@ -55,6 +54,7 @@ const TransactionsComponent = () => {
   const { isProcessing, alertText, userId, apiKey } = useOutletContext<IOutletContext>();
   const [filterOptions, setFilterOptions] = useState<TransactionsOptions>({
     accounts: [],
+    accountId: 0,
     minAmount: '',
     maxAmount: '',
     categoryId: '',
@@ -66,7 +66,6 @@ const TransactionsComponent = () => {
   });
   const [filterText, setFilterText] = useState<string>('');
   const [transactionsData, setTransactionsData] = useState<ITransaction[]>([]);
-  const [cursors, setCursors] = useState<Map<string, number>>(new Map());
   const [transactionsFilteredData, setTransactionsFilteredData] = useState<ITransaction[]>([]);
   const accountServices = useMemo(() => new AccountsClient(apiKey, URL_SERVER), [apiKey]);
   const categoryServices = useMemo(() => new CategoriesClient(apiKey, URL_SERVER), [apiKey]);
@@ -74,12 +73,14 @@ const TransactionsComponent = () => {
 
   const getFiltersFromObject = ({
     accounts,
+    accountId,
     categoryId,
     subcategoryId,
     dateFrom,
     dateTo
   }: {
-    accounts?: string[] | null;
+    accounts?: IAccount[] | null;
+    accountId?: number | null;
     categoryId?: string | null;
     subcategoryId?: string | null;
     dateFrom?: string | null;
@@ -87,6 +88,7 @@ const TransactionsComponent = () => {
   }) => {
     const tempOptions: any = {};
     if (accounts) tempOptions.accounts = accounts;
+    if (accountId) tempOptions.accountId = accountId;
     if (categoryId) tempOptions.categoryId = categoryId;
     if (subcategoryId) tempOptions.subcategoryId = subcategoryId;
     if (dateFrom) {
@@ -103,65 +105,21 @@ const TransactionsComponent = () => {
     return tempOptions;
   };
 
-  const getFilteredTransactions = useCallback(
-    (transactions: Transaction[], categoryId?: string, subcategoryId?: string) => {
-      if (categoryId && !subcategoryId) {
-        const selectedCategory = componentRef.current.categoriesData.find(
-          (category: ParentCategory) => category.id === parseInt(categoryId)
-        );
-        if (selectedCategory && selectedCategory.subcategories) {
-          const subcategoryDictionary: { [key: string]: boolean } = selectedCategory.subcategories.reduce(
-            (
-              acc: {
-                [key: string]: boolean;
-              },
-              subcategory: Category
-            ) => ({ ...acc, [subcategory.id]: true }),
-            {}
-          );
-          return transactions.filter((transaction) => subcategoryDictionary[transaction.categoryId]);
-        }
-      }
-      return transactions;
-    },
-    []
-  );
-  const loadMore = useCallback(() => {
-    const transPromises: Promise<Transaction[]>[] = [];
-    for (const [key, value] of cursors) {
-      if (value !== 0) {
-        transPromises.push(
-          new Promise((resolve, reject) => {
-            transactionServices
-              .getList(Number(key), { cursor: value })
-              .then((response) => {
-                setCursors(cursors?.set(key, response.nextCursor));
-                resolve(response.data);
-              })
-              .catch(() => reject());
-          })
-        );
-      }
-    }
-    Promise.all(transPromises)
-      .then((response) => {
-        const transactions: Transaction[] = [];
-        response.forEach((trArray) => transactions.push(...trArray));
-        setTransactionsData([...transactionsData, ...transactions]);
-        componentRef.current.showModalLoading = false;
-      })
-      .catch(() => {
-        toast.error('Um erro ocorreu.');
-        componentRef.current.showModalLoading = false;
-      });
-  }, [cursors, transactionServices, transactionsData, setCursors]);
-
   const filterTransactions = useCallback(
     (onSuccess: (response: Transaction[]) => void) => {
       const parsedFilterOptions: IListOptions = {};
       if (filterOptions) {
-        const { accounts, withCharges, withDebits, categoryId, subcategoryId, dateFrom, dateTo, minAmount, maxAmount } =
-          filterOptions;
+        const {
+          accountId,
+          withCharges,
+          withDebits,
+          categoryId,
+          subcategoryId,
+          dateFrom,
+          dateTo,
+          minAmount,
+          maxAmount
+        } = filterOptions;
         if (minAmount) {
           parsedFilterOptions.minAmount = parseFloat(minAmount);
         }
@@ -184,25 +142,33 @@ const TransactionsComponent = () => {
             parsedFilterOptions.categoryId = parseInt(categoryId);
           }
         }
-        const transPromises: Promise<Transaction[]>[] = accounts.map(
-          (accountId: string) =>
-            new Promise((resolve, reject) => {
-              if (userId)
-                transactionServices
-                  .getList(Number(accountId), parsedFilterOptions)
-                  .then((response) => {
-                    const filteredTransactions: Transaction[] = getFilteredTransactions(response.data);
-                    setCursors(cursors?.set(accountId, response.nextCursor));
-                    resolve(filteredTransactions);
-                  })
-                  .catch(() => reject());
+
+        if (userId)
+          transactionServices
+            .getList(Number(accountId), parsedFilterOptions)
+            .then((response) => {
+              onSuccess(response.data);
+              componentRef.current.totalPages = response.totalPages;
+              componentRef.current.showModalLoading = false;
             })
-        );
-        Promise.all(transPromises)
+            .catch(() => {
+              toast.error('Um erro ocorreu.');
+              componentRef.current.showModalLoading = false;
+            });
+      }
+    },
+    [filterOptions, transactionServices, userId]
+  );
+
+  const handleClickPage = useCallback(
+    (e: { detail: number }) => {
+      if (filterOptions.accountId) {
+        componentRef.current.showModalLoading = true;
+        transactionServices
+          .getList(Number(filterOptions.accountId), { page: e.detail - 1 })
           .then((response) => {
-            const transactions: Transaction[] = [];
-            response.forEach((trArray) => transactions.push(...trArray));
-            onSuccess(transactions);
+            setTransactionsData(response.data);
+            setTransactionsFilteredData(response.data);
             componentRef.current.showModalLoading = false;
           })
           .catch(() => {
@@ -211,42 +177,30 @@ const TransactionsComponent = () => {
           });
       }
     },
-    [filterOptions, transactionServices, getFilteredTransactions, userId, setCursors, cursors]
+    [filterOptions.accountId, transactionServices]
   );
-  const handleSaveTransaction = useCallback(
-    (e: { detail: ISubmitEventData }) => {
-      componentRef.current.showModalLoading = true;
-      const { transaction, onSuccess } = e.detail;
-      const newTransaction = new TransactionPayload({ ...transaction });
-      transactionServices
-        .create(newTransaction)
-        .then(() => {
-          filterTransactions((transactionsRes: Transaction[]) => {
-            setTransactionsData(transactionsRes);
-            setTransactionsFilteredData(transactionsRes);
-            onSuccess();
-            toast.success('Nuevo Movimiento agregado.');
-            componentRef.current.showModalLoading = false;
-          });
-        })
-        .catch(() => {
-          toast.error('Um erro ocorreu.');
-          componentRef.current.showModalLoading = false;
-        });
-    },
-    [transactionServices, filterTransactions]
-  );
+
   const handleFilterText = useCallback((e: { detail: ITransactionFilterEvent }) => {
     const filter = e.detail.description.toLowerCase();
     setFilterText(filter);
   }, []);
+
   const handleFilter = useCallback(
     (e: { detail: ITransactionFilterEvent }) => {
-      const { accountId, categoryId, subcategoryId, minAmount, maxAmount, withCharges, withDebits, dateFrom, dateTo } =
-        e.detail;
-      const accountIdStr = Number(accountId);
+      const {
+        accountId: accountIdFilter,
+        categoryId,
+        subcategoryId,
+        minAmount,
+        maxAmount,
+        withCharges,
+        withDebits,
+        dateFrom,
+        dateTo
+      } = e.detail;
+      const accountIdStr = Number(accountIdFilter);
       let transactions = transactionsData;
-      if (accountId !== '') transactions = transactions.filter((tr) => tr.accountId === accountIdStr);
+      if (accountIdFilter !== '') transactions = transactions.filter((tr) => tr.accountId === accountIdStr);
       if (subcategoryId !== '') {
         const subCatId = Number(subcategoryId);
         transactions = transactions.filter((tr) => tr.categoryId === subCatId);
@@ -276,6 +230,33 @@ const TransactionsComponent = () => {
     },
     [transactionsData]
   );
+
+  const handleSaveTransaction = useCallback(
+    (e: { detail: ISubmitEventData }) => {
+      componentRef.current.showModalLoading = true;
+      const { transaction, onSuccess } = e.detail;
+      const newTransaction = new TransactionPayload({ ...transaction });
+      transactionServices
+        .create(newTransaction)
+        .then(() => {
+          filterTransactions((transactionsRes: Transaction[]) => {
+            setTransactionsData(transactionsRes);
+            setTransactionsFilteredData(transactionsRes);
+            if (transactionsRes.length > 0) componentRef.current.isEmpty = false;
+            else componentRef.current.isEmpty = true;
+            onSuccess();
+            toast.success('Nuevo Movimiento agregado.');
+            componentRef.current.showModalLoading = false;
+          });
+        })
+        .catch(() => {
+          toast.error('Um erro ocorreu.');
+          componentRef.current.showModalLoading = false;
+        });
+    },
+    [transactionServices, filterTransactions]
+  );
+
   const handleEditTransaction = useCallback(
     (e: { detail: ISubmitEventData }) => {
       componentRef.current.showModalLoading = true;
@@ -300,6 +281,7 @@ const TransactionsComponent = () => {
     },
     [transactionServices, filterTransactions]
   );
+
   const handleDeleteTransaction = useCallback(
     (e: { detail: IDeleteEventData }) => {
       componentRef.current.showModalLoading = true;
@@ -310,6 +292,8 @@ const TransactionsComponent = () => {
           filterTransactions((transactionsRes: Transaction[]) => {
             setTransactionsData(transactionsRes);
             setTransactionsFilteredData(transactionsRes);
+            if (transactionsRes.length > 0) componentRef.current.isEmpty = false;
+            else componentRef.current.isEmpty = true;
             onSuccess();
             toast.success('Movimiento apagado.');
             componentRef.current.showModalLoading = false;
@@ -321,6 +305,14 @@ const TransactionsComponent = () => {
         });
     },
     [transactionServices, filterTransactions]
+  );
+
+  const handleChangeAccount = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      componentRef.current.showModalLoading = true;
+      setFilterOptions({ ...filterOptions, accountId: Number(e.target.value) });
+    },
+    [filterOptions]
   );
 
   useEffect(() => {
@@ -342,7 +334,7 @@ const TransactionsComponent = () => {
 
   useEffect(() => {
     if (userId) {
-      const accountId = searchParams.get('account_id');
+      const accountIdParam = searchParams.get('account_id');
       const subcategoryId = searchParams.get('subcategory_id');
       const categoryId = searchParams.get('category_id');
       const dateFrom = searchParams.get('date_from');
@@ -357,10 +349,12 @@ const TransactionsComponent = () => {
         .then((response: Account[]) => {
           const accounts = response.map((acc: Account) => acc.toObject());
           componentRef.current.accountsData = accounts;
-          if (!accountId)
+
+          if (accountIdParam)
             setFilterOptions(
               getFiltersFromObject({
-                accounts: accounts.map((acc: IAccount) => acc.id.toString()),
+                accounts,
+                accountId: Number(accountIdParam),
                 categoryId,
                 subcategoryId,
                 dateFrom,
@@ -370,7 +364,8 @@ const TransactionsComponent = () => {
           else
             setFilterOptions(
               getFiltersFromObject({
-                accounts: [accountId],
+                accounts,
+                accountId: Number(accounts[0].id),
                 categoryId,
                 subcategoryId,
                 dateFrom,
@@ -383,10 +378,12 @@ const TransactionsComponent = () => {
         });
     }
   }, [accountServices, searchParams, userId]);
+
   useEffect(() => {
     if (filterOptions.accounts.length > 0) {
       filterTransactions((transactionsRes: Transaction[]) => {
         if (transactionsRes.length) {
+          componentRef.current.isEmpty = false;
           setTransactionsData(transactionsRes);
           setTransactionsFilteredData(transactionsRes);
         } else {
@@ -404,6 +401,14 @@ const TransactionsComponent = () => {
     componentRefCurrent.addEventListener('delete', handleDeleteTransaction);
     componentRefCurrent.addEventListener('filter-trigger', handleFilter);
     componentRefCurrent.addEventListener('filter-text-trigger', handleFilterText);
+    componentRefCurrent.addEventListener('click-page', handleClickPage);
+    componentRefCurrent.addEventListener('click-prev-page', handleClickPage);
+    componentRefCurrent.addEventListener('click-next-page', handleClickPage);
+    componentRefCurrent.componentStyles = `
+      .obwc-sidebar-modal__body form .obwc-filter-transactions-modal__row:first-child{
+        display:none;
+      }
+    `;
 
     return () => {
       componentRefCurrent.removeEventListener('save-new', handleSaveTransaction);
@@ -411,14 +416,36 @@ const TransactionsComponent = () => {
       componentRefCurrent.removeEventListener('delete', handleDeleteTransaction);
       componentRefCurrent.addEventListener('filter-trigger', handleFilter);
       componentRefCurrent.addEventListener('filter-text-trigger', handleFilterText);
+      componentRefCurrent.addEventListener('click-page', handleClickPage);
+      componentRefCurrent.addEventListener('click-prev-page', handleClickPage);
+      componentRefCurrent.addEventListener('click-next-page', handleClickPage);
     };
-  }, [handleSaveTransaction, handleEditTransaction, handleDeleteTransaction, handleFilter, handleFilterText]);
+  }, [
+    handleSaveTransaction,
+    handleEditTransaction,
+    handleDeleteTransaction,
+    handleFilter,
+    handleFilterText,
+    handleClickPage
+  ]);
+
   useEffect(() => {
     componentRef.current.transactionsData = transactionsFilteredData;
+    componentRef.current.scrollIntoView();
   }, [transactionsFilteredData]);
 
   return (
     <>
+      <div className="selectContainer">
+        <select onChange={handleChangeAccount} value={filterOptions.accountId}>
+          {filterOptions.accounts &&
+            filterOptions.accounts.map((account) => (
+              <option key={account.id} value={account.id}>
+                {account.name}
+              </option>
+            ))}
+        </select>
+      </div>
       <ob-transactions-component
         ref={componentRef}
         alertType="warning"
@@ -430,11 +457,6 @@ const TransactionsComponent = () => {
         currencyType="BRL"
         searchDebounceTime={500}
       />
-      {Array.from(cursors.values()).filter((value) => value !== 0).length > 0 && (
-        <button onClick={() => loadMore()} type="button">
-          Mais
-        </button>
-      )}
     </>
   );
 };
