@@ -146,7 +146,7 @@ const TransactionsComponent = () => {
 
         if (userId)
           transactionServices
-            .getList(Number(accountId), { ...parsedFilterOptions, page })
+            .getList(Number(accountId), { ...parsedFilterOptions, page, field: 'executionDate' })
             .then((response) => {
               onSuccess(response.data);
               componentRef.current.totalPages = response.totalPages;
@@ -165,10 +165,11 @@ const TransactionsComponent = () => {
     (e: { detail: number }) => {
       if (filterOptions.accountId) {
         componentRef.current.showModalLoading = true;
+        componentRef.current.activePage = Number(e.detail);
         setPage(e.detail - 1);
       }
     },
-    [filterOptions.accountId, transactionServices]
+    [filterOptions.accountId]
   );
 
   const handleFilterText = useCallback((e: { detail: ITransactionFilterEvent }) => {
@@ -301,9 +302,11 @@ const TransactionsComponent = () => {
   const handleChangeAccount = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       componentRef.current.showModalLoading = true;
+      componentRef.current.activePage = 1;
+      setPage(0);
       setFilterOptions({ ...filterOptions, accountId: Number(e.target.value) });
     },
-    [filterOptions]
+    [filterOptions, componentRef]
   );
 
   useEffect(() => {
@@ -447,6 +450,7 @@ const TransactionsComponent = () => {
         currencyLang="pt-BR"
         currencyType="BRL"
         searchDebounceTime={500}
+        activePage={1}
       />
     </>
   );
