@@ -15,31 +15,38 @@ import BudgetsComponent from './pages/budgets/Budgets';
 import CategoriesComponent from './pages/categories/Categories';
 import SummaryComponent from './pages/summary/Summary';
 import SignUp from './pages/signup/Signup';
+import { getApiKey } from './helpers';
 
 function App() {
   const { pathname } = useLocation();
+  const apiKey = getApiKey();
 
   return (
     <>
       {pathname !== '/consume-consent' && <Header />}
       <div className="main-container">
         <Routes>
-          <Route path="/" element={<SignUp />} />
-          <Route path="/meus-produtos" element={<MyProductsPage />} />
-          <Route path="/contas" element={<AccountsPage />} />
-          <Route path="/cartoes" element={<CardsPage />} />
-          <Route path="/meus-emprestimos" element={<MyLoansPage />} />
-          <Route path="/meus-investimentos" element={<MyInvestmentsPage />} />
-          <Route path="/consume-consent" element={<ConsumeConsentPage />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/pfm" element={<PFMPage />}>
-            <Route path="" element={<ConsentComponent />} />
-            <Route path="cuentas" element={<AccountsComponent />} />
-            <Route path="movimientos" element={<TransactionsComponent />} />
-            <Route path="resumen" element={<SummaryComponent />} />
-            <Route path="categorias" element={<CategoriesComponent />} />
-            <Route path="presupuestos" element={<BudgetsComponent />} />
-          </Route>
+          {apiKey ? (
+            <>
+              <Route path="/" element={<SignUp />} />
+              <Route path="/meus-produtos" element={<MyProductsPage />} />
+              <Route path="/contas" element={<AccountsPage />} />
+              <Route path="/cartoes" element={<CardsPage />} />
+              <Route path="/meus-emprestimos" element={<MyLoansPage />} />
+              <Route path="/meus-investimentos" element={<MyInvestmentsPage />} />
+              <Route path="/consume-consent" element={<ConsumeConsentPage />} />
+              <Route path="/pfm" element={<PFMPage />}>
+                <Route path="" element={<ConsentComponent />} />
+                <Route path="cuentas" element={<AccountsComponent />} />
+                <Route path="movimientos" element={<TransactionsComponent />} />
+                <Route path="resumen" element={<SummaryComponent />} />
+                <Route path="categorias" element={<CategoriesComponent />} />
+                <Route path="presupuestos" element={<BudgetsComponent />} />
+              </Route>
+            </>
+          ) : (
+            <Route path="/*" element={<SignUp />} />
+          )}
         </Routes>
 
         <ToastContainer

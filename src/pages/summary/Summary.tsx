@@ -14,7 +14,7 @@ const getDateRange = (date: Date) => {
   const month = date.getMonth();
   const year = date.getFullYear();
   return {
-    iniDate: new Date(year, month, 1).getTime(),
+    iniDate: new Date(year, month - 6, 1).getTime(),
     endDate: new Date(month === 11 ? year + 1 : year, month === 11 ? 0 : month + 1, 1).getTime()
   };
 };
@@ -41,6 +41,7 @@ const SummaryComponent = () => {
       navigate({
         pathname: '../movimientos',
         search: createSearchParams({
+          account_id: `${accountId}`,
           category_id: `${summary.parentCategoryId}`,
           subcategory_id: `${summary.categoryId}`,
           date_from: `${iniDate}`,
@@ -48,24 +49,30 @@ const SummaryComponent = () => {
         }).toString()
       });
     },
-    [navigate]
+    [navigate, accountId]
   );
 
   const handleTransactionDetailClick = useCallback(
     (e: { detail: ISubmitEventData }) => {
-      const { summary, date } = e.detail;
+      const { date } = e.detail;
       const { iniDate, endDate } = getDateRange(new Date(date));
       navigate({
         pathname: '../movimientos',
         search: createSearchParams({
-          category_id: `${summary.categoryId}`,
+          account_id: `${accountId}`,
           date_from: `${iniDate}`,
           date_to: `${endDate}`
         }).toString()
       });
     },
-    [navigate]
+    [navigate, accountId]
   );
+
+  const handleEmptyActionClick = useCallback(() => {
+    navigate({
+      pathname: '../movimientos'
+    });
+  }, [navigate]);
 
   const handleChangeAccount = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     setAccountId(Number(e.target.value));
@@ -114,12 +121,13 @@ const SummaryComponent = () => {
         insightsServices
           .getResume(userId, { accountId })
           .then((insights) => {
-            if (insights) {
+            if (insights && (insights.incomes.length > 0 || insights.expenses.length > 0)) {
               componentRef.current.summaryData = {
                 balances: insights.balances,
                 expenses: insights.expenses,
                 incomes: insights.incomes
               };
+              componentRef.current.isEmpty = false;
             } else componentRef.current.isEmpty = true;
 
             componentRef.current.showMainLoading = false;
@@ -135,12 +143,19 @@ const SummaryComponent = () => {
     const componentRefCurrent = componentRef.current;
     componentRefCurrent.addEventListener('subcategory-detail-click', handleSubcategoryDetailClick);
     componentRefCurrent.addEventListener('transactions-detail-click', handleTransactionDetailClick);
+    componentRefCurrent.addEventListener('empty-button-click', handleEmptyActionClick);
+    componentRefCurrent.componentStyles = `
+      .obwc-expenses__table-transactions-icon{
+        display:none;
+      }
+    `;
 
     return () => {
       componentRefCurrent.removeEventListener('subcategory-detail-click', handleSubcategoryDetailClick);
       componentRefCurrent.removeEventListener('transactions-detail-click', handleTransactionDetailClick);
+      componentRefCurrent.addEventListener('empty-button-click', handleEmptyActionClick);
     };
-  }, [handleSubcategoryDetailClick, handleTransactionDetailClick]);
+  }, [handleSubcategoryDetailClick, handleTransactionDetailClick, handleEmptyActionClick]);
   return (
     <>
       <div className="selectContainer">
@@ -162,6 +177,7 @@ const SummaryComponent = () => {
         lang="pt"
         currencyLang="pt-BR"
         currencyType="BRL"
+        emptyViewActionText="Agregar movimento"
       />
     </>
   );
