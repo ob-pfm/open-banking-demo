@@ -27,7 +27,7 @@ const Menu = ({ userId }: { userId: number | null }) => {
           }`}
         >
           <Link className="menu__nav-link" to="movimientos">
-            Movimientos
+            Movimentos
           </Link>
         </div>
         <div
