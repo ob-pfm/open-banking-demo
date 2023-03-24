@@ -158,6 +158,14 @@ const AccountsComponent = () => {
     componentRefCurrent.addEventListener('save-edit', handleEditAccount);
     componentRefCurrent.addEventListener('delete', handleDeleteAccount);
     componentRefCurrent.addEventListener('click-account-collapsible-section', handleClickAccount);
+    componentRefCurrent.componentStyles = `
+      .obwc-accounts__balance-list-card .obwc-accounts__short-term-balance-item{
+        display:none;
+      }
+      .obwc-accounts__balance-list-card .obwc-accounts__long-term-balance-item{
+        display:none;
+      }
+    `;
 
     return () => {
       componentRefCurrent.removeEventListener('save-new', handleSaveAccount);

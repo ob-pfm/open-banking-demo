@@ -25,3 +25,6 @@ export const getApiKey = () => {
   }
   return null;
 };
+
+export const unicodeToChar = (text: string) =>
+  text.replace(/\\u[\dA-F]{4}/gi, (match) => String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16)));

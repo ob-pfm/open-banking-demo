@@ -6,7 +6,7 @@ import { URL_SERVER } from '../../constants';
 
 import '../../libs/wc/ob-summary-component';
 import { IOutletContext } from '../../interfaces';
-import { showErrorToast } from '../../helpers';
+import { showErrorToast, unicodeToChar } from '../../helpers';
 
 import './summary.css';
 
@@ -14,7 +14,7 @@ const getDateRange = (date: Date) => {
   const month = date.getMonth();
   const year = date.getFullYear();
   return {
-    iniDate: new Date(year, month - 6, 1).getTime(),
+    iniDate: new Date(year, month, 1).getTime(),
     endDate: new Date(month === 11 ? year + 1 : year, month === 11 ? 0 : month + 1, 1).getTime()
   };
 };
@@ -163,7 +163,7 @@ const SummaryComponent = () => {
           {accountsList &&
             accountsList.map((account) => (
               <option key={account.id} value={account.id}>
-                {account.name}
+                {unicodeToChar(account.name)}
               </option>
             ))}
         </select>
