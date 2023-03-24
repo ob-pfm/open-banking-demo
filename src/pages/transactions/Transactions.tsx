@@ -11,7 +11,7 @@ import {
 } from 'open-banking-pfm-sdk';
 import { IAccount, IListOptions, ITransaction } from 'open-banking-pfm-sdk/interfaces';
 import { URL_SERVER } from '../../constants';
-import { showErrorToast } from '../../helpers';
+import { showErrorToast, unicodeToChar } from '../../helpers';
 import { IOutletContext } from '../../interfaces';
 
 import '../../libs/wc/ob-transactions-component';
@@ -435,7 +435,7 @@ const TransactionsComponent = () => {
           {filterOptions.accounts &&
             filterOptions.accounts.map((account) => (
               <option key={account.id} value={account.id}>
-                {account.name}
+                {unicodeToChar(account.name)}
               </option>
             ))}
         </select>

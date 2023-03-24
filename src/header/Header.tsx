@@ -19,7 +19,7 @@ const Header = () => {
           </div>
         ) : (
           <>
-            {' '}
+            {/**
             <div
               className={`menu__nav-item--disabled header__nav-item ${
                 location &&
@@ -67,6 +67,7 @@ const Header = () => {
                 Meus investimentos
               </Link>
             </div>
+            */}
             <div
               className={`header__nav-item ${
                 location && location.pathname.includes('pfm') && 'header__nav-item--selected'
