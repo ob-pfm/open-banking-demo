@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
-import { Bank, buildClients } from 'open-banking-pfm-sdk';
 import { toast } from 'react-toastify';
+import { Bank, buildClients } from 'open-banking-pfm-sdk';
 import { showErrorToast } from '../../helpers';
 import { URL_SERVER } from '../../constants';
 
@@ -11,7 +11,7 @@ import { IOutletContext } from '../../interfaces';
 const ConsentComponent = () => {
   const navigate = useNavigate();
   const { setIsProcessing, userId, initConsent, handleSetAggBankId, apiKey } = useOutletContext<IOutletContext>();
-  const { banksClient } = useMemo(() => buildClients(apiKey, URL_SERVER), [apiKey]);
+  const { banksClient, consentsClient } = useMemo(() => buildClients(apiKey, URL_SERVER), [apiKey]);
   const consentWizardComponentRef = useRef<any>(null);
   const [selectedBank, selectBank] = useState<string | null>(null);
 
@@ -78,7 +78,24 @@ const ConsentComponent = () => {
 
   useEffect(() => {
     if (initConsent) openModalConsent();
-  }, [initConsent, openModalConsent]);
+    else if (userId) {
+      consentWizardComponentRef.current.showMainLoading = true;
+      const promises = [consentsClient.getList(userId), banksClient.getAvailables()];
+      Promise.all(promises)
+        .then((response) => {
+          const [consents, banks] = response;
+          consentWizardComponentRef.current.banksData = banks;
+          consentWizardComponentRef.current.consentsData = consents;
+          consentWizardComponentRef.current.showMainLoading = false;
+        })
+        .catch((error) => {
+          consentWizardComponentRef.current.banksData = [];
+          consentWizardComponentRef.current.consentsData = [];
+          consentWizardComponentRef.current.showMainLoading = false;
+          showErrorToast(error);
+        });
+    }
+  }, [initConsent, openModalConsent, userId, banksClient, consentsClient]);
 
   return <ob-consent-wizard-component ref={consentWizardComponentRef} fontFamily="Lato" lang="pt" title="" />;
 };

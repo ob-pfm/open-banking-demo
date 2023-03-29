@@ -42,17 +42,8 @@ const AccountsComponent = () => {
         .then((response) => {
           const accounts: Account[] = response[0] as Account[];
           const banks: Bank[] = response[1] as unknown as Bank[];
-          const bankAccount: any[] = [];
-          const financialEntityIds: number[] = [...new Set(accounts.map((account) => account.financialEntityId))];
-
-          financialEntityIds.forEach((financialEntityId) =>
-            bankAccount.push({
-              bank: banks.find((bank) => financialEntityId === bank.financialEntityId),
-              accounts: accounts.filter((account) => account.financialEntityId === financialEntityId)
-            })
-          );
           componentRef.current.banksData = banks;
-          componentRef.current.banksAccountData = bankAccount;
+          componentRef.current.accountsData = accounts;
           componentRef.current.showMainLoading = false;
         })
         .catch((error) => {
