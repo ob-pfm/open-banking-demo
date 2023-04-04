@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Bank, buildClients } from 'open-banking-pfm-sdk';
+import { Bank, buildClients } from '../../libs/sdk';
+import { ConsentDetail } from '../../libs/sdk/models';
 import { showErrorToast } from '../../helpers';
 import { URL_SERVER } from '../../constants';
 
 import '../../libs/wc/ob-consent-wizard-component';
 import { IOutletContext } from '../../interfaces';
+import { IConsentRenewEvent } from './interfaces';
 
 const ConsentComponent = () => {
   const navigate = useNavigate();
@@ -14,6 +16,26 @@ const ConsentComponent = () => {
   const { banksClient, consentsClient } = useMemo(() => buildClients(apiKey, URL_SERVER), [apiKey]);
   const consentWizardComponentRef = useRef<any>(null);
   const [selectedBank, selectBank] = useState<string | null>(null);
+
+  const loadConsents = useCallback(() => {
+    if (userId) {
+      consentWizardComponentRef.current.showMainLoading = true;
+      const promises = [consentsClient.getList(userId), banksClient.getAvailables()];
+      Promise.all(promises)
+        .then((response) => {
+          const [consents, banks] = response;
+          consentWizardComponentRef.current.banksData = banks;
+          consentWizardComponentRef.current.consentsData = consents;
+          consentWizardComponentRef.current.showMainLoading = false;
+        })
+        .catch((error) => {
+          consentWizardComponentRef.current.banksData = [];
+          consentWizardComponentRef.current.consentsData = [];
+          consentWizardComponentRef.current.showMainLoading = false;
+          showErrorToast(error);
+        });
+    }
+  }, [consentsClient, banksClient, userId]);
 
   const openModalConsent = useCallback(() => {
     consentWizardComponentRef.current.isShown = true;
@@ -30,6 +52,13 @@ const ConsentComponent = () => {
   const handleSelectBank = useCallback(
     (e: { detail: string }) => {
       selectBank(e.detail);
+    },
+    [selectBank]
+  );
+
+  const handleRenewConsent = useCallback(
+    (e: { detail: IConsentRenewEvent }) => {
+      selectBank(e.detail.financialEntity.bankId);
     },
     [selectBank]
   );
@@ -61,6 +90,41 @@ const ConsentComponent = () => {
     [banksClient, selectedBank, closeConsentWizard, userId, handleSetAggBankId, setIsProcessing, navigate]
   );
 
+  const handleSelectConsent = useCallback(
+    (e: { detail: ConsentDetail }) => {
+      consentWizardComponentRef.current.showModalLoading = true;
+      consentWizardComponentRef.current.consentSelectedData = '';
+      consentsClient
+        .get(e.detail.consentId)
+        .then((consent) => {
+          consentWizardComponentRef.current.consentSelectedData = consent;
+          consentWizardComponentRef.current.showModalLoading = false;
+        })
+        .catch((error) => {
+          showErrorToast(error);
+          consentWizardComponentRef.current.showModalLoading = false;
+        });
+    },
+    [consentsClient]
+  );
+
+  const handleCancelConsent = useCallback(
+    (e: { detail: ConsentDetail }) => {
+      consentWizardComponentRef.current.showModalLoading = true;
+      consentsClient
+        .delete(e.detail.consentId)
+        .then((_response) => {
+          consentWizardComponentRef.current.showModalLoading = false;
+          loadConsents();
+        })
+        .catch((error) => {
+          showErrorToast(error);
+          consentWizardComponentRef.current.showModalLoading = false;
+        });
+    },
+    [consentsClient, loadConsents]
+  );
+
   useEffect(() => {
     const consentWizardComponentRefCurrent = consentWizardComponentRef.current;
 
@@ -68,36 +132,35 @@ const ConsentComponent = () => {
     consentWizardComponentRefCurrent.addEventListener('on-submit', handleSubmitConsent);
     consentWizardComponentRefCurrent.addEventListener('close-modal', closeConsentWizard);
     consentWizardComponentRefCurrent.addEventListener('on-click-add', openModalConsent);
+    consentWizardComponentRefCurrent.addEventListener('select-consent', handleSelectConsent);
+    consentWizardComponentRefCurrent.addEventListener('renew-consent', handleRenewConsent);
+    consentWizardComponentRefCurrent.addEventListener('cancel-consent-confirm', handleCancelConsent);
+
     return () => {
       consentWizardComponentRefCurrent.removeEventListener('select-bank', handleSelectBank);
       consentWizardComponentRefCurrent.removeEventListener('on-submit', handleSubmitConsent);
       consentWizardComponentRefCurrent.removeEventListener('close-modal', closeConsentWizard);
       consentWizardComponentRefCurrent.addEventListener('on-click-add', openModalConsent);
+      consentWizardComponentRefCurrent.addEventListener('select-consent', handleSelectConsent);
+      consentWizardComponentRefCurrent.addEventListener('renew-consent', handleRenewConsent);
+      consentWizardComponentRefCurrent.addEventListener('cancel-consent-confirm', handleCancelConsent);
     };
-  }, [closeConsentWizard, handleSubmitConsent, handleSelectBank, openModalConsent]);
+  }, [
+    closeConsentWizard,
+    handleSubmitConsent,
+    handleSelectBank,
+    openModalConsent,
+    handleSelectConsent,
+    handleRenewConsent,
+    handleCancelConsent
+  ]);
 
   useEffect(() => {
     if (initConsent) openModalConsent();
-    else if (userId) {
-      consentWizardComponentRef.current.showMainLoading = true;
-      const promises = [consentsClient.getList(userId), banksClient.getAvailables()];
-      Promise.all(promises)
-        .then((response) => {
-          const [consents, banks] = response;
-          consentWizardComponentRef.current.banksData = banks;
-          consentWizardComponentRef.current.consentsData = consents;
-          consentWizardComponentRef.current.showMainLoading = false;
-        })
-        .catch((error) => {
-          consentWizardComponentRef.current.banksData = [];
-          consentWizardComponentRef.current.consentsData = [];
-          consentWizardComponentRef.current.showMainLoading = false;
-          showErrorToast(error);
-        });
-    }
-  }, [initConsent, openModalConsent, userId, banksClient, consentsClient]);
+    else if (userId) loadConsents();
+  }, [initConsent, openModalConsent, userId, loadConsents]);
 
-  return <ob-consent-wizard-component ref={consentWizardComponentRef} fontFamily="Lato" lang="pt" title="" />;
+  return <ob-consent-wizard-component ref={consentWizardComponentRef} fontFamily="Lato" lang="pt" />;
 };
 
 export default ConsentComponent;
