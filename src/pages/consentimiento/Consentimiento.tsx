@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Bank, buildClients } from '../../libs/sdk';
-import { ConsentDetail } from '../../libs/sdk/models';
+import { Bank, buildClients } from 'open-banking-pfm-sdk';
+import { ConsentDetail } from 'open-banking-pfm-sdk/models';
 import { showErrorToast } from '../../helpers';
 import { URL_SERVER } from '../../constants';
 
@@ -16,6 +16,8 @@ const ConsentComponent = () => {
   const { banksClient, consentsClient } = useMemo(() => buildClients(apiKey, URL_SERVER), [apiKey]);
   const consentWizardComponentRef = useRef<any>(null);
   const [selectedBank, selectBank] = useState<string | null>(null);
+  const [filterType, setFilterType] = useState<string | null>(null);
+  const [filterStatus, setFilterStatus] = useState<string | null>(null);
 
   const loadConsents = useCallback(() => {
     if (userId) {
@@ -125,6 +127,31 @@ const ConsentComponent = () => {
     [consentsClient, loadConsents]
   );
 
+  const handleFilter = useCallback((e: { detail: { name: string; label: string; value: string } }) => {
+    if (e.detail.name === 'consenttype') setFilterType(e.detail.value);
+    else if (e.detail.name === 'consentstatus') setFilterStatus(e.detail.value);
+  }, []);
+
+  useEffect(() => {
+    if (userId) {
+      consentWizardComponentRef.current.showMainLoading = true;
+      const filter: { type?: string; status?: string } = {};
+      if (filterType !== null) filter.type = filterType;
+      if (filterStatus !== null) filter.status = filterStatus;
+      consentsClient
+        .getList(userId, filter)
+        .then((consents) => {
+          consentWizardComponentRef.current.consentsData = consents;
+          consentWizardComponentRef.current.showMainLoading = false;
+        })
+        .catch((error) => {
+          consentWizardComponentRef.current.consentsData = [];
+          consentWizardComponentRef.current.showMainLoading = false;
+          showErrorToast(error);
+        });
+    }
+  }, [filterType, filterStatus]);
+
   useEffect(() => {
     const consentWizardComponentRefCurrent = consentWizardComponentRef.current;
 
@@ -135,6 +162,7 @@ const ConsentComponent = () => {
     consentWizardComponentRefCurrent.addEventListener('select-consent', handleSelectConsent);
     consentWizardComponentRefCurrent.addEventListener('renew-consent', handleRenewConsent);
     consentWizardComponentRefCurrent.addEventListener('cancel-consent-confirm', handleCancelConsent);
+    consentWizardComponentRefCurrent.addEventListener('select-filter', handleFilter);
 
     return () => {
       consentWizardComponentRefCurrent.removeEventListener('select-bank', handleSelectBank);
@@ -144,6 +172,7 @@ const ConsentComponent = () => {
       consentWizardComponentRefCurrent.addEventListener('select-consent', handleSelectConsent);
       consentWizardComponentRefCurrent.addEventListener('renew-consent', handleRenewConsent);
       consentWizardComponentRefCurrent.addEventListener('cancel-consent-confirm', handleCancelConsent);
+      consentWizardComponentRefCurrent.addEventListener('select-filter', handleFilter);
     };
   }, [
     closeConsentWizard,
@@ -152,7 +181,8 @@ const ConsentComponent = () => {
     openModalConsent,
     handleSelectConsent,
     handleRenewConsent,
-    handleCancelConsent
+    handleCancelConsent,
+    handleFilter
   ]);
 
   useEffect(() => {
