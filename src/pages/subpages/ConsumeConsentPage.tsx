@@ -63,7 +63,7 @@ const ConsumeConsentPage = () => {
 
   return (
     <div className="container">
-      <h1>Consumir consentimento</h1>
+      <h1>Consumir consetimento</h1>
       <span className={messageClassname}>{message}</span>
     </div>
   );

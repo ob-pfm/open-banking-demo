@@ -23,7 +23,7 @@ function App() {
 
   return (
     <>
-      {pathname !== '/consume-consent' && <Header />}
+      {pathname !== '/consume-consent' && !pathname.includes('/pfm') && <Header />}
       <div className="main-container">
         <Routes>
           {apiKey ? (
