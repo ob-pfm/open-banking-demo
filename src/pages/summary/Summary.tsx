@@ -31,7 +31,7 @@ const SummaryComponent = () => {
   const categoryServices = useMemo(() => new CategoriesClient(apiKey, URL_SERVER), [apiKey]);
   const insightsServices = useMemo(() => new InsightsClient(apiKey, URL_SERVER), [apiKey]);
   const accountServices = useMemo(() => new AccountsClient(apiKey, URL_SERVER), [apiKey]);
-  const [accountId, setAccountId] = useState<number>(0);
+  const [accountId, setAccountId] = useState<number | string>(0);
   const [accountsList, setAccountsList] = useState<Account[]>([]);
 
   const handleSubcategoryDetailClick = useCallback(
@@ -84,7 +84,7 @@ const SummaryComponent = () => {
         .getList(userId)
         .then((response) => {
           setAccountsList(response);
-          if (response.length > 0) setAccountId(response[0].id);
+          if (response.length > 0) setAccountId('');
         })
         .catch(() => setAccountsList([]));
     }
@@ -118,8 +118,11 @@ const SummaryComponent = () => {
         balances: []
       };
       if (accountId !== 0) {
-        insightsServices
-          .getResume(userId, { accountId })
+        const request =
+          accountId === ''
+            ? insightsServices.getResume(userId)
+            : insightsServices.getResume(userId, { accountId: Number(accountId) });
+        request
           .then((insights) => {
             if (insights && (insights.incomes.length > 0 || insights.expenses.length > 0)) {
               componentRef.current.summaryData = {
@@ -133,8 +136,13 @@ const SummaryComponent = () => {
             componentRef.current.showMainLoading = false;
           })
           .catch((error) => {
+            componentRef.current.isEmpty = true;
+            componentRef.current.showMainLoading = false;
             showErrorToast(error);
           });
+      } else {
+        componentRef.current.isEmpty = true;
+        componentRef.current.showMainLoading = false;
       }
     }
   }, [insightsServices, categoryServices, userId, accountServices, accountId]);
@@ -145,6 +153,9 @@ const SummaryComponent = () => {
     componentRefCurrent.addEventListener('transactions-detail-click', handleTransactionDetailClick);
     componentRefCurrent.addEventListener('empty-button-click', handleEmptyActionClick);
     componentRefCurrent.componentStyles = `
+      .obwc-onboarding__container .obwc-onboarding__close-button{
+        display:none;
+      }
       .obwc-expenses__table-transactions-icon{
         display:none;
       }
@@ -158,16 +169,18 @@ const SummaryComponent = () => {
   }, [handleSubcategoryDetailClick, handleTransactionDetailClick, handleEmptyActionClick]);
   return (
     <>
-      <div className="selectContainer">
-        <select onChange={handleChangeAccount}>
-          {accountsList &&
-            accountsList.map((account) => (
+      {accountsList.length && (
+        <div className="selectContainer">
+          <select onChange={handleChangeAccount}>
+            <option value="">Todas as contas</option>
+            {accountsList.map((account) => (
               <option key={account.id} value={account.id}>
                 {unicodeToChar(account.name)}
               </option>
             ))}
-        </select>
-      </div>
+          </select>
+        </div>
+      )}
       <ob-summary-component
         ref={componentRef}
         alertType="warning"

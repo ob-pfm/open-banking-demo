@@ -2,6 +2,17 @@ import { memo } from 'react';
 
 import { Link, useLocation } from 'react-router-dom';
 
+import IconA from '../../../assets/accounts-icon.png';
+import IconAb from '../../../assets/accounts-selected-icon.png';
+import IconB from '../../../assets/budgets-icon.png';
+import IconBb from '../../../assets/budgets-selected-icon.png';
+import IconC from '../../../assets/category-icon.png';
+import IconCb from '../../../assets/category-selected-icon.png';
+import IconD from '../../../assets/movements-icon.png';
+import IconDb from '../../../assets/movements-selected-icon.png';
+import IconE from '../../../assets/summary-icon.png';
+import IconEb from '../../../assets/summary-selected-icon.png';
+
 const Menu = ({ userId }: { userId: number | null }) => {
   const location = useLocation();
   return (
@@ -9,7 +20,7 @@ const Menu = ({ userId }: { userId: number | null }) => {
       <nav className="menu__nav">
         <div className={`menu__nav-item ${location && location.pathname === '/pfm' && 'menu__nav-item--selected'}`}>
           <Link className="menu__nav-link" to="">
-            Consentimento
+            Consetimento
           </Link>
         </div>
         <div
@@ -18,7 +29,9 @@ const Menu = ({ userId }: { userId: number | null }) => {
           }`}
         >
           <Link className="menu__nav-link" to="cuentas">
-            Contas
+            <img src={IconA} className="img-normal" />
+            <img src={IconAb} className="img-active" />
+            <span>Contas</span>
           </Link>
         </div>
         <div
@@ -27,7 +40,9 @@ const Menu = ({ userId }: { userId: number | null }) => {
           }`}
         >
           <Link className="menu__nav-link" to="movimientos">
-            Movimentos
+            <img src={IconD} className="img-normal" />
+            <img src={IconDb} className="img-active" />
+            <span> Movimentos</span>
           </Link>
         </div>
         <div
@@ -36,7 +51,9 @@ const Menu = ({ userId }: { userId: number | null }) => {
           }`}
         >
           <Link className="menu__nav-link" to="presupuestos">
-            Orçamentos
+            <img src={IconB} className="img-normal" />
+            <img src={IconBb} className="img-active" />
+            <span> Orçamentos</span>
           </Link>
         </div>
         <div
@@ -45,7 +62,9 @@ const Menu = ({ userId }: { userId: number | null }) => {
           } ${!userId && 'menu__nav-item--disabled'}`}
         >
           <Link className="menu__nav-link" to="categorias">
-            Categorias
+            <img src={IconC} className="img-normal" />
+            <img src={IconCb} className="img-active" />
+            <span>Categorias</span>
           </Link>
         </div>
         <div
@@ -54,7 +73,9 @@ const Menu = ({ userId }: { userId: number | null }) => {
           }`}
         >
           <Link className="menu__nav-link" to="resumen">
-            Resumo
+            <img src={IconE} className="img-normal" />
+            <img src={IconEb} className="img-active" />
+            <span>Resumo</span>
           </Link>
         </div>
       </nav>

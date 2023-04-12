@@ -94,7 +94,7 @@ const PFMPage = () => {
       switch (currentBankStatus) {
         case CONSENT_REQUESTED:
           if (bankStatus !== CONSENT_REQUESTED) {
-            toast.info('Consentimento solicitado.');
+            toast.info('Consetimento solicitado.');
             setAlertText(CONSENT_IN_PROCESS);
             handleSetBankStatus(CONSENT_REQUESTED);
           }
@@ -105,7 +105,7 @@ const PFMPage = () => {
             banksClient
               .getResources(aggBankId, userId)
               .then((resourcesResponse) => {
-                toast.success('Consentimento concedido.');
+                toast.success('Consetimento concedido.');
                 setAlertText(AGG_IN_PROCESS);
                 setResources(resourcesResponse.resources);
                 showResourcesModal(true);
@@ -129,14 +129,14 @@ const PFMPage = () => {
           }
           break;
         case CONSENT_REJECTED:
-          toast.warn('Consentimento recusado.');
+          toast.warn('Consetimento recusado.');
           setAlertText('');
           handleSetAggBankId(null);
           handleSetBankStatus('');
           setIsProcessing(false);
           break;
         case CONSENT_DELETED:
-          toast.warn('Consentimento removido.');
+          toast.warn('Consetimento removido.');
           setAlertText('');
           handleSetBankStatus('');
           handleSetAggBankId(null);
@@ -252,7 +252,7 @@ const PFMPage = () => {
             />
           </svg>
         </div>
-        <h2>Consentimento</h2>
+        <h2>Consetimento</h2>
         <ul>
           {resources.map((resourceText) => (
             <li key={`resource-list-item-${resourceText}`}>{resourceText}</li>

@@ -40,7 +40,6 @@ const ConsentComponent = () => {
   }, [consentsClient, banksClient, userId]);
 
   const openModalConsent = useCallback(() => {
-    consentWizardComponentRef.current.isShown = true;
     banksClient
       .getAvailables()
       .then((bankResponse: Bank[]) => {
@@ -65,10 +64,6 @@ const ConsentComponent = () => {
     [selectBank]
   );
 
-  const closeConsentWizard = useCallback(() => {
-    consentWizardComponentRef.current.isShown = false;
-  }, []);
-
   const handleSubmitConsent = useCallback(
     (e: { detail: string }) => {
       const months = parseInt(e.detail);
@@ -76,10 +71,9 @@ const ConsentComponent = () => {
       banksClient
         .createConsent(selectedBank!, userId!, Number(months))
         .then((consentResponse) => {
-          toast.success('Consentimento criado.');
+          toast.success('Consetimento criado.');
           consentWizardComponentRef.current.showModalLoading = false;
-          closeConsentWizard();
-          window.open(consentResponse.url, 'Consentimento', 'width=800, height=600');
+          window.open(consentResponse.url, 'Consetimento', 'width=800, height=600');
           handleSetAggBankId(selectedBank);
           setTimeout(() => navigate('/pfm/cuentas'), 1000);
         })
@@ -89,7 +83,7 @@ const ConsentComponent = () => {
           consentWizardComponentRef.current.showModalLoading = false;
         });
     },
-    [banksClient, selectedBank, closeConsentWizard, userId, handleSetAggBankId, setIsProcessing, navigate]
+    [banksClient, selectedBank, userId, handleSetAggBankId, setIsProcessing, navigate]
   );
 
   const handleSelectConsent = useCallback(
@@ -157,7 +151,6 @@ const ConsentComponent = () => {
 
     consentWizardComponentRefCurrent.addEventListener('select-bank', handleSelectBank);
     consentWizardComponentRefCurrent.addEventListener('on-submit', handleSubmitConsent);
-    consentWizardComponentRefCurrent.addEventListener('close-modal', closeConsentWizard);
     consentWizardComponentRefCurrent.addEventListener('on-click-add', openModalConsent);
     consentWizardComponentRefCurrent.addEventListener('select-consent', handleSelectConsent);
     consentWizardComponentRefCurrent.addEventListener('renew-consent', handleRenewConsent);
@@ -167,7 +160,6 @@ const ConsentComponent = () => {
     return () => {
       consentWizardComponentRefCurrent.removeEventListener('select-bank', handleSelectBank);
       consentWizardComponentRefCurrent.removeEventListener('on-submit', handleSubmitConsent);
-      consentWizardComponentRefCurrent.removeEventListener('close-modal', closeConsentWizard);
       consentWizardComponentRefCurrent.addEventListener('on-click-add', openModalConsent);
       consentWizardComponentRefCurrent.addEventListener('select-consent', handleSelectConsent);
       consentWizardComponentRefCurrent.addEventListener('renew-consent', handleRenewConsent);
@@ -175,7 +167,6 @@ const ConsentComponent = () => {
       consentWizardComponentRefCurrent.addEventListener('select-filter', handleFilter);
     };
   }, [
-    closeConsentWizard,
     handleSubmitConsent,
     handleSelectBank,
     openModalConsent,

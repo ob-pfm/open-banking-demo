@@ -344,28 +344,33 @@ const TransactionsComponent = () => {
           const accounts = response.map((acc: Account) => acc.toObject());
           componentRef.current.accountsData = accounts;
 
-          if (accountIdParam)
-            setFilterOptions(
-              getFiltersFromObject({
-                accounts,
-                accountId: Number(accountIdParam),
-                categoryId,
-                subcategoryId,
-                dateFrom,
-                dateTo
-              })
-            );
-          else
-            setFilterOptions(
-              getFiltersFromObject({
-                accounts,
-                accountId: Number(accounts[0].id),
-                categoryId,
-                subcategoryId,
-                dateFrom,
-                dateTo
-              })
-            );
+          if (accounts.length > 0) {
+            if (accountIdParam)
+              setFilterOptions(
+                getFiltersFromObject({
+                  accounts,
+                  accountId: Number(accountIdParam),
+                  categoryId,
+                  subcategoryId,
+                  dateFrom,
+                  dateTo
+                })
+              );
+            else
+              setFilterOptions(
+                getFiltersFromObject({
+                  accounts,
+                  accountId: Number(accounts[0].id),
+                  categoryId,
+                  subcategoryId,
+                  dateFrom,
+                  dateTo
+                })
+              );
+          } else {
+            componentRef.current.showMainLoading = false;
+            componentRef.current.isEmpty = true;
+          }
         })
         .catch((error) => {
           showErrorToast(error);
@@ -374,15 +379,15 @@ const TransactionsComponent = () => {
   }, [accountServices, searchParams, userId]);
 
   useEffect(() => {
+    componentRef.current.showMainLoading = true;
     if (filterOptions.accounts.length > 0) {
       filterTransactions((transactionsRes: Transaction[]) => {
         if (transactionsRes.length) {
           componentRef.current.isEmpty = false;
           setTransactionsData(transactionsRes);
           setTransactionsFilteredData(transactionsRes);
-        } else {
-          componentRef.current.isEmpty = true;
-        }
+        } else componentRef.current.isEmpty = true;
+
         componentRef.current.showMainLoading = false;
       });
     }
@@ -430,16 +435,17 @@ const TransactionsComponent = () => {
 
   return (
     <>
-      <div className="selectContainer">
-        <select onChange={handleChangeAccount} value={filterOptions.accountId}>
-          {filterOptions.accounts &&
-            filterOptions.accounts.map((account) => (
+      {filterOptions.accounts.length > 0 && (
+        <div className="selectContainer">
+          <select onChange={handleChangeAccount} value={filterOptions.accountId}>
+            {filterOptions.accounts.map((account) => (
               <option key={account.id} value={account.id}>
                 {unicodeToChar(account.name)}
               </option>
             ))}
-        </select>
-      </div>
+          </select>
+        </div>
+      )}
       <ob-transactions-component
         ref={componentRef}
         alertType="warning"
