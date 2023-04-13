@@ -144,7 +144,7 @@ const ConsentComponent = () => {
           showErrorToast(error);
         });
     }
-  }, [filterType, filterStatus]);
+  }, [filterType, filterStatus, consentsClient, userId]);
 
   useEffect(() => {
     const consentWizardComponentRefCurrent = consentWizardComponentRef.current;

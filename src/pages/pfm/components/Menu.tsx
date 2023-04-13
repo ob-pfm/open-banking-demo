@@ -29,8 +29,8 @@ const Menu = ({ userId }: { userId: number | null }) => {
           }`}
         >
           <Link className="menu__nav-link" to="cuentas">
-            <img src={IconA} className="img-normal" />
-            <img src={IconAb} className="img-active" />
+            <img alt="" src={IconA} className="img-normal" />
+            <img alt="" src={IconAb} className="img-active" />
             <span>Contas</span>
           </Link>
         </div>
@@ -40,8 +40,8 @@ const Menu = ({ userId }: { userId: number | null }) => {
           }`}
         >
           <Link className="menu__nav-link" to="movimientos">
-            <img src={IconD} className="img-normal" />
-            <img src={IconDb} className="img-active" />
+            <img alt="" src={IconD} className="img-normal" />
+            <img alt="" src={IconDb} className="img-active" />
             <span> Movimentos</span>
           </Link>
         </div>
@@ -51,8 +51,8 @@ const Menu = ({ userId }: { userId: number | null }) => {
           }`}
         >
           <Link className="menu__nav-link" to="presupuestos">
-            <img src={IconB} className="img-normal" />
-            <img src={IconBb} className="img-active" />
+            <img alt="" src={IconB} className="img-normal" />
+            <img alt="" src={IconBb} className="img-active" />
             <span> Orçamentos</span>
           </Link>
         </div>
@@ -62,8 +62,8 @@ const Menu = ({ userId }: { userId: number | null }) => {
           } ${!userId && 'menu__nav-item--disabled'}`}
         >
           <Link className="menu__nav-link" to="categorias">
-            <img src={IconC} className="img-normal" />
-            <img src={IconCb} className="img-active" />
+            <img alt="" src={IconC} className="img-normal" />
+            <img alt="" src={IconCb} className="img-active" />
             <span>Categorias</span>
           </Link>
         </div>
@@ -73,8 +73,8 @@ const Menu = ({ userId }: { userId: number | null }) => {
           }`}
         >
           <Link className="menu__nav-link" to="resumen">
-            <img src={IconE} className="img-normal" />
-            <img src={IconEb} className="img-active" />
+            <img alt="" src={IconE} className="img-normal" />
+            <img alt="" src={IconEb} className="img-active" />
             <span>Resumo</span>
           </Link>
         </div>
