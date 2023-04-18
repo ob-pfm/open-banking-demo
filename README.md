@@ -1,46 +1,43 @@
-# Getting Started with Create React App
+# Project Name: pfm-brazil-demo
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![Language](https://img.shields.io/badge/Language-React-yellow.svg)
 
-## Available Scripts
+## Description
 
-In the project directory, you can run:
+**pfm-brazil-demo** is a React web app for personal financial management. It ilustrates the use and the way to integrate the Open Banking SDK and Open Banking Web Components in a web application.
 
-### `yarn start`
+[Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk)
+[Open Banking WC Consent](https://cdn.finerio.mx/pfm/components/ob-consent-component.js)
+[Open Banking WC Transactions](https://cdn.finerio.mx/pfm/components/ob-transactions-component.js)
+[Open Banking WC Accounts](https://cdn.finerio.mx/pfm/components/ob-accounts-component.js)
+[Open Banking WC Budgets](https://cdn.finerio.mx/pfm/components/ob-budget-component.js)
+[Open Banking WC Categories](https://cdn.finerio.mx/pfm/components/ob-categories-component.js)
+[Open Banking WC Summary](https://cdn.finerio.mx/pfm/components/ob-summary-component.js)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Project Setup
 
-### `yarn test`
+1. Clone the repository from the project's repository.
+2. Navigate to the project directory using the terminal.
+3. Run npm install to install the project dependencies.
+4. Create a .env.development file in the project root directory to store development environment variables or use the provided one.
+5. Create a .env.test file in the project root directory to store test environment variables or use the provided one.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `yarn build`
+## Scripts
+**start:dev**
+ >   Runs the app in development mode with environment variables from .env.development file.
+ 
+**start:qa**
+ >   Runs the app in QA mode with environment variables from .env.test file.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+**build:dev**
+ >   Builds the app for development with environment variables from .env.development file.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+**build:qa**
+ >   Builds the app for qa with environment variables from .env.test file.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+**start:qa**
+ >   RunsRuns the app in QA mode with environment variables from .env.test file.
 
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
