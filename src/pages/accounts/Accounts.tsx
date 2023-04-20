@@ -27,39 +27,42 @@ interface IDeleteEventData {
   onSuccess: () => void;
 }
 const AccountsComponent = () => {
-  const componentRef = useRef<any>(null);
-  const { isProcessing, userId, alertText, apiKey } = useOutletContext<IOutletContext>();
-  const navigate = useNavigate();
+  const componentRef = useRef<any>(null); // Create a ref for the component
+  const { isProcessing, userId, alertText, apiKey } = useOutletContext<IOutletContext>(); // Get context data using custom hook
+  const navigate = useNavigate(); // Get navigate function from react-router-dom
 
+  // Create instances of AccountsClient and BanksClient using memoized version
   const accountServices = useMemo(() => new AccountsClient(apiKey, URL_SERVER), [apiKey]);
   const banksServices = useMemo(() => new BanksClient(apiKey, URL_SERVER), [apiKey]);
 
+  // Load accounts when component mounts or userId changes
   const loadAccounts = useCallback(() => {
     if (userId) {
-      componentRef.current.showMainLoading = true;
-      const promises = [accountServices.getList(userId), banksServices.getAvailables()];
+      componentRef.current.showMainLoading = true; // Show loading indicator in the component
+      const promises = [accountServices.getList(userId), banksServices.getAvailables()]; // Fetch accounts and banks data in parallel
       Promise.all(promises)
         .then((response) => {
-          const accounts: Account[] = response[0] as Account[];
-          const banks: Bank[] = response[1] as unknown as Bank[];
-          componentRef.current.banksData = banks;
-          componentRef.current.accountsData = accounts;
-          componentRef.current.showMainLoading = false;
+          const accounts: Account[] = response[0] as Account[]; // Extract accounts data from response
+          const banks: Bank[] = response[1] as unknown as Bank[]; // Extract banks data from response
+          componentRef.current.banksData = banks; // Set banks data in the component
+          componentRef.current.accountsData = accounts; // Set accounts data in the component
+          componentRef.current.showMainLoading = false; // Hide loading indicator in the component
         })
         .catch((error) => {
-          componentRef.current.banksData = [];
-          componentRef.current.banksAccountData = [];
-          showErrorToast(error);
+          componentRef.current.banksData = []; // Reset banks data in the component
+          componentRef.current.banksAccountData = []; // Reset accounts data in the component
+          showErrorToast(error); // Show error toast
         });
     }
   }, [componentRef, accountServices, banksServices, userId]);
 
+  // Event handler for 'save-new' event
   const handleSaveAccount = useCallback(
     (e: { detail: ISubmitEventData }) => {
       if (userId) {
-        componentRef.current.showMainLoading = true;
+        componentRef.current.showMainLoading = true; // Show loading indicator in the component
         const { account, onSuccess } = e.detail;
-        onSuccess();
+        onSuccess(); // Call onSuccess callback
         const { financialEntityId, ...rest } = account;
         const newAccount = new AccountPayload({
           userId,
@@ -69,8 +72,8 @@ const AccountsComponent = () => {
         accountServices
           .create(newAccount)
           .then((_response: Account) => {
-            loadAccounts();
-            toast.success('Conta adicionada.');
+            loadAccounts(); // Reload accounts data
+            toast.success('Conta adicionada.'); // Show success toast
             componentRef.current.showMainLoading = false;
           })
           .catch((_error) => {
@@ -85,9 +88,9 @@ const AccountsComponent = () => {
   const handleEditAccount = useCallback(
     (e: { detail: ISubmitEventData }) => {
       if (userId) {
-        componentRef.current.showMainLoading = true;
+        componentRef.current.showMainLoading = true; // Show loading indicator in the component
         const { account, onSuccess } = e.detail;
-        onSuccess();
+        onSuccess(); // Call onSuccess callback
         const { id, financialEntityId, ...rest } = account;
         const editedAccount = new AccountPayload({
           userId,
@@ -97,13 +100,13 @@ const AccountsComponent = () => {
         accountServices
           .edit(id!, editedAccount)
           .then((_response: Account) => {
-            loadAccounts();
-            toast.success('Alterações salvas.');
-            componentRef.current.showMainLoading = false;
+            loadAccounts(); // Reload accounts data
+            toast.success('Alterações salvas.'); // Show success toast
+            componentRef.current.showMainLoading = false; // Hide loading indicator in the component
           })
           .catch((_error) => {
-            toast.error('Um erro ocorreu.');
-            componentRef.current.showMainLoading = false;
+            toast.error('Um erro ocorreu.'); // Show error toast
+            componentRef.current.showMainLoading = false; // Hide loading indicator in the component
           });
       }
     },
@@ -112,21 +115,21 @@ const AccountsComponent = () => {
 
   const handleDeleteAccount = useCallback(
     (e: { detail: IDeleteEventData }) => {
-      componentRef.current.showMainLoading = true;
+      componentRef.current.showMainLoading = true; // Show loading indicator in the component
       const { accountId, onSuccess } = e.detail;
-      onSuccess();
+      onSuccess(); // Call onSuccess callback
       accountServices
         .delete(accountId)
         .then((response: boolean) => {
           if (response) {
-            loadAccounts();
-            toast.success('Conta apagada.');
-            componentRef.current.showMainLoading = false;
+            loadAccounts(); // Reload accounts data
+            toast.success('Conta apagada.'); // Show success toast
+            componentRef.current.showMainLoading = false; // Hide loading indicator in the component
           }
         })
         .catch((_error) => {
-          toast.error('Um erro ocorreu.');
-          componentRef.current.showMainLoading = false;
+          toast.error('Um erro ocorreu.'); // Show error toast
+          componentRef.current.showMainLoading = false; // Hide loading indicator in the component
         });
     },
     [accountServices, loadAccounts]
@@ -134,21 +137,32 @@ const AccountsComponent = () => {
 
   const handleClickAccount = useCallback(
     (e: { detail: IDeleteEventData }) => {
-      navigate(`/pfm/movimientos?account_id=${e.detail}`);
+      navigate(`/pfm/movimientos?account_id=${e.detail}`); // Navigate to a different route with query parameters
     },
     [navigate]
   );
 
   useEffect(() => {
-    loadAccounts();
+    loadAccounts(); // Load accounts when component mounts or userId changes
   }, [loadAccounts]);
 
+  /**
+   * React hook that attaches and removes event listeners to a ref object.
+   *
+   * @param {function} handleSaveAccount - Event handler function for 'save-new' event.
+   * @param {function} handleEditAccount - Event handler function for 'save-edit' event.
+   * @param {function} handleDeleteAccount - Event handler function for 'delete' event.
+   * @param {function} handleClickAccount - Event handler function for 'click-account-collapsible-section' event.
+   * @returns {function} - Cleanup function that removes event listeners when component is unmounted or when dependency array changes.
+   */
   useEffect(() => {
     const componentRefCurrent = componentRef.current;
+    // Attach event listeners
     componentRefCurrent.addEventListener('save-new', handleSaveAccount);
     componentRefCurrent.addEventListener('save-edit', handleEditAccount);
     componentRefCurrent.addEventListener('delete', handleDeleteAccount);
     componentRefCurrent.addEventListener('click-account-collapsible-section', handleClickAccount);
+    // Set component styles
     componentRefCurrent.componentStyles = `
       .obwc-accounts__balance-list-card .obwc-accounts__short-term-balance-item{
         display:none;
@@ -157,26 +171,31 @@ const AccountsComponent = () => {
         display:none;
       }
     `;
-
+    // Cleanup function
     return () => {
+      // Remove event listeners
       componentRefCurrent.removeEventListener('save-new', handleSaveAccount);
       componentRefCurrent.removeEventListener('save-edit', handleEditAccount);
       componentRefCurrent.removeEventListener('delete', handleDeleteAccount);
       componentRefCurrent.removeEventListener('click-account-collapsible-section', handleClickAccount);
     };
   }, [handleSaveAccount, handleEditAccount, handleDeleteAccount, handleClickAccount]);
-
+  /**
+   * Renders an ob-accounts-component with props passed to it.
+   *
+   * @returns {ReactElement} - An ob-accounts-component with configured props.
+   */
   return (
     <ob-accounts-component
-      ref={componentRef}
-      showAlert={isProcessing}
-      alertText={alertText}
-      alertType="warning"
-      fontFamily="Lato"
-      lang="pt"
-      currencyLang="pt-BR"
-      currencyType="BRL"
-      componentStyles={styles}
+      ref={componentRef} // A ref object that will be used to attach event listeners
+      showAlert={isProcessing} // Boolean prop that determines whether to show an alert
+      alertText={alertText} // String prop that sets the text for the alert
+      alertType="warning" // String prop that sets the type of the alert
+      fontFamily="Lato" // String prop that sets the font family for the component
+      lang="pt" // String prop that sets the language for the component
+      currencyLang="pt-BR" // String prop that sets the currency language for the component
+      currencyType="BRL" // String prop that sets the currency type for the component
+      componentStyles={styles} // String prop that sets the component styles
     />
   );
 };
