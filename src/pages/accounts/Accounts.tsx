@@ -28,7 +28,8 @@ interface IDeleteEventData {
 }
 const AccountsComponent = () => {
   const componentRef = useRef<any>(null); // Create a ref for the component
-  const { isProcessing, userId, alertText, apiKey } = useOutletContext<IOutletContext>(); // Get context data using custom hook
+  // Get context data using custom hook
+  const { isProcessing, userId, alertText, apiKey } = useOutletContext<IOutletContext>();
   const navigate = useNavigate(); // Get navigate function from react-router-dom
 
   // Create instances of AccountsClient and BanksClient using memoized version
@@ -38,13 +39,17 @@ const AccountsComponent = () => {
   // Load accounts when component mounts or userId changes
   const loadAccounts = useCallback(() => {
     if (userId) {
-      componentRef.current.showMainLoading = true; // Show loading indicator in the component
-      const promises = [accountServices.getList(userId), banksServices.getAvailables()]; // Fetch accounts and banks data in parallel
+      // Show loading indicator in the component
+      componentRef.current.showMainLoading = true;
+      // Fetch accounts and banks data in parallel
+      const promises = [accountServices.getList(userId), banksServices.getAvailables()];
       Promise.all(promises)
         .then((response) => {
           const accounts: Account[] = response[0] as Account[]; // Extract accounts data from response
           const banks: Bank[] = response[1] as unknown as Bank[]; // Extract banks data from response
           componentRef.current.banksData = banks; // Set banks data in the component
+          // Set available banks data to add accounts in the component
+          componentRef.current.availableBanksData = banks.filter((bank) => bank.isBankAggregation === false);
           componentRef.current.accountsData = accounts; // Set accounts data in the component
           componentRef.current.showMainLoading = false; // Hide loading indicator in the component
         })
@@ -146,15 +151,6 @@ const AccountsComponent = () => {
     loadAccounts(); // Load accounts when component mounts or userId changes
   }, [loadAccounts]);
 
-  /**
-   * React hook that attaches and removes event listeners to a ref object.
-   *
-   * @param {function} handleSaveAccount - Event handler function for 'save-new' event.
-   * @param {function} handleEditAccount - Event handler function for 'save-edit' event.
-   * @param {function} handleDeleteAccount - Event handler function for 'delete' event.
-   * @param {function} handleClickAccount - Event handler function for 'click-account-collapsible-section' event.
-   * @returns {function} - Cleanup function that removes event listeners when component is unmounted or when dependency array changes.
-   */
   useEffect(() => {
     const componentRefCurrent = componentRef.current;
     // Attach event listeners

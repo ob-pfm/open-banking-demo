@@ -9,6 +9,7 @@ import { URL_SERVER } from '../../constants';
 import '../../libs/wc/ob-categories-component';
 import { IOutletContext } from '../../interfaces';
 
+// Define interface for event data
 interface ISubmitEventData {
   category?: {
     id: number;
@@ -21,11 +22,22 @@ interface ISubmitEventData {
   onSuccess: () => void;
   showToast: () => void;
 }
+
+// Define CategoriesComponent functional component
 const CategoriesComponent = () => {
+  // Ref for component
   const componentRef = useRef<any>(null);
+
+  // Get data from outlet context
   const { isProcessing, alertText, userId, apiKey } = useOutletContext<IOutletContext>();
+
+  // Create CategoriesClient instance with memoized apiKey
   const categoriesServices = useMemo(() => new CategoriesClient(apiKey, URL_SERVER), [apiKey]);
+
+  // State to store categories
   const [categories, setCategories] = useState<ICategory[]>([]);
+
+  // Fetch categories with subcategories and update state
   const getCategories = useCallback(
     (onSuccess: () => void) => {
       if (categoriesServices && componentRef.current !== null) {
@@ -38,60 +50,85 @@ const CategoriesComponent = () => {
     [categoriesServices, componentRef, userId]
   );
 
+  // Event handler for saving a new category
   const handleSaveCategory = useCallback(
     (e: { detail: ISubmitEventData }) => {
       if (userId) {
         const { category, onSuccess } = e.detail;
         const newCategory = new CategoryPayload({ userId, ...category! });
-        categoriesServices.create(newCategory).then(() => {
-          toast.success('Categoria adicionada.');
-          getCategories(() => onSuccess());
-        });
+        categoriesServices
+          .create(newCategory)
+          .then(() => {
+            toast.success('Categoria adicionada.');
+            getCategories(() => onSuccess());
+          })
+          .catch(() => {
+            toast.error('Um erro ocorreu.');
+          });
       }
     },
     [categoriesServices, userId, getCategories]
   );
 
+  // Event handler for saving a new subcategory
   const handleSaveSubcategory = useCallback(
     (e: { detail: ISubmitEventData }) => {
       if (userId) {
         const { category, onSuccess } = e.detail;
         const newCategory = new CategoryPayload({ userId, ...category! });
-        categoriesServices.create(newCategory).then((_response: Category) => {
-          toast.success('Subcategoria adicionada.');
-          getCategories(() => onSuccess());
-        });
+        categoriesServices
+          .create(newCategory)
+          .then((_response: Category) => {
+            toast.success('Subcategoria adicionada.');
+            getCategories(() => onSuccess());
+          })
+          .catch(() => {
+            toast.error('Um erro ocorreu.');
+          });
       }
     },
     [categoriesServices, userId, getCategories]
   );
 
+  // Edit category
   const handleEditCategory = useCallback(
     (e: { detail: ISubmitEventData }) => {
       const { category, onSuccess } = e.detail;
       const { id, name, color, parentCategoryId } = category!;
       const editedCategory: ICategoryUpdatePayload = { name, color, parentCategoryId };
-      categoriesServices.edit(id, editedCategory).then(() => {
-        toast.success('Categoria editada.');
-        getCategories(() => onSuccess());
-      });
+      categoriesServices
+        .edit(id, editedCategory)
+        .then(() => {
+          toast.success('Categoria editada.');
+          getCategories(() => onSuccess());
+        })
+        .catch(() => {
+          toast.error('Um erro ocorreu.');
+        });
     },
     [categoriesServices, getCategories]
   );
 
+  // Edit subcategory
   const handleEditSubCategory = useCallback(
     (e: { detail: ISubmitEventData }) => {
       const { category, onSuccess } = e.detail;
       const { id, name, color, parentCategoryId } = category!;
       const editedCategory: ICategoryUpdatePayload = { name, color, parentCategoryId };
-      categoriesServices.edit(id, editedCategory).then(() => {
-        toast.success('Subcategoria editada.');
-        getCategories(() => onSuccess());
-      });
+      categoriesServices
+        .edit(id, editedCategory)
+        .then(() => {
+          toast.success('Subcategoria editada.');
+          getCategories(() => onSuccess());
+        })
+        .catch(() => {
+          toast.error('Um erro ocorreu.');
+        });
     },
     [categoriesServices, getCategories]
   );
 
+  // Delete category
   const handleDeleteCategory = useCallback(
     (e: { detail: ISubmitEventData }) => {
       componentRef.current.showModalLoading = true;
@@ -115,6 +152,7 @@ const CategoriesComponent = () => {
     [categoriesServices, getCategories]
   );
 
+  // Delete subcategory
   const handleDeleteSubCategory = useCallback(
     (e: { detail: ISubmitEventData }) => {
       componentRef.current.showModalLoading = true;
@@ -139,17 +177,21 @@ const CategoriesComponent = () => {
   );
 
   useEffect(() => {
+    // Show main loading spinner when component mounts or when getCategories function changes
     componentRef.current.showMainLoading = true;
     getCategories(() => {
+      // Hide main loading spinner once categories are fetched
       componentRef.current.showMainLoading = false;
     });
   }, [getCategories]);
 
   useEffect(() => {
+    // Update categoriesData property of componentRef with latest categories prop
     componentRef.current.categoriesData = categories;
   }, [componentRef, categories]);
 
   useEffect(() => {
+    // Add event listeners for custom events to componentRef and remove them on cleanup
     const componentRefCurrent = componentRef.current;
     componentRefCurrent.addEventListener('save-new', handleSaveCategory);
     componentRefCurrent.addEventListener('save-new-subcategory', handleSaveSubcategory);
@@ -157,13 +199,15 @@ const CategoriesComponent = () => {
     componentRefCurrent.addEventListener('delete-own-subcategory', handleDeleteSubCategory);
     componentRefCurrent.addEventListener('edit-category', handleEditCategory);
     componentRefCurrent.addEventListener('edit-subcategory', handleEditSubCategory);
+
     return () => {
+      // Cleanup by removing event listeners from componentRef
       componentRefCurrent.removeEventListener('save-new', handleSaveCategory);
       componentRefCurrent.removeEventListener('save-new-subcategory', handleSaveSubcategory);
       componentRefCurrent.removeEventListener('delete-own-category', handleDeleteCategory);
-      componentRefCurrent.addEventListener('delete-own-subcategory', handleDeleteSubCategory);
-      componentRefCurrent.addEventListener('edit-category', handleEditCategory);
-      componentRefCurrent.addEventListener('edit-subcategory', handleEditSubCategory);
+      componentRefCurrent.removeEventListener('delete-own-subcategory', handleDeleteSubCategory);
+      componentRefCurrent.removeEventListener('edit-category', handleEditCategory);
+      componentRefCurrent.removeEventListener('edit-subcategory', handleEditSubCategory);
     };
   }, [
     handleSaveCategory,
@@ -174,18 +218,19 @@ const CategoriesComponent = () => {
     handleEditSubCategory
   ]);
 
+  // Render ob-categories-component with props
   return (
     <ob-categories-component
-      alertType="warning"
-      showAlert={isProcessing}
-      alertText={alertText}
-      ref={componentRef}
-      lang="pt"
-      currencyLang="pt-BR"
-      currencyType="BRL"
-      deleteCategoryDisabled
-      editCategoryDisabled
-      editSubcategoryDisabled
+      alertType="warning" // Prop for alert type, e.g. "warning"
+      showAlert={isProcessing} // Prop for showing/hiding alert, based on isProcessing boolean variable
+      alertText={alertText} // Prop for alert text to display
+      ref={componentRef} // Prop for passing the ref of componentRef to the ob-categories-component
+      lang="pt" // Prop for language setting, e.g. "pt" for Portuguese
+      currencyLang="pt-BR" // Prop for currency language setting, e.g. "pt-BR" for Brazilian Portuguese
+      currencyType="BRL" // Prop for currency type, e.g. "BRL" for Brazilian Real
+      deleteCategoryDisabled // Prop for disabling delete category functionality
+      editCategoryDisabled // Prop for disabling edit category functionality
+      editSubcategoryDisabled // Prop for disabling edit subcategory functionality
     />
   );
 };
