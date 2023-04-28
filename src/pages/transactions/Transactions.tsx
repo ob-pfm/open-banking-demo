@@ -423,12 +423,12 @@ const TransactionsComponent = () => {
       accountServices
         .getList(userId)
         .then((response: Account[]) => {
-          const accounts = response.map((acc: Account) => acc.toObject());
+          const accounts = response.map((acc: Account) => acc);
           // Update accountsData in componentRef with the fetched data
-          componentRef.current.accountsData = accounts;
+          componentRef.current.accountsData = response;
           // Update availableAccountsData in componentRef with no bank aggregation
           // acounts
-          componentRef.current.availableAccountsData = accounts.filter(
+          componentRef.current.availableAccountsData = response.filter(
             (account) => account.isBankAggregation === false
           );
 
