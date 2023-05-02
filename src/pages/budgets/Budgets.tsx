@@ -178,14 +178,12 @@ const BudgetsComponent = () => {
           })); // Map categories and subcategories to plain objects
           getBudgets((isEmpty: boolean) => {
             // Call getBudgets function with callback on success
-            if (isEmpty) {
-              componentRef.current.isEmpty = true; // Set isEmpty flag to true
-            }
+            if (isEmpty) componentRef.current.isEmpty = true; // Set isEmpty flag to true
             componentRef.current.showMainLoading = false; // Hide main loading
           });
         })
         .catch(() => {
-          // e.detail.showToast('error', 'Error de servidor');
+          toast.error('Um erro ocorreu.'); // Show error toast
         });
   }, [getBudgets, categoryServices, userId]); // Dependencies for useEffect hook
 
