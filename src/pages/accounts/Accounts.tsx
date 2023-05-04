@@ -52,7 +52,8 @@ const AccountsComponent = () => {
         .then((response) => {
           const accounts: Account[] = response[0] as Account[]; // Extract accounts data from response
           const banks: Bank[] = response[1] as Bank[]; // Extract banks data from response
-          const financialEntities: FinancialEntity[] = response[2] as FinancialEntity[]; // Extract banks data from response
+          // Extract banks data from response
+          const financialEntities: FinancialEntity[] = response[2] as FinancialEntity[];
           componentRef.current.banksData = banks; // Set banks data in the component
           componentRef.current.accountsData = accounts; // Set accounts data in the component
           // Set available banks data to add accounts in the component
@@ -65,7 +66,7 @@ const AccountsComponent = () => {
           showErrorToast(error); // Show error toast
         });
     }
-  }, [componentRef, accountServices, banksServices, userId]);
+  }, [componentRef, accountServices, banksServices, userId, userServices]);
 
   // Event handler for 'save-new' event
   const handleSaveAccount = useCallback(
