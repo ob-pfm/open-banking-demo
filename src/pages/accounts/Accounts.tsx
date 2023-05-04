@@ -2,8 +2,8 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import { Bank } from 'open-banking-pfm-sdk/models';
-import { BanksClient, Account, AccountsClient, AccountPayload } from 'open-banking-pfm-sdk';
+import { Bank, FinancialEntity } from 'open-banking-pfm-sdk/models';
+import { BanksClient, Account, AccountsClient, AccountPayload, UsersClient } from 'open-banking-pfm-sdk';
 import '../../libs/wc/ob-accounts-component';
 import { URL_SERVER } from '../../constants';
 import { IOutletContext } from '../../interfaces';
@@ -35,6 +35,7 @@ const AccountsComponent = () => {
   // Create instances of AccountsClient and BanksClient using memoized version
   const accountServices = useMemo(() => new AccountsClient(apiKey, URL_SERVER), [apiKey]);
   const banksServices = useMemo(() => new BanksClient(apiKey, URL_SERVER), [apiKey]);
+  const userServices = useMemo(() => new UsersClient(apiKey, URL_SERVER), [apiKey]);
 
   // Load accounts when component mounts or userId changes
   const loadAccounts = useCallback(() => {
@@ -42,15 +43,20 @@ const AccountsComponent = () => {
       // Show loading indicator in the component
       componentRef.current.showMainLoading = true;
       // Fetch accounts and banks data in parallel
-      const promises = [accountServices.getList(userId), banksServices.getAvailables()];
+      const promises = [
+        accountServices.getList(userId),
+        banksServices.getAvailables(),
+        userServices.getFinancialEntities()
+      ];
       Promise.all(promises)
         .then((response) => {
           const accounts: Account[] = response[0] as Account[]; // Extract accounts data from response
-          const banks: Bank[] = response[1] as unknown as Bank[]; // Extract banks data from response
+          const banks: Bank[] = response[1] as Bank[]; // Extract banks data from response
+          const financialEntities: FinancialEntity[] = response[2] as FinancialEntity[]; // Extract banks data from response
           componentRef.current.banksData = banks; // Set banks data in the component
-          // Set available banks data to add accounts in the component
-          componentRef.current.availableBanksData = banks.filter((bank) => bank.isBankAggregation === false);
           componentRef.current.accountsData = accounts; // Set accounts data in the component
+          // Set available banks data to add accounts in the component
+          componentRef.current.availableBanksData = financialEntities.filter((fe) => fe.isBankAggregation === false);
           componentRef.current.showMainLoading = false; // Hide loading indicator in the component
         })
         .catch((error) => {
