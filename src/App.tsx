@@ -47,7 +47,10 @@ function App() {
               </Route>
             </>
           ) : (
-            <Route path="/*" element={<SignUp />} />
+            <>
+              <Route path="/consume-consent" element={<ConsumeConsentPage />} />
+              <Route path="/*" element={<SignUp />} />
+            </>
           )}
         </Routes>
 
