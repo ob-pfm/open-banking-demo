@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 
 import { Bank, Credit, CreditBalance } from 'open-banking-pfm-sdk/models';
 import { BanksClient, CreditsClient } from 'open-banking-pfm-sdk';
@@ -9,6 +9,7 @@ import { IOutletContext } from '../../interfaces';
 import { showErrorToast } from '../../helpers';
 
 const CreditsComponent = () => {
+  const navigate = useNavigate(); // Get navigate function from react-router-dom
   const componentRef = useRef<any>(null); // Create a ref for the component
   // Get context data using custom hook
   const { isProcessing, userId, alertText, apiKey } = useOutletContext<IOutletContext>();
@@ -30,10 +31,13 @@ const CreditsComponent = () => {
           const creditsResponse = response[0] as { data: Credit[]; totalBalance: CreditBalance };
           const banks: Bank[] = response[1] as unknown as Bank[]; // Extract banks data from response
           componentRef.current.banksData = banks; // Set banks data in the component
-          componentRef.current.creditData = creditsResponse.data; // Set credit data in the component
-          componentRef.current.availableAmount = creditsResponse.totalBalance.availableAmount;
-          componentRef.current.limitAmount = creditsResponse.totalBalance.limitAmount;
-          componentRef.current.usedAmount = creditsResponse.totalBalance.usedAmount;
+          if (creditsResponse.data.length > 0) {
+            componentRef.current.creditData = creditsResponse.data; // Set credit data in the component
+            componentRef.current.availableAmount = creditsResponse.totalBalance.availableAmount;
+            componentRef.current.limitAmount = creditsResponse.totalBalance.limitAmount;
+            componentRef.current.usedAmount = creditsResponse.totalBalance.usedAmount;
+          } else componentRef.current.isEmpty = true;
+
           componentRef.current.showMainLoading = false;
         })
         .catch((error) => {
@@ -45,9 +49,24 @@ const CreditsComponent = () => {
     }
   }, [componentRef, creditsServices, banksServices, userId]);
 
+  const handleEmptyClick = useCallback(() => {
+    navigate('/pfm/cuentas');
+  }, [navigate]);
+
   useEffect(() => {
     loadCredits(); // Load accounts when component mounts or userId changes
   }, [loadCredits]);
+
+  useEffect(() => {
+    // Add event listeners for custom events to componentRef and remove them on cleanup
+    const componentRefCurrent = componentRef.current;
+    componentRefCurrent.addEventListener('empty-button-click', handleEmptyClick);
+
+    return () => {
+      // Cleanup by removing event listeners from componentRef
+      componentRefCurrent.removeEventListener('empty-button-click', handleEmptyClick);
+    };
+  }, [handleEmptyClick]);
 
   /**
    * Renders an ob-accounts-component with props passed to it.
