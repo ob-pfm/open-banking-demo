@@ -14,12 +14,17 @@ const CreditsComponent = () => {
   // Get context data using custom hook
   const { isProcessing, userId, alertText, apiKey } = useOutletContext<IOutletContext>();
 
-  // Create instances of AccountsClient and BanksClient using memoized version
+  // Create instances of CreditsClient and BanksClient using memoized version
   const creditsServices = useMemo(() => new CreditsClient(apiKey, URL_SERVER), [apiKey]);
   const banksServices = useMemo(() => new BanksClient(apiKey, URL_SERVER), [apiKey]);
 
-  // Load credits when component mounts or userId changes
-  const loadCredits = useCallback(() => {
+  // Hanlde click button on empty view
+  const handleEmptyClick = useCallback(() => {
+    navigate('/pfm');
+  }, [navigate]);
+
+  useEffect(() => {
+    // Load credits when component mounts or userId changes
     if (userId) {
       // Show loading indicator in the component
       componentRef.current.showMainLoading = true;
@@ -27,15 +32,18 @@ const CreditsComponent = () => {
       const promises = [creditsServices.list(userId), banksServices.getAvailables()];
       Promise.all(promises)
         .then((response) => {
-          // Extract data from response
+          // Extract credits data from response
           const creditsResponse = response[0] as { data: Credit[]; totalBalance: CreditBalance };
           const banks: Bank[] = response[1] as unknown as Bank[]; // Extract banks data from response
           componentRef.current.banksData = banks; // Set banks data in the component
+          // If there are not credits data
           if (creditsResponse.data.length > 0) {
-            componentRef.current.creditData = creditsResponse.data; // Set credit data in the component
+            // Set credit data in the component
+            componentRef.current.creditData = creditsResponse.data;
             componentRef.current.availableAmount = creditsResponse.totalBalance.availableAmount;
             componentRef.current.limitAmount = creditsResponse.totalBalance.limitAmount;
             componentRef.current.usedAmount = creditsResponse.totalBalance.usedAmount;
+            componentRef.current.isEmpty = false;
           } else componentRef.current.isEmpty = true;
 
           componentRef.current.showMainLoading = false;
@@ -48,14 +56,6 @@ const CreditsComponent = () => {
         });
     }
   }, [componentRef, creditsServices, banksServices, userId]);
-
-  const handleEmptyClick = useCallback(() => {
-    navigate('/pfm/cuentas');
-  }, [navigate]);
-
-  useEffect(() => {
-    loadCredits(); // Load accounts when component mounts or userId changes
-  }, [loadCredits]);
 
   useEffect(() => {
     // Add event listeners for custom events to componentRef and remove them on cleanup

@@ -53,11 +53,13 @@ const AccountsComponent = () => {
           const accounts: Account[] = response[0] as Account[]; // Extract accounts data from response
           const banks: Bank[] = response[1] as Bank[]; // Extract banks data from response
           // Extract banks data from response
-          const financialEntities: FinancialEntity[] = response[2] as FinancialEntity[];
+          const financialEntities: FinancialEntity[] = (response[2] as FinancialEntity[]).filter(
+            (fe) => fe.isBankAggregation === false
+          );
           componentRef.current.banksData = banks; // Set banks data in the component
           componentRef.current.accountsData = accounts; // Set accounts data in the component
           // Set available banks data to add accounts in the component
-          componentRef.current.availableBanksData = financialEntities.filter((fe) => fe.isBankAggregation === false);
+          componentRef.current.financialEntitiesData = financialEntities;
           componentRef.current.showMainLoading = false; // Hide loading indicator in the component
         })
         .catch((error) => {
