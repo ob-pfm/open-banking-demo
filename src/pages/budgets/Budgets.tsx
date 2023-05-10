@@ -111,7 +111,21 @@ const BudgetsComponent = () => {
                   .catch(() => reject()); // Reject promise on failure
             })
         );
-      Promise.all(budgetPromises) // Wait for all budget promises to resolve
+      const newBudgetPromises = e.detail.budgets
+        .filter(({ id, amount }) => id === undefined && amount !== 0) // Filter budgets with id present
+        .map(
+          ({ name, categoryId, amount }) =>
+            new Promise((resolve, reject) => {
+              // Check if userId is truthy
+              if (userId)
+                // Create budget using budgetsServices
+                budgetsServices
+                  .create(new BudgetPayload({ name, amount, warningPercentage: 0.5, categoryId, userId }))
+                  .then(() => resolve(true)) // Resolve promise with true on success
+                  .catch(() => reject()); // Reject promise on failure
+            })
+        );
+      Promise.all([...budgetPromises, ...newBudgetPromises]) // Wait for all budget promises to resolve
         .then(() => {
           getBudgets(() => {
             // Call getBudgets function with callback on success
