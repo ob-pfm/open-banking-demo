@@ -29,11 +29,15 @@ const CreditsComponent = () => {
       // Show loading indicator in the component
       componentRef.current.showMainLoading = true;
       // Fetch credits and banks data in parallel
-      const promises = [creditsServices.list(userId), banksServices.getAvailables()];
+      const promises = [creditsServices.getList(userId), banksServices.getAvailables(userId)];
       Promise.all(promises)
         .then((response) => {
           // Extract credits data from response
-          const creditsResponse = response[0] as { data: Credit[]; totalBalance: CreditBalance };
+          const creditsResponse = response[0] as {
+            data: Credit[];
+            totalBalance: CreditBalance;
+            nextCursor: number | null;
+          };
           const banks: Bank[] = response[1] as unknown as Bank[]; // Extract banks data from response
           componentRef.current.banksData = banks; // Set banks data in the component
           // If there are not credits data
