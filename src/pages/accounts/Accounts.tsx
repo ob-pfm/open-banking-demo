@@ -2,8 +2,8 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import { Bank, FinancialEntity } from 'open-banking-pfm-sdk/models';
-import { BanksClient, Account, AccountsClient, AccountPayload, UsersClient } from 'open-banking-pfm-sdk';
+import { FinancialEntity } from 'open-banking-pfm-sdk/models';
+import { Account, AccountsClient, AccountPayload, UsersClient } from 'open-banking-pfm-sdk';
 import '../../libs/wc/ob-accounts-component';
 import { URL_SERVER } from '../../constants';
 import { IOutletContext } from '../../interfaces';
@@ -34,7 +34,6 @@ const AccountsComponent = () => {
 
   // Create instances of AccountsClient and BanksClient using memoized version
   const accountServices = useMemo(() => new AccountsClient(apiKey, URL_SERVER), [apiKey]);
-  const banksServices = useMemo(() => new BanksClient(apiKey, URL_SERVER), [apiKey]);
   const userServices = useMemo(() => new UsersClient(apiKey, URL_SERVER), [apiKey]);
 
   // Load accounts when component mounts or userId changes
@@ -43,20 +42,12 @@ const AccountsComponent = () => {
       // Show loading indicator in the component
       componentRef.current.showMainLoading = true;
       // Fetch accounts and banks data in parallel
-      const promises = [
-        accountServices.getList(userId),
-        banksServices.getAvailables(),
-        userServices.getFinancialEntities()
-      ];
+      const promises = [accountServices.getList(userId), userServices.getFinancialEntities()];
       Promise.all(promises)
         .then((response) => {
           const accounts: Account[] = response[0] as Account[]; // Extract accounts data from response
-          const banks: Bank[] = response[1] as Bank[]; // Extract banks data from response
           // Extract banks data from response
-          const financialEntities: FinancialEntity[] = (response[2] as FinancialEntity[]).filter(
-            (fe) => fe.isBankAggregation === false
-          );
-          componentRef.current.banksData = banks; // Set banks data in the component
+          const financialEntities: FinancialEntity[] = response[1] as FinancialEntity[];
           componentRef.current.accountsData = accounts; // Set accounts data in the component
           // Set available banks data to add accounts in the component
           componentRef.current.financialEntitiesData = financialEntities;
@@ -68,7 +59,7 @@ const AccountsComponent = () => {
           showErrorToast(error); // Show error toast
         });
     }
-  }, [componentRef, accountServices, banksServices, userId, userServices]);
+  }, [componentRef, accountServices, userId, userServices]);
 
   // Event handler for 'save-new' event
   const handleSaveAccount = useCallback(
