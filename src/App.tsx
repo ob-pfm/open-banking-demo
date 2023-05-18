@@ -16,6 +16,7 @@ import CategoriesComponent from './pages/categories/Categories';
 import SummaryComponent from './pages/summary/Summary';
 import SignUp from './pages/signup/Signup';
 import { getApiKey } from './helpers';
+import CreditsComponent from './pages/credits/Credits';
 
 function App() {
   const { pathname } = useLocation();
@@ -42,10 +43,14 @@ function App() {
                 <Route path="resumen" element={<SummaryComponent />} />
                 <Route path="categorias" element={<CategoriesComponent />} />
                 <Route path="presupuestos" element={<BudgetsComponent />} />
+                <Route path="credits" element={<CreditsComponent />} />
               </Route>
             </>
           ) : (
-            <Route path="/*" element={<SignUp />} />
+            <>
+              <Route path="/consume-consent" element={<ConsumeConsentPage />} />
+              <Route path="/*" element={<SignUp />} />
+            </>
           )}
         </Routes>
 

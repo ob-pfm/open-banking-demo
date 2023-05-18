@@ -1,7 +1,5 @@
 import { useState, FormEvent, ChangeEvent, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signUp } from 'open-banking-pfm-sdk';
-import { IUserForm } from 'open-banking-pfm-sdk/interfaces';
 import { API_KEY_SIGNUP, URL_SERVER } from '../../constants';
 import './signup.css';
 import { showErrorToast } from '../../helpers';
@@ -58,8 +56,12 @@ const SignUp = () => {
       return;
     }
     setLoading(true);
-    const userForm: IUserForm = { ...formData, serverUrl: URL_SERVER, apiKey: API_KEY_SIGNUP };
-    signUp(userForm)
+    fetch(`${URL_SERVER}/onboarding/signup`, {
+      method: 'POST',
+      headers: { 'X-api-key': API_KEY_SIGNUP, 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData)
+    })
+      .then((res) => res.json())
       .then((response) => {
         handleSetKey(response.apiKey);
         setLoading(false);

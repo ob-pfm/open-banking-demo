@@ -78,6 +78,17 @@ const Menu = ({ userId }: { userId: number | null }) => {
             <span>Resumo</span>
           </Link>
         </div>
+        <div
+          className={`menu__nav-item ${!userId && 'menu__nav-item--disabled'} ${
+            location && location.pathname === '/pfm/credits' && 'menu__nav-item--selected'
+          }`}
+        >
+          <Link className="menu__nav-link" to="credits">
+            <img alt="" src={IconA} className="img-normal" />
+            <img alt="" src={IconAb} className="img-active" />
+            <span>Créditos</span>
+          </Link>
+        </div>
       </nav>
     </div>
   );

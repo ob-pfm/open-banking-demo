@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Bank, buildClients } from 'open-banking-pfm-sdk';
+import { buildClients } from 'open-banking-pfm-sdk';
 import { ConsentDetail } from 'open-banking-pfm-sdk/models';
 import { showErrorToast } from '../../helpers';
 import { URL_SERVER } from '../../constants';
 
-import '../../libs/wc/ob-consent-wizard-component';
 import { IOutletContext } from '../../interfaces';
 import { IConsentRenewEvent } from './interfaces';
 
@@ -22,7 +21,7 @@ const ConsentComponent = () => {
   const loadConsents = useCallback(() => {
     if (userId) {
       consentWizardComponentRef.current.showMainLoading = true;
-      const promises = [consentsClient.getList(userId), banksClient.getAvailables()];
+      const promises = [consentsClient.getList(userId), banksClient.getAvailables(userId)];
       Promise.all(promises)
         .then((response) => {
           const [consents, banks] = response;
@@ -38,17 +37,6 @@ const ConsentComponent = () => {
         });
     }
   }, [consentsClient, banksClient, userId]);
-
-  const openModalConsent = useCallback(() => {
-    banksClient
-      .getAvailables()
-      .then((bankResponse: Bank[]) => {
-        consentWizardComponentRef.current.banksData = bankResponse.map((bank: Bank) => bank.toObject());
-      })
-      .catch((error) => {
-        showErrorToast(error);
-      });
-  }, [banksClient]);
 
   const handleSelectBank = useCallback(
     (e: { detail: string }) => {
@@ -151,7 +139,6 @@ const ConsentComponent = () => {
 
     consentWizardComponentRefCurrent.addEventListener('select-bank', handleSelectBank);
     consentWizardComponentRefCurrent.addEventListener('on-submit', handleSubmitConsent);
-    consentWizardComponentRefCurrent.addEventListener('on-click-add', openModalConsent);
     consentWizardComponentRefCurrent.addEventListener('select-consent', handleSelectConsent);
     consentWizardComponentRefCurrent.addEventListener('renew-consent', handleRenewConsent);
     consentWizardComponentRefCurrent.addEventListener('cancel-consent-confirm', handleCancelConsent);
@@ -160,7 +147,6 @@ const ConsentComponent = () => {
     return () => {
       consentWizardComponentRefCurrent.removeEventListener('select-bank', handleSelectBank);
       consentWizardComponentRefCurrent.removeEventListener('on-submit', handleSubmitConsent);
-      consentWizardComponentRefCurrent.addEventListener('on-click-add', openModalConsent);
       consentWizardComponentRefCurrent.addEventListener('select-consent', handleSelectConsent);
       consentWizardComponentRefCurrent.addEventListener('renew-consent', handleRenewConsent);
       consentWizardComponentRefCurrent.addEventListener('cancel-consent-confirm', handleCancelConsent);
@@ -169,7 +155,6 @@ const ConsentComponent = () => {
   }, [
     handleSubmitConsent,
     handleSelectBank,
-    openModalConsent,
     handleSelectConsent,
     handleRenewConsent,
     handleCancelConsent,
@@ -177,9 +162,8 @@ const ConsentComponent = () => {
   ]);
 
   useEffect(() => {
-    if (initConsent) openModalConsent();
-    else if (userId) loadConsents();
-  }, [initConsent, openModalConsent, userId, loadConsents]);
+    if (userId) loadConsents();
+  }, [initConsent, userId, loadConsents]);
 
   return <ob-consent-wizard-component ref={consentWizardComponentRef} fontFamily="Lato" lang="pt" />;
 };

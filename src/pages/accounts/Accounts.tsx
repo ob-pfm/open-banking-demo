@@ -2,9 +2,8 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import { Bank } from 'open-banking-pfm-sdk/models';
-import { BanksClient, Account, AccountsClient, AccountPayload } from 'open-banking-pfm-sdk';
-import '../../libs/wc/ob-accounts-component';
+import { FinancialEntity } from 'open-banking-pfm-sdk/models';
+import { Account, AccountsClient, AccountPayload, UsersClient } from 'open-banking-pfm-sdk';
 import { URL_SERVER } from '../../constants';
 import { IOutletContext } from '../../interfaces';
 import styles from './style.css';
@@ -28,24 +27,29 @@ interface IDeleteEventData {
 }
 const AccountsComponent = () => {
   const componentRef = useRef<any>(null); // Create a ref for the component
-  const { isProcessing, userId, alertText, apiKey } = useOutletContext<IOutletContext>(); // Get context data using custom hook
+  // Get context data using custom hook
+  const { isProcessing, userId, alertText, apiKey } = useOutletContext<IOutletContext>();
   const navigate = useNavigate(); // Get navigate function from react-router-dom
 
   // Create instances of AccountsClient and BanksClient using memoized version
   const accountServices = useMemo(() => new AccountsClient(apiKey, URL_SERVER), [apiKey]);
-  const banksServices = useMemo(() => new BanksClient(apiKey, URL_SERVER), [apiKey]);
+  const userServices = useMemo(() => new UsersClient(apiKey, URL_SERVER), [apiKey]);
 
   // Load accounts when component mounts or userId changes
   const loadAccounts = useCallback(() => {
     if (userId) {
-      componentRef.current.showMainLoading = true; // Show loading indicator in the component
-      const promises = [accountServices.getList(userId), banksServices.getAvailables()]; // Fetch accounts and banks data in parallel
+      // Show loading indicator in the component
+      componentRef.current.showMainLoading = true;
+      // Fetch accounts and banks data in parallel
+      const promises = [accountServices.getList(userId), userServices.getFinancialEntities()];
       Promise.all(promises)
         .then((response) => {
           const accounts: Account[] = response[0] as Account[]; // Extract accounts data from response
-          const banks: Bank[] = response[1] as unknown as Bank[]; // Extract banks data from response
-          componentRef.current.banksData = banks; // Set banks data in the component
+          // Extract banks data from response
+          const financialEntities: FinancialEntity[] = response[1] as FinancialEntity[];
           componentRef.current.accountsData = accounts; // Set accounts data in the component
+          // Set available banks data to add accounts in the component
+          componentRef.current.financialEntitiesData = financialEntities;
           componentRef.current.showMainLoading = false; // Hide loading indicator in the component
         })
         .catch((error) => {
@@ -54,7 +58,7 @@ const AccountsComponent = () => {
           showErrorToast(error); // Show error toast
         });
     }
-  }, [componentRef, accountServices, banksServices, userId]);
+  }, [componentRef, accountServices, userId, userServices]);
 
   // Event handler for 'save-new' event
   const handleSaveAccount = useCallback(
@@ -146,15 +150,6 @@ const AccountsComponent = () => {
     loadAccounts(); // Load accounts when component mounts or userId changes
   }, [loadAccounts]);
 
-  /**
-   * React hook that attaches and removes event listeners to a ref object.
-   *
-   * @param {function} handleSaveAccount - Event handler function for 'save-new' event.
-   * @param {function} handleEditAccount - Event handler function for 'save-edit' event.
-   * @param {function} handleDeleteAccount - Event handler function for 'delete' event.
-   * @param {function} handleClickAccount - Event handler function for 'click-account-collapsible-section' event.
-   * @returns {function} - Cleanup function that removes event listeners when component is unmounted or when dependency array changes.
-   */
   useEffect(() => {
     const componentRefCurrent = componentRef.current;
     // Attach event listeners

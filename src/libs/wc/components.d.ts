@@ -7,5 +7,6 @@ declare namespace JSX {
     'ob-onboarding-component': any;
     'ob-summary-component': any;
     'ob-transactions-component': any;
+    'ob-credit-component': any;
   }
 }

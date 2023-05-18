@@ -4,12 +4,12 @@ import { useOutletContext, createSearchParams, useNavigate } from 'react-router-
 import { CategoriesClient, InsightsClient, AccountsClient, Account } from 'open-banking-pfm-sdk';
 import { URL_SERVER } from '../../constants';
 
-import '../../libs/wc/ob-summary-component';
 import { IOutletContext } from '../../interfaces';
 import { showErrorToast, unicodeToChar } from '../../helpers';
 
 import './summary.css';
 
+// Get date range based on a given date
 const getDateRange = (date: Date) => {
   const month = date.getMonth();
   const year = date.getFullYear();
@@ -19,6 +19,7 @@ const getDateRange = (date: Date) => {
   };
 };
 
+// Interface for event data used in the component
 interface ISubmitEventData {
   summary: { categoryId: number; parentCategoryId: number };
   date: number | string;
@@ -34,6 +35,7 @@ const SummaryComponent = () => {
   const [accountId, setAccountId] = useState<number | string>(0);
   const [accountsList, setAccountsList] = useState<Account[]>([]);
 
+  // Handle subcategory detail click event
   const handleSubcategoryDetailClick = useCallback(
     (e: { detail: ISubmitEventData }) => {
       const { summary, date } = e.detail;
@@ -52,6 +54,7 @@ const SummaryComponent = () => {
     [navigate, accountId]
   );
 
+  // Handle transaction detail click event
   const handleTransactionDetailClick = useCallback(
     (e: { detail: ISubmitEventData }) => {
       const { date } = e.detail;
@@ -68,16 +71,19 @@ const SummaryComponent = () => {
     [navigate, accountId]
   );
 
+  // Handle empty action click event
   const handleEmptyActionClick = useCallback(() => {
     navigate({
       pathname: '../movimientos'
     });
   }, [navigate]);
 
+  // Handle change account event
   const handleChangeAccount = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     setAccountId(Number(e.target.value));
   }, []);
 
+  // Fetch accounts list when userId changes
   useEffect(() => {
     if (userId) {
       accountServices
@@ -92,18 +98,24 @@ const SummaryComponent = () => {
 
   useEffect(() => {
     if (userId) {
+      // Show main loading while data is being fetched
       componentRef.current.showMainLoading = true;
+      // Initialize categoriesData as an empty array
       componentRef.current.categoriesData = [];
+      // Make API call to get categories with subcategories
       categoryServices
         .getListWithSubcategories(userId)
         .then((response) => {
+          // Transform the response data and update categoriesData
           componentRef.current.categoriesData = response.map((category) => ({
             ...category.toObject(),
             subcategories: category.subcategories.map((subcategory: any) => subcategory.toObject())
           }));
+          // Hide main loading on success
           componentRef.current.showMainLoading = false;
         })
         .catch((error) => {
+          // Show error toast on failure
           showErrorToast(error);
         });
     }
@@ -111,13 +123,16 @@ const SummaryComponent = () => {
 
   useEffect(() => {
     if (userId) {
+      // Show main loading while data is being fetched
       componentRef.current.showMainLoading = true;
+      // Initialize summaryData with empty arrays for incomes, expenses, and balances
       componentRef.current.summaryData = {
         incomes: [],
         expenses: [],
         balances: []
       };
       if (accountId !== 0) {
+        // Make API call to get summary data for a specific account or all accounts
         const request =
           accountId === ''
             ? insightsServices.getResume(userId)
@@ -125,22 +140,29 @@ const SummaryComponent = () => {
         request
           .then((insights) => {
             if (insights && (insights.incomes.length > 0 || insights.expenses.length > 0)) {
+              // Update summaryData with the fetched data
               componentRef.current.summaryData = {
                 balances: insights.balances,
                 expenses: insights.expenses,
                 incomes: insights.incomes
               };
+              // Set isEmpty to false if there are incomes or expenses
               componentRef.current.isEmpty = false;
-            } else componentRef.current.isEmpty = true;
-
+            } else {
+              // Set isEmpty to true if there are no incomes or expenses
+              componentRef.current.isEmpty = true;
+            }
+            // Hide main loading on success
             componentRef.current.showMainLoading = false;
           })
           .catch((error) => {
+            // Show error toast on failure
             componentRef.current.isEmpty = true;
             componentRef.current.showMainLoading = false;
             showErrorToast(error);
           });
       } else {
+        // Set isEmpty to true and hide main loading if accountId is 0
         componentRef.current.isEmpty = true;
         componentRef.current.showMainLoading = false;
       }
@@ -148,10 +170,11 @@ const SummaryComponent = () => {
   }, [insightsServices, categoryServices, userId, accountServices, accountId]);
 
   useEffect(() => {
+    // Add event listeners and update component styles
     const componentRefCurrent = componentRef.current;
-    componentRefCurrent.addEventListener('subcategory-detail-click', handleSubcategoryDetailClick);
-    componentRefCurrent.addEventListener('transactions-detail-click', handleTransactionDetailClick);
-    componentRefCurrent.addEventListener('empty-button-click', handleEmptyActionClick);
+    componentRefCurrent.addEventListener('subcategory-detail-click', handleSubcategoryDetailClick); // Add event listener for 'subcategory-detail-click' event
+    componentRefCurrent.addEventListener('transactions-detail-click', handleTransactionDetailClick); // Add event listener for 'transactions-detail-click' event
+    componentRefCurrent.addEventListener('empty-button-click', handleEmptyActionClick); // Add event listener for 'empty-button-click' event
     componentRefCurrent.componentStyles = `
       .obwc-onboarding__container .obwc-onboarding__close-button{
         display:none;
@@ -159,17 +182,20 @@ const SummaryComponent = () => {
       .obwc-expenses__table-transactions-icon{
         display:none;
       }
-    `;
+    `; // Update component styles with CSS rules
 
+    // Remove event listeners on unmount
     return () => {
-      componentRefCurrent.removeEventListener('subcategory-detail-click', handleSubcategoryDetailClick);
-      componentRefCurrent.removeEventListener('transactions-detail-click', handleTransactionDetailClick);
-      componentRefCurrent.addEventListener('empty-button-click', handleEmptyActionClick);
+      componentRefCurrent.removeEventListener('subcategory-detail-click', handleSubcategoryDetailClick); // Remove event listener for 'subcategory-detail-click' event
+      componentRefCurrent.removeEventListener('transactions-detail-click', handleTransactionDetailClick); // Remove event listener for 'transactions-detail-click' event
+      componentRefCurrent.addEventListener('empty-button-click', handleEmptyActionClick); // Remove event listener for 'empty-button-click' event
     };
   }, [handleSubcategoryDetailClick, handleTransactionDetailClick, handleEmptyActionClick]);
+
   return (
     <>
       {accountsList.length && (
+        // Render a div with class name "selectContainer" if accountsList has length greater than 0
         <div className="selectContainer">
           <select onChange={handleChangeAccount}>
             <option value="">Todas as contas</option>
@@ -182,15 +208,15 @@ const SummaryComponent = () => {
         </div>
       )}
       <ob-summary-component
-        ref={componentRef}
-        alertType="warning"
-        showAlert={isProcessing}
-        alertText={alertText}
-        fontFamily="Lato"
-        lang="pt"
-        currencyLang="pt-BR"
-        currencyType="BRL"
-        emptyViewActionText="Agregar movimento"
+        ref={componentRef} // Pass a ref to the ob-summary-component component
+        alertType="warning" // Pass the prop "alertType" with the value "warning"
+        showAlert={isProcessing} // Pass the prop "showAlert" with the value of the "isProcessing" variable
+        alertText={alertText} // Pass the prop "alertText" with the value of the "alertText" variable
+        fontFamily="Lato" // Pass the prop "fontFamily" with the value "Lato"
+        lang="pt" // Pass the prop "lang" with the value "pt"
+        currencyLang="pt-BR" // Pass the prop "currencyLang" with the value "pt-BR"
+        currencyType="BRL" // Pass the prop "currencyType" with the value "BRL"
+        emptyViewActionText="Agregar movimento" // Pass the prop "emptyViewActionText" with the value "Agregar movimento"
       />
     </>
   );
