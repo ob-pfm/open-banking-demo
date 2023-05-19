@@ -14,7 +14,6 @@ import { URL_SERVER } from '../../constants';
 import { showErrorToast, unicodeToChar } from '../../helpers';
 import { IOutletContext } from '../../interfaces';
 
-import '../../libs/wc/ob-transactions-component';
 import { ITransactionFilterEvent } from './interfaces';
 
 // Define interface for filter options

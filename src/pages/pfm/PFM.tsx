@@ -5,7 +5,6 @@ import Modal from 'react-modal';
 import { buildClients } from 'open-banking-pfm-sdk';
 
 import Menu from './components/Menu';
-import '../../libs/wc/ob-onboarding-component';
 import {
   CONSENT_IN_PROCESS,
   AGG_IN_PROCESS,

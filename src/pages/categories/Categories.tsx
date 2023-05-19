@@ -6,7 +6,6 @@ import { CategoriesClient, Category, CategoryPayload } from 'open-banking-pfm-sd
 import { ICategory, ICategoryUpdatePayload } from 'open-banking-pfm-sdk/interfaces';
 import { URL_SERVER } from '../../constants';
 
-import '../../libs/wc/ob-categories-component';
 import { IOutletContext } from '../../interfaces';
 
 // Define interface for event data

@@ -4,7 +4,6 @@ import { useOutletContext, createSearchParams, useNavigate } from 'react-router-
 import { CategoriesClient, InsightsClient, AccountsClient, Account } from 'open-banking-pfm-sdk';
 import { URL_SERVER } from '../../constants';
 
-import '../../libs/wc/ob-summary-component';
 import { IOutletContext } from '../../interfaces';
 import { showErrorToast, unicodeToChar } from '../../helpers';
 
