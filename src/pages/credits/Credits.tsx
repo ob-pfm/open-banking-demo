@@ -3,7 +3,6 @@ import { useNavigate, useOutletContext } from 'react-router-dom';
 
 import { Bank, Credit, CreditBalance } from 'open-banking-pfm-sdk/models';
 import { BanksClient, CreditsClient } from 'open-banking-pfm-sdk';
-import '../../libs/wc/ob-credit-component';
 import { URL_SERVER } from '../../constants';
 import { IOutletContext } from '../../interfaces';
 import { showErrorToast } from '../../helpers';

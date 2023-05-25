@@ -6,7 +6,6 @@ import { ConsentDetail } from 'open-banking-pfm-sdk/models';
 import { showErrorToast } from '../../helpers';
 import { URL_SERVER } from '../../constants';
 
-import '../../libs/wc/ob-consent-wizard-component';
 import { IOutletContext } from '../../interfaces';
 import { IConsentRenewEvent } from './interfaces';
 

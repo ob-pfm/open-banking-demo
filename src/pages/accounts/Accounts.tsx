@@ -4,7 +4,6 @@ import { toast } from 'react-toastify';
 
 import { FinancialEntity } from 'open-banking-pfm-sdk/models';
 import { Account, AccountsClient, AccountPayload, UsersClient } from 'open-banking-pfm-sdk';
-import '../../libs/wc/ob-accounts-component';
 import { URL_SERVER } from '../../constants';
 import { IOutletContext } from '../../interfaces';
 import styles from './style.css';

@@ -5,7 +5,6 @@ import { toast } from 'react-toastify';
 import { CategoriesClient, ParentCategory, BudgetsClient, Budget, BudgetPayload } from 'open-banking-pfm-sdk';
 import { URL_SERVER } from '../../constants';
 
-import '../../libs/wc/ob-budget-component';
 import { IOutletContext } from '../../interfaces';
 
 interface IBudgetData {
