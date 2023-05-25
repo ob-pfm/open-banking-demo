@@ -17,6 +17,8 @@
 
 - [Scripts](#scripts)
 
+- [Usage](#usage) 
+
 - [Open Banking SDK](#open-banking-sdk)
 
 - [Open Banking Web Components](#open-banking-web-components)
@@ -201,6 +203,34 @@ Once you have runned the demo, it will appear the next form:
 ![demoStep1](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/72d5bc68-7cd8-4efb-a530-8d3cdfc37b78)
 
 Please fill the fields and submit it.
+
+Then the onboarding form will be displayed, here you have to enter a valid CPF and submit it.
+
+![Captura](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/6e984c57-11e5-4ae8-ba47-9b81410acc9a)
+
+The user was created.
+
+![1Captura](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/c2c2b2d2-cdd6-448a-9708-4d668ac70175)
+
+You can now create a consent and do the bank aggregation process. To do it click on the PLUS icon, select the bank and period of time that the consent will be granted.
+
+![2Captura](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/42d508f9-cb7b-4c7f-b66c-9f3908effc97)
+
+![4Captura](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/72233757-3029-44bb-a6cf-71def50f9758)
+
+This will open a new window where you have to enter the bank credentials.
+
+![5Captura](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/4a8a4d80-fc25-4860-ab6d-36245c9edcda)
+
+If the credentials were correct then the consent was granted, the resources will be showed and aggregation process will run in background.
+
+![6Captura](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/a32c29b8-66d3-433a-997e-764d3a2541e3)
+
+You now will see the consent in the consents tab and its status.
+
+![7Captura](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/7cef6479-ba87-40b6-bbc7-0f164c0769e2)
+
+You have to wait the aggregation process to be completed to see the data in the PFM [Open Banking Web Components](#open-banking-web-components).
 
 ## Open Banking SDK
 
