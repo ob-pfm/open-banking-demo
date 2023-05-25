@@ -194,6 +194,14 @@ start:qa
 
 > Runs the app in QA mode with environment variables from .env.test file.
 
+## Usage
+
+Once you have runned the demo, it will appear the next form:
+
+![demoStep1](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/72d5bc68-7cd8-4efb-a530-8d3cdfc37b78)
+
+Please fill the fields and submit it.
+
 ## Open Banking SDK
 
 The Open Banking PFM SDK uses Client classes and with **Promises** to get responses from the API, structured as data models. For further information visit:
