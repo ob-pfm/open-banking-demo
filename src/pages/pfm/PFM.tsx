@@ -282,7 +282,6 @@ const PFMPage = () => {
       <ob-onboarding-component
         ref={onboardingComponentRef} // Pass a ref to `onboardingComponentRef`
         fontFamily="Lato" // Set the `fontFamily` prop to "Lato"
-        lang="pt" // Set the `lang` prop to "pt" (Portuguese)
       />
       {/* Render a `Modal` component */}
       <Modal
