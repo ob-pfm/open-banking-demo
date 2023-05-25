@@ -136,11 +136,14 @@ npm install
 
   
 
-4. Create a .env.development file in the project root directory to store development environment variables or use the provided one.
+4. Create an environment file in the project root directory setting the API URL where you will be pointing or use or change one of the Test or Dev environment files provided. 
 
+```console
+REACT_APP_API_URL="http://ec2-3-21-18-54.us-east-2.compute.amazonaws.com:8083"
+```
   
 
-5. Create a .env.test file in the project root directory to store test environment variables or use the provided one.
+5. Run the app using the react-scripts command or use one of the start commands showed in the [scripts section](#scripts) 
 
   
 
