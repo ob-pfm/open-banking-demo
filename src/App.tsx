@@ -3,7 +3,7 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 
 import Header from './header/Header';
-import { AccountsPage, CardsPage, MyInvestmentsPage, MyLoansPage, MyProductsPage, PFMPage } from './pages/subpages';
+import { PFMPage } from './pages/subpages';
 
 import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
@@ -30,11 +30,6 @@ function App() {
           {apiKey ? (
             <>
               <Route path="/" element={<SignUp />} />
-              <Route path="/meus-produtos" element={<MyProductsPage />} />
-              <Route path="/contas" element={<AccountsPage />} />
-              <Route path="/cartoes" element={<CardsPage />} />
-              <Route path="/meus-emprestimos" element={<MyLoansPage />} />
-              <Route path="/meus-investimentos" element={<MyInvestmentsPage />} />
               <Route path="/consume-consent" element={<ConsumeConsentPage />} />
               <Route path="/pfm" element={<PFMPage />}>
                 <Route path="" element={<ConsentComponent />} />

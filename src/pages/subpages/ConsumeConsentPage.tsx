@@ -3,63 +3,70 @@ import { useLocation } from 'react-router-dom';
 
 import { BanksClient } from 'open-banking-pfm-sdk';
 import { URL_SERVER } from '../../constants';
-import { getApiKey, showErrorToast } from '../../helpers';
+import { showErrorToast } from '../../helpers';
 
+// Constants representing the consume status
 const CONSUME_IN_PROCESS = 'IN_PROCESS';
 const CONSUME_FAILED = 'FAILED';
 const CONSUME_SUCCESSFUL = 'SUCCESSFUL';
 
 const ConsumeConsentPage = () => {
   const location = useLocation();
-  const apiKey = getApiKey();
 
-  const [consumeStatus, setConsumeStatus] = useState(CONSUME_IN_PROCESS);
+  // State variables
+  const [consumeStatus, setConsumeStatus] = useState(CONSUME_IN_PROCESS); // The consume status
   const message = useMemo(() => {
+    // Determine the message based on the consume status
     switch (consumeStatus) {
       case CONSUME_SUCCESSFUL:
-        return 'O processo foi bem sucedido.';
+        return 'O processo foi bem sucedido.'; // Successful message
       case CONSUME_FAILED:
-        return 'Um erro ocorreu.';
+        return 'Um erro ocorreu.'; // Failed message
       default:
-        return 'Em processamento...';
+        return 'Em processamento...'; // Default message
     }
   }, [consumeStatus]);
 
   const messageClassname = useMemo(() => {
+    // Determine the classname for the message based on the consume status
     switch (consumeStatus) {
       case CONSUME_SUCCESSFUL:
-        return 'success-text';
+        return 'success-text'; // Classname for successful status
       case CONSUME_FAILED:
-        return 'error-text';
+        return 'error-text'; // Classname for failed status
       default:
-        return '';
+        return ''; // Empty classname for default status
     }
   }, [consumeStatus]);
 
   useEffect(() => {
     if (location.hash) {
       const params = location.hash.split('&');
-      const authCode = params.find((el) => el.indexOf('code') !== -1)?.split('=')[1];
-      const token = params.find((el) => el.indexOf('id_token') !== -1)?.split('=')[1];
-      const state = params.find((el) => el.indexOf('state') !== -1)?.split('=')[1];
+      const authCode = params.find((el) => el.indexOf('code') !== -1)?.split('=')[1]; // Extract the auth code from the URL
+      const token = params.find((el) => el.indexOf('id_token') !== -1)?.split('=')[1]; // Extract the token from the URL
+      const state = params.find((el) => el.indexOf('state') !== -1)?.split('=')[1]; // Extract the state from the URL
 
-      if (authCode && token && state && apiKey) {
-        const banksClient = new BanksClient(apiKey, URL_SERVER);
+      if (authCode && token && state) {
+        const banksClient = new BanksClient();
+        banksClient.serverUrl = URL_SERVER; // Set the server URL for the banks client
+
+        // Authorize the client using the auth code, token, and state
         banksClient
-          .consumeConsent(authCode, token, state)
+          .authorize(authCode, token, state)
           .then(() => {
-            setConsumeStatus(CONSUME_SUCCESSFUL);
-            window.close();
+            setConsumeStatus(CONSUME_SUCCESSFUL); // Set the consume status to successful
+            window.close(); // Close the window
           })
           .catch((error) => {
-            showErrorToast(error);
-            setConsumeStatus(CONSUME_FAILED);
+            showErrorToast(error); // Show an error toast message
+            setConsumeStatus(CONSUME_FAILED); // Set the consume status to failed
           });
       } else {
+        // Set the consume status to failed if any of the required parameters are missing
         setConsumeStatus(CONSUME_FAILED);
       }
     }
-  }, [location, apiKey]);
+  }, [location]);
 
   return (
     <div className="container">

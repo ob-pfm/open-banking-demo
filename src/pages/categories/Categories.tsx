@@ -225,9 +225,6 @@ const CategoriesComponent = () => {
       showAlert={isProcessing} // Prop for showing/hiding alert, based on isProcessing boolean variable
       alertText={alertText} // Prop for alert text to display
       ref={componentRef} // Prop for passing the ref of componentRef to the ob-categories-component
-      lang="pt" // Prop for language setting, e.g. "pt" for Portuguese
-      currencyLang="pt-BR" // Prop for currency language setting, e.g. "pt-BR" for Brazilian Portuguese
-      currencyType="BRL" // Prop for currency type, e.g. "BRL" for Brazilian Real
       deleteCategoryDisabled // Prop for disabling delete category functionality
       editCategoryDisabled // Prop for disabling edit category functionality
       editSubcategoryDisabled // Prop for disabling edit subcategory functionality

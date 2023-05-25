@@ -16,8 +16,12 @@ interface FormData {
 }
 
 const SignUp = () => {
+  // Import the necessary dependencies
+
+  // Define the navigate function from react-router-dom
   const navigate = useNavigate();
 
+  // Define the initial form data using useState hook
   const [formData, setFormData] = useState<FormData>({
     name: '',
     firstLastName: '',
@@ -28,20 +32,30 @@ const SignUp = () => {
     password: '',
     countryShortName: ''
   });
+
+  // Define the error state and loading state
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+
+  // Get the 'key' value from localStorage using useState hook
   const [key, setKey] = useState<string | null>(localStorage.getItem('key'));
 
+  // Define the handleSetKey function using useCallback hook
   const handleSetKey = useCallback(
     (value: string | null) => {
+      // Set the 'key' value in localStorage
       localStorage.setItem('key', value || '');
+      // Update the 'key' state
       setKey(value);
     },
     [setKey]
   );
 
+  // Define the handleSubmit function
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    // Check if any required field is empty
     if (
       !formData.name ||
       !formData.firstLastName ||
@@ -55,24 +69,34 @@ const SignUp = () => {
       setError('Por favor insira todos os campos.');
       return;
     }
+
+    // Set loading to true to indicate the form submission is in progress
     setLoading(true);
+
+    // Perform a POST request to the server
     fetch(`${URL_SERVER}/onboarding/signup`, {
       method: 'POST',
       headers: { 'X-api-key': API_KEY_SIGNUP, 'Content-Type': 'application/json' },
       body: JSON.stringify(formData)
     })
-      .then((res) => res.json())
+      .then((res) => res.json()) // Parse the response as JSON
       .then((response) => {
+        // Update the 'key' state with the response apiKey
         handleSetKey(response.apiKey);
+        // Set loading to false to indicate the form submission is complete
         setLoading(false);
+        // Navigate to the '/pfm' route
         navigate('/pfm');
       })
       .catch((_error) => {
+        // Handle errors by displaying a toast or notification
         showErrorToast(_error);
+        // Set loading to false to indicate the form submission is complete
         setLoading(false);
       });
   };
 
+  // Define the handleInputChange function
   const handleInputChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target;
     setError('');
@@ -82,6 +106,7 @@ const SignUp = () => {
     }));
   };
 
+  // useEffect hook to navigate if 'key' exists
   useEffect(() => {
     if (key) navigate('/pfm');
   }, [key, navigate]);

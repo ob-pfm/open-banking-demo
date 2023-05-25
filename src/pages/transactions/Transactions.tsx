@@ -394,13 +394,16 @@ const TransactionsComponent = () => {
   useEffect(() => {
     if (userId) {
       // Fetch categories list with subcategories for the given userId
-      categoryServices.getListWithSubcategories(userId).then((response) => {
-        // Update categoriesData in componentRef with the fetched data
-        componentRef.current.categoriesData = response.map((category) => ({
-          ...category.toObject(),
-          subcategories: category.subcategories.map((subcategory: any) => subcategory.toObject())
-        }));
-      });
+      categoryServices
+        .getListWithSubcategories(userId)
+        .then((response) => {
+          // Update categoriesData in componentRef with the fetched data
+          componentRef.current.categoriesData = response;
+        })
+        .catch((error) => {
+          // Show error toast on error
+          showErrorToast(error);
+        });
     }
   }, [categoryServices, userId]);
 
@@ -426,11 +429,6 @@ const TransactionsComponent = () => {
           const accounts = response.map((acc: Account) => acc);
           // Update accountsData in componentRef with the fetched data
           componentRef.current.accountsData = response;
-          // Update availableAccountsData in componentRef with no bank aggregation
-          // acounts
-          componentRef.current.availableAccountsData = response.filter(
-            (account) => account.isBankAggregation === false
-          );
 
           if (accounts.length > 0) {
             if (accountIdParam)
@@ -557,9 +555,6 @@ const TransactionsComponent = () => {
         showAlert={isProcessing} // Whether to show the alert or not, based on isProcessing value
         alertText={alertText} // Text to display in the alert
         fontFamily="Lato" // Font family for the component
-        lang="pt" // Language for the component, e.g. Portuguese
-        currencyLang="pt-BR" // Language for currency formatting, e.g. Brazilian Portuguese
-        currencyType="BRL" // Currency type, e.g. Brazilian Real
         searchDebounceTime={500} // Debounce time for search functionality in milliseconds
         activePage={1} // Active page number for pagination
       />

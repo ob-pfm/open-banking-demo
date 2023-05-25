@@ -1,12 +1,17 @@
+
 # Project Name: pfm-brazil-demo
+
+  
 
 ![Language](https://img.shields.io/badge/Language-React-blue.svg)
 
-## Description
-
-**pfm-brazil-demo** is a React web app for personal financial management. It ilustrates the use and the way to integrate the Open Banking SDK and Open Banking Web Components in a web application.
+  
 
 ## Table of contents
+
+  
+
+- [Introduction](#introduction)
 
 - [Project Setup](#project-setup)
 
@@ -16,39 +21,178 @@
 
 - [Open Banking Web Components](#open-banking-web-components)
 
+  
+
+## Introduction
+
+  
+
+**pfm-brazil-demo** is a React web app for personal financial management. It ilustrates the use and the way to integrate the Open Banking SDK and Open Banking Web Components in a web application.
+
+  
+
+The [Open Banking SDK](#open-banking-sdk) is used to consume the API in an easier way and its responses are passed to the [Open Banking Web Components](#open-banking-web-components) to show the data and interact with them.
+
+  
+
+For example:
+
+The [Transactions Component](#transactions-component) uses three data models as input **transactionsData**, **accountsData**  and **categoriesData**
+
+  
+
+```html
+
+<ob-transactions-component  
+	transactionsData 
+	accountsData 
+	categoriesData
+></ob-transactions-component>
+
+```
+
+If the data input is not provided then the web component won't show any data so you have to use the  [Open Banking SDK](#open-banking-sdk) methods to provide the data needed.
+
+In the previous example to get the data needed you have to use the next methods from the sdk:
+
+- [Transactions List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-transactions)
+- [Accounts List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-accounts)
+- [Categories List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-categories-with-subcategories)
+
+So in the demo to set the Categories data the implementation is the next:
+
+
+```javascript
+...
+import { CategoriesClient} from  'open-banking-pfm-sdk';
+...
+const  categoryServices = useMemo(() =>  new  CategoriesClient(apiKey, URL_SERVER), [apiKey]);
+...
+useEffect(() => {
+	if (userId) {
+		categoryServices
+		.getListWithSubcategories(userId)
+		.then((response) => {
+			componentRef.current.categoriesData = response;
+		})
+		.catch((error) => {
+			showErrorToast(error);
+		});
+	}
+}, [categoryServices, userId]);
+...
+
+```
+
+```html
+...
+
+return(
+	<ob-transactions-component
+		ref={componentRef}  // Reference to the component for later use
+		lang="pt"  // Language for the component, e.g. Portuguese
+		currencyLang="pt-BR"  // Language for currency formatting, e.g. Brazilian Portuguese
+		currencyType="BRL"  // Currency type, e.g. Brazilian Real
+	/>
+);
+...
+
+```
+
+
 ## Project Setup
+
+  
 
 1. Clone the repository from the project's repository.
 
+  
+
+```console
+git clone https://github.com/Finerio-Connect/pfm-brazil-demo.git
+```
+
+  
+
 2. Navigate to the project directory using the terminal.
+
+  
+
+```console
+cd pfm-brazil-demo
+```
+
+  
 
 3. Run npm install to install the project dependencies.
 
+  
+
+```console
+npm install
+```
+
+  
+
 4. Create a .env.development file in the project root directory to store development environment variables or use the provided one.
+
+  
 
 5. Create a .env.test file in the project root directory to store test environment variables or use the provided one.
 
+  
+
 ## Scripts
 
-**start:dev**
+  
+
+```console
+start:dev
+```
+
+  
 
 > Runs the app in development mode with environment variables from .env.development file.
 
-**start:qa**
+  
+
+```console
+start:qa
+```
+
+  
 
 > Runs the app in QA mode with environment variables from .env.test file.
 
-**build:dev**
+  
+
+```console
+build:dev
+```
+
+  
 
 > Builds the app for development with environment variables from .env.development file.
 
-**build:qa**
+  
+
+```console
+build:qa
+```
+
+  
 
 > Builds the app for qa with environment variables from .env.test file.
 
-**start:qa**
+  
 
-> RunsRuns the app in QA mode with environment variables from .env.test file.
+```console
+start:qa
+```
+
+  
+
+> Runs the app in QA mode with environment variables from .env.test file.
 
 ## Open Banking SDK
 
@@ -386,24 +530,18 @@ This component helps in managing transactions.
 Insert the html tag in your web application as follow.
 
 ```html
-<ob-transactions-component
-  transactionsData
-  accountsData
-  availableAccountsData
-  availableAccountsData
-></ob-transactions-component>
+<ob-transactions-component transactionsData accountsData categoriesData></ob-transactions-component>
 ```
 
 ## Data Properties
 
 The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is the data source of this component.
 
-| Name                      | Type                 | Description                                                                     | Default | SDK Function                                                                                          |
-| ------------------------- | -------------------- | ------------------------------------------------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------- |
-| **transactionsData**      | [`string`, `Array`]  | The data of the transactions that will be used                               | _[]_    | [Transactions List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-transactions)             |
-| **accountsData**          | [`string` , `Array`] | data of the accounts that will be used                                          | _[]_    | [Accounts List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-accounts)                     |
-| **availableAccountsData** | [`string` , `Array`] | The data of the available accounts that will be used to create new transactions | _[]_    | [Accounts List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-categories) (filter accounts) |
-| **categoriesData**        | [`string` , `Array`] | data of the categories that will be used                                        | _[]_    | [List Categories](https://www.npmjs.com/package/open-banking-pfm-sdk#list-categories)                 |
+| Name                 | Type                 | Description                                    | Default | SDK Function                                                                              |
+| -------------------- | -------------------- | ---------------------------------------------- | ------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| **transactionsData** | [`string`, `Array`]  | The data of the transactions that will be used | _[]_    | [Transactions List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-transactions) |
+| **accountsData**     | [`string` , `Array`] | data of the accounts that will be used         | _[]_    | [Accounts List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-accounts)         | (https://www.npmjs.com/package/open-banking-pfm-sdk#list-categories-with-subcategories) (filter accounts) |
+| **categoriesData**   | [`string` , `Array`] | data of the categories that will be used       | _[]_    | [Categories List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-categories-with-subcategories)     |
 
 ## Customization Properties
 
@@ -521,7 +659,7 @@ The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is th
 
 | Name               | Type                 | Description                              | Default | SDK Function                                                                          |
 | ------------------ | -------------------- | ---------------------------------------- | ------- | ------------------------------------------------------------------------------------- |
-| **categoriesData** | [`string` , `Array`] | data of the categories that will be used | _[]_    | [List Categories](https://www.npmjs.com/package/open-banking-pfm-sdk#list-categories) |
+| **categoriesData** | [`string` , `Array`] | data of the categories that will be used | _[]_    | [Categories List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-categories-with-subcategories) |
 
 ## Customization Properties
 
@@ -610,10 +748,10 @@ Insert the html tag in your web application as follow.
 
 The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is the data source of this component.
 
-| Name               | Type                 | Description                                  | Default | SDK Function                                                                          |
-| ------------------ | -------------------- | -------------------------------------------- | ------- | ------------------------------------------------------------------------------------- |
+| Name               | Type                 | Description                               | Default | SDK Function                                                                          |
+| ------------------ | -------------------- | ----------------------------------------- | ------- | ------------------------------------------------------------------------------------- |
 | **budgetData**     | [`string`, `Array`]  | The data of the budgets that will be used | _[]_    | [Budgets List](httpshttps://www.npmjs.com/package/open-banking-pfm-sdk#list-budgets)  |
-| **categoriesData** | [`string` , `Array`] | data of the categories that will be used     | _[]_    | [List Categories](https://www.npmjs.com/package/open-banking-pfm-sdk#list-categories) |
+| **categoriesData** | [`string` , `Array`] | data of the categories that will be used  | _[]_    | [Categories List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-categories-with-subcategories) |
 
 ## Customization Properties
 
@@ -690,7 +828,7 @@ The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is th
 | Name               | Type                 | Description                               | Default                                    | SDK Function                                                                          |
 | ------------------ | -------------------- | ----------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------- |
 | **summaryData**    | [`string`, `Object`] | The data of the summary that will be used | _{incomes: [], expenses: [], balances:[]}_ | [Resume](httpshttps://www.npmjs.com/package/open-banking-pfm-sdk#resume)              |
-| **categoriesData** | [`string` , `Array`] | data of the categories that will be used  | _[]_                                       | [List Categories](https://www.npmjs.com/package/open-banking-pfm-sdk#list-categories) |
+| **categoriesData** | [`string` , `Array`] | data of the categories that will be used  | _[]_                                       | [Categories List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-categories-with-subcategories) |
 
 ## Customization Properties
 

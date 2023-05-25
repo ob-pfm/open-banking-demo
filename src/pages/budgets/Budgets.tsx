@@ -186,10 +186,7 @@ const BudgetsComponent = () => {
       categoryServices
         .getListWithSubcategories(userId) // Fetch categories with subcategories using categoryServices
         .then((response: ParentCategory[]) => {
-          componentRef.current.categoriesData = response.map((category) => ({
-            ...category.toObject(),
-            subcategories: category.subcategories.map((subcategory) => subcategory.toObject())
-          })); // Map categories and subcategories to plain objects
+          componentRef.current.categoriesData = response;
           getBudgets((isEmpty: boolean) => {
             // Call getBudgets function with callback on success
             if (isEmpty) componentRef.current.isEmpty = true; // Set isEmpty flag to true
@@ -222,9 +219,6 @@ const BudgetsComponent = () => {
       alertText={alertText} // Set the text for the alert
       ref={componentRef} // Attach a ref to the component using componentRef
       fontFamily="Lato" // Set the font family to "Lato"
-      lang="pt" // Set the language to "pt" for localization
-      currencyLang="pt-BR" // Set the currency language to "pt-BR" for localization
-      currencyType="BRL" // Set the currency type to "BRL"
     />
   );
 };

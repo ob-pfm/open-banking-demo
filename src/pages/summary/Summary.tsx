@@ -108,10 +108,7 @@ const SummaryComponent = () => {
         .getListWithSubcategories(userId)
         .then((response) => {
           // Transform the response data and update categoriesData
-          componentRef.current.categoriesData = response.map((category) => ({
-            ...category.toObject(),
-            subcategories: category.subcategories.map((subcategory: any) => subcategory.toObject())
-          }));
+          componentRef.current.categoriesData = response;
           // Hide main loading on success
           componentRef.current.showMainLoading = false;
         })
@@ -214,9 +211,6 @@ const SummaryComponent = () => {
         showAlert={isProcessing} // Pass the prop "showAlert" with the value of the "isProcessing" variable
         alertText={alertText} // Pass the prop "alertText" with the value of the "alertText" variable
         fontFamily="Lato" // Pass the prop "fontFamily" with the value "Lato"
-        lang="pt" // Pass the prop "lang" with the value "pt"
-        currencyLang="pt-BR" // Pass the prop "currencyLang" with the value "pt-BR"
-        currencyType="BRL" // Pass the prop "currencyType" with the value "BRL"
         emptyViewActionText="Agregar movimento" // Pass the prop "emptyViewActionText" with the value "Agregar movimento"
       />
     </>

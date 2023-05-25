@@ -28,7 +28,7 @@ interface IDeleteEventData {
 }
 const AccountsComponent = () => {
   const componentRef = useRef<any>(null); // Create a ref for the component
-  // Get context data using custom hook
+  // Get context data using useOutletContext hook
   const { isProcessing, userId, alertText, apiKey } = useOutletContext<IOutletContext>();
   const navigate = useNavigate(); // Get navigate function from react-router-dom
 
@@ -188,9 +188,6 @@ const AccountsComponent = () => {
       alertText={alertText} // String prop that sets the text for the alert
       alertType="warning" // String prop that sets the type of the alert
       fontFamily="Lato" // String prop that sets the font family for the component
-      lang="pt" // String prop that sets the language for the component
-      currencyLang="pt-BR" // String prop that sets the currency language for the component
-      currencyType="BRL" // String prop that sets the currency type for the component
       componentStyles={styles} // String prop that sets the component styles
     />
   );
