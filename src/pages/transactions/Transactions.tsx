@@ -10,7 +10,7 @@ import {
   Account
 } from 'open-banking-pfm-sdk';
 import { IAccount, IListOptions, ITransaction } from 'open-banking-pfm-sdk/interfaces';
-import { URL_SERVER } from '../../constants';
+import { URL_SERVER as serverUrl } from '../../constants';
 import { showErrorToast, unicodeToChar } from '../../helpers';
 import { IOutletContext } from '../../interfaces';
 
@@ -78,11 +78,11 @@ const TransactionsComponent = () => {
   const [transactionsFilteredData, setTransactionsFilteredData] = useState<ITransaction[]>([]);
   const [page, setPage] = useState(0); // Set initial state for current page
   // Memoize AccountsClient instance
-  const accountServices = useMemo(() => new AccountsClient(apiKey, URL_SERVER), [apiKey]);
+  const accountServices = useMemo(() => new AccountsClient({ apiKey, serverUrl }), [apiKey]);
   // Memoize CategoriesClient instance
-  const categoryServices = useMemo(() => new CategoriesClient(apiKey, URL_SERVER), [apiKey]);
+  const categoryServices = useMemo(() => new CategoriesClient({ apiKey, serverUrl }), [apiKey]);
   // Memoize TransactionsClient instance
-  const transactionServices = useMemo(() => new TransactionsClient(apiKey, URL_SERVER), [apiKey]);
+  const transactionServices = useMemo(() => new TransactionsClient({ apiKey, serverUrl }), [apiKey]);
 
   const getFiltersFromObject = ({
     accounts,

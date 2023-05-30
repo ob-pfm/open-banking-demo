@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 
 import { FinancialEntity } from 'open-banking-pfm-sdk/models';
 import { Account, AccountsClient, AccountPayload, UsersClient } from 'open-banking-pfm-sdk';
-import { URL_SERVER } from '../../constants';
+import { URL_SERVER as serverUrl } from '../../constants';
 import { IOutletContext } from '../../interfaces';
 import styles from './style.css';
 import { showErrorToast } from '../../helpers';
@@ -32,8 +32,8 @@ const AccountsComponent = () => {
   const navigate = useNavigate(); // Get navigate function from react-router-dom
 
   // Create instances of AccountsClient and BanksClient using memoized version
-  const accountServices = useMemo(() => new AccountsClient(apiKey, URL_SERVER), [apiKey]);
-  const userServices = useMemo(() => new UsersClient(apiKey, URL_SERVER), [apiKey]);
+  const accountServices = useMemo(() => new AccountsClient({ apiKey, serverUrl }), [apiKey]);
+  const userServices = useMemo(() => new UsersClient({ apiKey, serverUrl }), [apiKey]);
 
   // Load accounts when component mounts or userId changes
   const loadAccounts = useCallback(() => {

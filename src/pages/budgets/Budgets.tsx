@@ -3,7 +3,7 @@ import { useOutletContext } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { CategoriesClient, ParentCategory, BudgetsClient, Budget, BudgetPayload } from 'open-banking-pfm-sdk';
-import { URL_SERVER } from '../../constants';
+import { URL_SERVER as serverUrl } from '../../constants';
 
 import { IOutletContext } from '../../interfaces';
 
@@ -33,9 +33,9 @@ const BudgetsComponent = () => {
   // Destructuring values from a custom hook
   const { isProcessing, alertText, userId, apiKey } = useOutletContext<IOutletContext>();
   // Creating a memoized instance of a client class
-  const budgetsServices = useMemo(() => new BudgetsClient(apiKey, URL_SERVER), [apiKey]);
+  const budgetsServices = useMemo(() => new BudgetsClient({ apiKey, serverUrl }), [apiKey]);
   // Creating a memoized instance of another client class
-  const categoryServices = useMemo(() => new CategoriesClient(apiKey, URL_SERVER), [apiKey]);
+  const categoryServices = useMemo(() => new CategoriesClient({ apiKey, serverUrl }), [apiKey]);
 
   const getBudgets = useCallback(
     (onSuccess: (response: boolean) => void, onError?: () => void) => {

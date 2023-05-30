@@ -15,7 +15,7 @@ import {
   AGGREGATION_STARTED,
   AGGREGATION_COMPLETED,
   PROCESS_FAILED,
-  URL_SERVER
+  URL_SERVER as serverUrl
 } from '../../constants';
 import { getApiKey, getUserId, showErrorToast } from '../../helpers';
 
@@ -27,7 +27,7 @@ const PFMPage = () => {
   const onboardingComponentRef = useRef<any>(null); // Ref object to hold a reference to ob-onboarding-component
   const apiKey = getApiKey(); // Fetching API key from helper function
 
-  const { banksClient } = useMemo(() => buildClients(apiKey || '', URL_SERVER), [apiKey]); // Memoized function for building clients with API key and URL_SERVER as dependencies
+  const { banksClient } = useMemo(() => buildClients({ apiKey: apiKey || '', serverUrl }), [apiKey]); // Memoized function for building clients with API key and URL_SERVER as dependencies
   // State variable to hold user ID, initialized with value from helper function
   const [userId, setUserId] = useState<number | null>(getUserId());
   // State variable to indicate if processing is in progress
@@ -215,7 +215,7 @@ const PFMPage = () => {
     (e: { detail: string }) => {
       if (e.detail && apiKey) {
         onboardingComponentRef.current.showModalLoading = true; // Show modal loading
-        fetch(`${URL_SERVER}/onboarding/users`, {
+        fetch(`${serverUrl}/onboarding/users`, {
           method: 'POST',
           headers: { 'X-api-key': apiKey, 'Content-Type': 'application/json' },
           body: JSON.stringify({ cpf: e.detail })
