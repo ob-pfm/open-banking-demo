@@ -322,10 +322,55 @@ UserDetail {
 }
 ```
 
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary>*Possible Errors*</summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
   
 
 ### Get Financial Entities
@@ -362,7 +407,7 @@ Output:
 ```
 
 <details>
-  <summary>Possible Errors</summary>
+  <summary>*Possible Errors*</summary>
   
   ### Error 400
 
