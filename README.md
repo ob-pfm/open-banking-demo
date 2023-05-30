@@ -323,7 +323,7 @@ UserDetail {
 ```
 
 <details>
-  <summary>*Possible Errors*</summary>
+  <summary>**Possible Errors**</summary>
   
   ### Error 400
 
@@ -407,7 +407,7 @@ Output:
 ```
 
 <details>
-  <summary>*Possible Errors*</summary>
+  <summary>**Possible Errors**</summary>
   
   ### Error 400
 
@@ -2550,7 +2550,6 @@ The Open Banking Web Componentes are reusable components with their functionalit
   - [Categories Component](#categories-component)
   - [Budget Component](#budget-component)
   - [Summary Component](#summary-component)
-  - [Onboarding Component](#onboarding-component)
 - [Theme Colors](#theme-colors)
 - [Global components](#global-components)
 
@@ -2596,6 +2595,8 @@ You can manage these properties in any web component.
 ![Category](https://img.shields.io/badge/Category-WebComponents-blue.svg)
 
 This component displays the consent list, consent detail and banks list to start consent consume process.
+
+![consetns2](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/4d48a71b-0b98-4a8d-8a0f-b7313ee731b4)
 
 ## Installation
 
@@ -2695,6 +2696,8 @@ The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is th
 
 This component helps in managing accounts and calculating their balance.
 
+![accounts](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/24649fb1-a563-4980-b5db-00c9f8e56587)
+
 ## Installation
 
 ```html
@@ -2782,7 +2785,9 @@ The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is th
 ![Language](https://img.shields.io/badge/Language-JavaScript-yellow.svg)
 ![Category](https://img.shields.io/badge/Category-WebComponents-blue.svg)
 
-This component shows credit accounts information .
+This component shows credit accounts information.
+
+![credit](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/58b426f2-3ef0-4058-9107-a2ffb6ae1c99)
 
 ## Installation
 
@@ -2845,6 +2850,8 @@ The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is th
 ![Category](https://img.shields.io/badge/Category-WebComponents-blue.svg)
 
 This component helps in managing transactions.
+
+![transacciones](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/ff72271a-dfbb-4430-94fb-55a662e311e1)
 
 ## Installation
 
@@ -2968,6 +2975,8 @@ The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is th
 
 This component helps in managing categories.
 
+![categorias](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/7ce74783-c278-40bf-ad06-a544005d4eb2)
+
 ## Installation
 
 ```html
@@ -3057,6 +3066,8 @@ The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is th
 
 This component helps in managing and calculating budgets.
 
+![bufgets](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/45779d73-3868-4743-b746-8609326af0e7)
+
 ## Installation
 
 ```html
@@ -3133,6 +3144,8 @@ The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is th
 ![Category](https://img.shields.io/badge/Category-WebComponents-blue.svg)
 
 This component shows data in graphic charts.
+
+![summary](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/ce9f9ded-d249-4de3-a543-3997986be97d)
 
 ## Installation
 
@@ -3239,53 +3252,6 @@ The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is th
 | **modal-analysis-close**             | Triggers when new analysis modal is closed                     | _None_                              |
 | **empty-button-click**               | Triggers when action button in empty view is clicked           | _None_                              |
 |                                      |                                                                |                                     |
-
-# Onboarding Component
-
-![Language](https://img.shields.io/badge/Language-HTML-red.svg)
-![Language](https://img.shields.io/badge/Language-JavaScript-yellow.svg)
-![Category](https://img.shields.io/badge/Category-WebComponents-blue.svg)
-
-This component displays a modal that allows you to insert a CPF.
-
-## Installation
-
-```html
-<script src="https://cdn.finerio.mx/pfm/components/ob-onboarding-component.js"></script>
-```
-
-## How to use
-
-Insert the html tag in your web application as follow.
-
-```html
-<ob-onboarding-component></ob-onboarding-component>
-```
-
-## Properties
-
-| Name                    | Type                  | Description                                                              | Default                                                                             |
-| ----------------------- | --------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
-| **closeDisabled**       | [`string`, `boolean`] | The Close events are disabled                                            | _false_                                                                             |
-| **title**               | `string`              | The custom text to be displayed in the title of the view                 | "Olá!"                                                                            |
-| **titleIsShown**        | [`string`, `boolean`] | Show view title                                                          | _true_                                                                              |
-| **description**         | `string`              | The custom text to be displayed in the description of the view           | "Informe seu CPF e aproveite todo o potencial da panificação aberta de forma rápida e fácil" |
-| **descriptionIsShown**  | [`string`, `boolean`] | Show view description                                                    | _true_                                                                              |
-| **cpfFieldPlaceholder** | `string`              | The custom text to be displayed in the placeholder of the cpf text field | "Escreva seu CPF aqui"                                                               |
-| **cpfFieldIsShown**     | [`string`, `boolean`] | Show cpf text field                                                      | _true_                                                                              |
-| **continueButton**      | `string`              | The custom text to be displayed in the continue button                   | "Prosseguir"                                                                         |
-| **isShown**             | [`string`, `boolean`] | Show modal view                                                          | _true_                                                                              |
-|                         |                       |                                                                          |
-
-## Events
-
-| Name                  | Description                                  | Detail Data       |
-| --------------------- | -------------------------------------------- | ----------------- |
-| **component-mount**   | Triggers when the component is mounted       | _None_            |
-| **component-unmount** | Triggers when the component is unmounted     | _None_            |
-| **close-modal**       | Triggers when the modal is closed            | _None_            |
-| **continue**          | Triggers when the continue button is clicked | cpfText: `string` |
-|                       |                                              |                   |
 
 # Theme Colors
 
