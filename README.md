@@ -4932,6 +4932,8 @@ This component represents a button that contains only text and performs a specif
 - `ob-categories-component`
 - `ob-transactions-component`
 - `ob-summary-component`
+- 
+![1](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/01b5c38a-4b74-47e6-a8f0-e03ea649fc22)
 
 The component structure is:
 
@@ -4959,6 +4961,8 @@ Cards are used to display content made up of different types of objects. This co
 - `ob-budget-component`
 - `ob-categories-component`
 - `ob-summary-component`
+- 
+![2](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/a7dac85c-1510-4b4b-acf7-21401cc7bcba)
 
 The component structure is:
 
@@ -4976,6 +4980,8 @@ The component structure is:
 ---
 
 Element that allows to inform about the acceptance of the option that is linked to it. This component is used by `ob-accounts-component` web component.
+
+![3](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/c4bf7f2a-ea31-441c-8d59-b57be253d00c)
 
 The component structure is:
 
@@ -5003,6 +5009,8 @@ The component structure is:
 
 The Collapsible COntainer are used to show or hide content. This component is used by `ob-accounts-component` web component.
 
+![4](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/0bd7bba9-1edb-47bf-a89d-7e88eedd4417)
+
 The component structure is:
 
 ```html
@@ -5022,6 +5030,8 @@ Cards are used to display content made up of different types of objects. This co
 
 - `ob-budget-component`
 - `ob-categories-component`
+- 
+![5](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/d7233df5-eda3-4107-80f8-11dff46090c8)
 
 The component structure is:
 
@@ -5042,6 +5052,8 @@ A modal that displays a warning message and requires confirmation of the action 
 
 - `ob-budget-component`
 - `ob-categories-component`
+
+![6](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/4acba20d-01e2-4f16-886c-1ead77fd54cd)
 
 The component structure is:
 
@@ -5076,6 +5088,8 @@ The component structure is:
 ---
 
 Shows a dropdown list when interacting with it. This component is used by `ob-transactions-component` web component.
+
+![image](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/5c958295-2538-47da-b03a-3111306cd8ee)
 
 The component structure is:
 
@@ -5122,6 +5136,8 @@ This view appears when you have no items to display. This component is used by n
 - `ob-budget-component`
 - `ob-transactions-component`
 - `ob-summary-component`
+- 
+![7](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/f925232d-ea41-4e5a-8b53-4e7ba2ffca5b)
 
 The component structure is:
 
@@ -5157,6 +5173,8 @@ This component represents a button that can only contain one icon and performs a
 - `ob-categories-component`
 - `ob-transactions-component`
 - `ob-summary-component`
+- 
+![8](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/4287f9d8-194b-4d93-9bce-e315d66fc117)
 
 The component structure is:
 
@@ -5186,6 +5204,9 @@ A modal with a Spinner view used to render processes. This component is used by 
 - `ob-transactions-component`
 - `ob-summary-component`
 
+
+![9](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/d0e1cb7e-d13c-440c-bcb2-a3f8b0f8dfad)
+
 The component structure is:
 
 ```html
@@ -5211,6 +5232,8 @@ It is a Spinner view used to represent processes. This component is used by next
 - `ob-categories-component`
 - `ob-transactions-component`
 - `ob-summary-component`
+- 
+![9](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/a13a4cf4-cc3e-40ab-9984-00561d466577)
 
 The component structure is:
 
@@ -5236,6 +5259,8 @@ It is a popup window that can contain different objects such as forms or tables.
 - `ob-categories-component`
 - `ob-transactions-component`
 - `ob-summary-component`
+
+![13](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/db849f37-05d2-4a6c-bfa8-4860e546828e)
 
 The component structure is:
 
@@ -5268,6 +5293,8 @@ Displays a series of options from which only one can be selected. It is commonly
 - `ob-accounts-component`
 - `ob-transactions-component`
 
+![2](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/2790defe-8e02-475d-be1c-2540862be64b)
+
 The component structure is:
 
 ```html
@@ -5298,6 +5325,8 @@ The component structure is:
 
 Text field used for searching. This component is used by `ob-transactions-component` web component.
 
+![10](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/b4741743-b25a-45a7-835c-a236857df879)
+
 The component structure is:
 
 ```html
@@ -5325,6 +5354,8 @@ This is a field that displays a single selection list. It is commonly used in fo
 
 - `ob-accounts-component`
 - `ob-transactions-component`
+
+![11](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/bb0010ef-3074-4431-b2ec-ae1d78dfda34)
 
 The component structure is:
 
@@ -5372,6 +5403,8 @@ It is a pop-up window that is displayed from the right of the screen and can con
 - `ob-categories-component`
 - `ob-transactions-component`
 
+![1](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/bc1df911-f8f6-4215-ba35-98910356b06a)
+
 The component structure is:
 
 ```html
@@ -5404,6 +5437,8 @@ The component structure is:
 
 It is special checkbox used for binary states like on/off. This component is used by `ob-transactions-component` web component.
 
+![14](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/edb08ac7-8428-4b18-8adc-45f8672ca4a7)
+
 The component structure is:
 
 ```html
@@ -5423,6 +5458,8 @@ The component structure is:
 ---
 
 The tab structure consists of an unordered list of tabs that display content when one of them is activated. This component is used by `ob-summary-component` web component.
+
+![16](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/a223f755-0e3f-4248-a623-c53be3b8d908)
 
 The component structure is:
 
@@ -5453,6 +5490,8 @@ Text field used in forms. This component is used by next web components:
 - `ob-budget-component`
 - `ob-categories-component`
 - `ob-transactions-component`
+- 
+![15](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/7f60e95d-950b-4ae9-900f-020b9ccf2876)
 
 The component structure is:
 
@@ -5490,6 +5529,8 @@ Shows a text as a title. This component is used by next web components:
 - `ob-transactions-component`
 - `ob-summary-component`
 
+![18](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/1bb4b84a-0341-4676-81c9-586ba2f267ac)
+
 The component structure is:
 
 ```html
@@ -5500,34 +5541,3 @@ The component structure is:
 | ------------ | ------- | ------------------------ | -------- |
 | `opwc-title` | **H1**  | It is the main ClassName | _None_   |
 |              |         |                          |
-
-## **`Toast Component`**
-
----
-
-It is a pop-up window that returns a feedback of a process. This component is used by next web components:
-
-- `ob-accounts-component`
-- `ob-budget-component`
-- `ob-categories-component`
-- `ob-transactions-component`
-
-The component structure is:
-
-```html
-<div class="opwc-toast">
-  <div class="opwc-toast__close-button">...</div>
-  <div class="opwc-toast__container">
-    <svg class="opwc-toast__icon">...</svg>
-    ...
-  </div>
-</div>
-```
-
-| ClassName                  | Element | Description                                          | Variants |
-| -------------------------- | ------- | ---------------------------------------------------- | -------- |
-| `opwc-toast`               | **Div** | It is the main ClassName                             | _None_   |
-| `opwc-toast__close-button` | **Div** | Refers to the close button                           | _None_   |
-| `opwc-toast__container`    | **Div** | Contains the alert icon and the message of the toast | _None_   |
-| `opwc-toast__icon`         | **Svg** | Refers to the alert icon                             | _None_   |
-|                            |         |                                                      |
