@@ -3,7 +3,7 @@ import { useNavigate, useOutletContext } from 'react-router-dom';
 
 import { Bank, Credit, CreditBalance } from 'open-banking-pfm-sdk/models';
 import { BanksClient, CreditsClient } from 'open-banking-pfm-sdk';
-import { URL_SERVER } from '../../constants';
+import { URL_SERVER as serverUrl } from '../../constants';
 import { IOutletContext } from '../../interfaces';
 import { showErrorToast } from '../../helpers';
 
@@ -14,8 +14,8 @@ const CreditsComponent = () => {
   const { isProcessing, userId, alertText, apiKey } = useOutletContext<IOutletContext>();
 
   // Create instances of CreditsClient and BanksClient using memoized version
-  const creditsServices = useMemo(() => new CreditsClient(apiKey, URL_SERVER), [apiKey]);
-  const banksServices = useMemo(() => new BanksClient(apiKey, URL_SERVER), [apiKey]);
+  const creditsServices = useMemo(() => new CreditsClient({ apiKey, serverUrl }), [apiKey]);
+  const banksServices = useMemo(() => new BanksClient({ apiKey, serverUrl }), [apiKey]);
 
   // Hanlde click button on empty view
   const handleEmptyClick = useCallback(() => {

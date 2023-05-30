@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { BanksClient } from 'open-banking-pfm-sdk';
-import { URL_SERVER } from '../../constants';
+import { URL_SERVER as serverUrl } from '../../constants';
 import { showErrorToast } from '../../helpers';
 
 // Constants representing the consume status
@@ -47,8 +47,7 @@ const ConsumeConsentPage = () => {
       const state = params.find((el) => el.indexOf('state') !== -1)?.split('=')[1]; // Extract the state from the URL
 
       if (authCode && token && state) {
-        const banksClient = new BanksClient();
-        banksClient.serverUrl = URL_SERVER; // Set the server URL for the banks client
+        const banksClient = new BanksClient({ serverUrl });
 
         // Authorize the client using the auth code, token, and state
         banksClient
