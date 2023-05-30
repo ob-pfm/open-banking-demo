@@ -528,10 +528,44 @@ Output:
 	...
 ]
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 401](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 401
+
+Invalid authorization.
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
  
  # Categories Client
 
@@ -613,10 +647,56 @@ Output:
 	...
 ]
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -668,10 +748,56 @@ Output:
 	...
 ]
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -708,10 +834,56 @@ Category {
 	isUserCategory: false,
 }
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -759,10 +931,56 @@ Category {
 	lastUpdated: 1678317553755
 }
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -802,10 +1020,56 @@ Category {
 	lastUpdated: 1678317553755
 }
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -829,10 +1093,56 @@ categoriesClient
 If the category was removed, the response will be returned as true.
 
 
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -922,10 +1232,56 @@ Output:
 	...
 ]
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -965,10 +1321,56 @@ Account {
 	financialEntityId: 547953460
 },
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -1022,10 +1424,56 @@ Account {
 	financialEntityId: 547953460
 }
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
   
 
 ### Update Account
@@ -1066,10 +1514,56 @@ Account {
 	financialEntityId: 547953460
 }
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -1087,10 +1581,56 @@ accountsClient
 	.then((data) => console.log(data))
 	.catch((error) => console.log(error));
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
 
 # Transactions Client
@@ -1185,10 +1725,56 @@ Output:
 	...
 ]
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -1224,10 +1810,56 @@ Transaction {
 	isBankAggregation: true
 }
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -1277,10 +1909,56 @@ Transaction {
 	isBankAggregation: false
 }
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -1319,10 +1997,56 @@ Transaction {
 	isBankAggregation: false
 }
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -1340,10 +2064,56 @@ transactionsClient
 	.then((data) => console.log(data))
 	.catch((error) => console.log(error));
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -1362,9 +2132,56 @@ transactionsClient
 	.catch((error) => console.log(error));
 ```
 Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
  # Budgets Client
 
@@ -1449,10 +2266,56 @@ Output:
 	...
 ]
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -1492,10 +2355,56 @@ Budget {
 	lastUpdated: 1677714920234
 }
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -1545,10 +2454,56 @@ Budget {
 	lastUpdated: 1678317204886
 }
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -1589,10 +2544,56 @@ Budget {
 	lastUpdated: 1678317204886
 }
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -1616,10 +2617,56 @@ budgetsClient
 If the budget was removed, the response will be returned as true.
 
 
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
 
  
@@ -1692,11 +2739,59 @@ Output:
 	url: "https://auth1.tboz-csbx.staging.ozoneapi-br.com/auth?client_id=75deaf3f-2597-48a0-bf70"
 }
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 401](#error-401)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 401
+
+Invalid authorization.
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -1736,11 +2831,60 @@ Output:
 ```console
 true
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 401](#error-401)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 401
+
+Invalid authorization.
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
 ### Get Bank aggregation status
 
   
@@ -1769,11 +2913,59 @@ Output:
 	status: "CONSENT_REQUESTED"
 }
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 401](#error-401)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 401
+
+Invalid authorization.
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -1845,11 +3037,59 @@ Output:
 	]
 }
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 401](#error-401)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 401
+
+Invalid authorization.
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -1879,11 +3119,59 @@ Output:
 ```console
 true
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 401](#error-401)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 401
+
+Invalid authorization.
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -1917,11 +3205,59 @@ Output:
 	status: "CONSENT_AUTHORISED"
 }
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 401](#error-401)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 401
+
+Invalid authorization.
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -1964,11 +3300,59 @@ Output:
 ...
 ]
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 401](#error-401)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 401
+
+Invalid authorization.
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
  # Consents Client
 
@@ -2037,11 +3421,59 @@ ConsentDetail {
 	isSynchronized: false
 },
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 401](#error-401)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 401
+
+Invalid authorization.
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -2084,11 +3516,59 @@ Consent {
 	}
 ]
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 401](#error-401)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 401
+
+Invalid authorization.
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -2111,10 +3591,55 @@ consentsClient
 
 If the consent was cancelled, the response will be returned as true.
 
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -2203,10 +3728,55 @@ Output:
 	}
 }
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -2327,10 +3897,55 @@ Resume {
 	]
 }
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
   
 
@@ -2415,10 +4030,55 @@ Output:
 	}
 ]
 ```
-Possible Errors:
-- [Error 400](#error-400)
-- [Error 404](#error-404)
-- [Error 500](#error-500)
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
 
  
 
@@ -2474,58 +4134,8 @@ ClientDictionary {
 }
 ```
 
-# Error Codes
-
-## Error 400
-
-Something in your request was wrong.
 
 
-```json
-{
-  "errors": [
-    {
-      "code": "string",
-      "title": "string",
-      "detail": "string"
-    }
-  ]
-}
-```
-
-
-## Error 401
-
-Invalid authorization.
-
-## Error 404
-
-The requested param was not found.
-
-```json
-{
-	"errors": [
-	    {
-	      "code": "string",
-	      "title": "string",
-	      "detail": "string"
-	    }
-	]
-}
-```
-
-
-
-## Error 500
-
-Something in your request was wrong.
-
-
-```json
-{
-	"message": "string"
-}
-```
 
 ## Open Banking Web Components
 
