@@ -323,7 +323,7 @@ UserDetail {
 ```
 
 <details>
-  <summary>**Possible Errors**</summary>
+  <summary><h4>Possible Errors</h4></summary>
   
   ### Error 400
 
@@ -407,7 +407,7 @@ Output:
 ```
 
 <details>
-  <summary>**Possible Errors**</summary>
+  <summary><h4>Possible Errors</h4></summary>
   
   ### Error 400
 
