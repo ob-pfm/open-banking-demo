@@ -4,10 +4,11 @@ import { toast } from 'react-toastify';
 
 import { CategoriesClient, Category, CategoryPayload } from 'open-banking-pfm-sdk';
 import { ICategory, ICategoryUpdatePayload } from 'open-banking-pfm-sdk/interfaces';
-import { URL_SERVER } from '../../constants';
+import { URL_SERVER as serverUrl } from '../../constants';
+
+import { IOutletContext } from '../../interfaces';
 
 import '../../libs/wc/ob-categories-component';
-import { IOutletContext } from '../../interfaces';
 
 // Define interface for event data
 interface ISubmitEventData {
@@ -32,7 +33,7 @@ const CategoriesComponent = () => {
   const { isProcessing, alertText, userId, apiKey } = useOutletContext<IOutletContext>();
 
   // Create CategoriesClient instance with memoized apiKey
-  const categoriesServices = useMemo(() => new CategoriesClient(apiKey, URL_SERVER), [apiKey]);
+  const categoriesServices = useMemo(() => new CategoriesClient({ apiKey, serverUrl }), [apiKey]);
 
   // State to store categories
   const [categories, setCategories] = useState<ICategory[]>([]);
@@ -225,9 +226,6 @@ const CategoriesComponent = () => {
       showAlert={isProcessing} // Prop for showing/hiding alert, based on isProcessing boolean variable
       alertText={alertText} // Prop for alert text to display
       ref={componentRef} // Prop for passing the ref of componentRef to the ob-categories-component
-      lang="pt" // Prop for language setting, e.g. "pt" for Portuguese
-      currencyLang="pt-BR" // Prop for currency language setting, e.g. "pt-BR" for Brazilian Portuguese
-      currencyType="BRL" // Prop for currency type, e.g. "BRL" for Brazilian Real
       deleteCategoryDisabled // Prop for disabling delete category functionality
       editCategoryDisabled // Prop for disabling edit category functionality
       editSubcategoryDisabled // Prop for disabling edit subcategory functionality

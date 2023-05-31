@@ -2,13 +2,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useOutletContext, createSearchParams, useNavigate } from 'react-router-dom';
 
 import { CategoriesClient, InsightsClient, AccountsClient, Account } from 'open-banking-pfm-sdk';
-import { URL_SERVER } from '../../constants';
+import { URL_SERVER as serverUrl } from '../../constants';
 
-import '../../libs/wc/ob-summary-component';
 import { IOutletContext } from '../../interfaces';
 import { showErrorToast, unicodeToChar } from '../../helpers';
 
 import './summary.css';
+import '../../libs/wc/ob-summary-component';
 
 // Get date range based on a given date
 const getDateRange = (date: Date) => {
@@ -30,9 +30,9 @@ const SummaryComponent = () => {
   const componentRef = useRef<any>(null);
   const navigate = useNavigate();
   const { isProcessing, alertText, userId, apiKey } = useOutletContext<IOutletContext>();
-  const categoryServices = useMemo(() => new CategoriesClient(apiKey, URL_SERVER), [apiKey]);
-  const insightsServices = useMemo(() => new InsightsClient(apiKey, URL_SERVER), [apiKey]);
-  const accountServices = useMemo(() => new AccountsClient(apiKey, URL_SERVER), [apiKey]);
+  const categoryServices = useMemo(() => new CategoriesClient({ apiKey, serverUrl }), [apiKey]);
+  const insightsServices = useMemo(() => new InsightsClient({ apiKey, serverUrl }), [apiKey]);
+  const accountServices = useMemo(() => new AccountsClient({ apiKey, serverUrl }), [apiKey]);
   const [accountId, setAccountId] = useState<number | string>(0);
   const [accountsList, setAccountsList] = useState<Account[]>([]);
 
@@ -108,10 +108,7 @@ const SummaryComponent = () => {
         .getListWithSubcategories(userId)
         .then((response) => {
           // Transform the response data and update categoriesData
-          componentRef.current.categoriesData = response.map((category) => ({
-            ...category.toObject(),
-            subcategories: category.subcategories.map((subcategory: any) => subcategory.toObject())
-          }));
+          componentRef.current.categoriesData = response;
           // Hide main loading on success
           componentRef.current.showMainLoading = false;
         })
@@ -214,9 +211,6 @@ const SummaryComponent = () => {
         showAlert={isProcessing} // Pass the prop "showAlert" with the value of the "isProcessing" variable
         alertText={alertText} // Pass the prop "alertText" with the value of the "alertText" variable
         fontFamily="Lato" // Pass the prop "fontFamily" with the value "Lato"
-        lang="pt" // Pass the prop "lang" with the value "pt"
-        currencyLang="pt-BR" // Pass the prop "currencyLang" with the value "pt-BR"
-        currencyType="BRL" // Pass the prop "currencyType" with the value "BRL"
         emptyViewActionText="Agregar movimento" // Pass the prop "emptyViewActionText" with the value "Agregar movimento"
       />
     </>

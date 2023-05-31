@@ -1,54 +1,239 @@
+
 # Project Name: pfm-brazil-demo
+
+  
 
 ![Language](https://img.shields.io/badge/Language-React-blue.svg)
 
-## Description
-
-**pfm-brazil-demo** is a React web app for personal financial management. It ilustrates the use and the way to integrate the Open Banking SDK and Open Banking Web Components in a web application.
+  
 
 ## Table of contents
+
+  
+
+- [Introduction](#introduction)
 
 - [Project Setup](#project-setup)
 
 - [Scripts](#scripts)
 
+- [Usage](#usage) 
+
 - [Open Banking SDK](#open-banking-sdk)
 
 - [Open Banking Web Components](#open-banking-web-components)
 
+  
+
+## Introduction
+
+  
+
+**pfm-brazil-demo** is a React web app for personal financial management. It ilustrates the use and the way to integrate the Open Banking SDK and Open Banking Web Components in a web application.
+
+  
+
+The [Open Banking SDK](#open-banking-sdk) is used to consume the API in an easier way and its responses are passed to the [Open Banking Web Components](#open-banking-web-components) to show the data and interact with them.
+
+  
+
+For example:
+
+The [Transactions Component](#transactions-component) uses three data models as input **transactionsData**, **accountsData**  and **categoriesData**
+
+  
+
+```html
+
+<ob-transactions-component  
+	transactionsData 
+	accountsData 
+	categoriesData
+></ob-transactions-component>
+
+```
+
+If the data input is not provided then the web component won't show any data so you have to use the  [Open Banking SDK](#open-banking-sdk) methods to provide the data needed.
+
+In the previous example to get the data needed you have to use the next methods from the sdk:
+
+- [Transactions List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-transactions)
+- [Accounts List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-accounts)
+- [Categories List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-categories-with-subcategories)
+
+So in the demo to set the Categories data the implementation is the next:
+
+
+```javascript
+...
+import { CategoriesClient} from  'open-banking-pfm-sdk';
+...
+const  categoryServices = useMemo(() =>  new  CategoriesClient(apiKey, URL_SERVER), [apiKey]);
+...
+useEffect(() => {
+	if (userId) {
+		categoryServices
+		.getListWithSubcategories(userId)
+		.then((response) => {
+			componentRef.current.categoriesData = response;
+		})
+		.catch((error) => {
+			showErrorToast(error);
+		});
+	}
+}, [categoryServices, userId]);
+...
+
+```
+
+```html
+...
+
+return(
+	<ob-transactions-component
+		ref={componentRef}  // Reference to the component for later use
+		lang="pt"  // Language for the component, e.g. Portuguese
+		currencyLang="pt-BR"  // Language for currency formatting, e.g. Brazilian Portuguese
+		currencyType="BRL"  // Currency type, e.g. Brazilian Real
+	/>
+);
+...
+
+```
+
+
 ## Project Setup
+
+  
 
 1. Clone the repository from the project's repository.
 
+  
+
+```console
+git clone https://github.com/Finerio-Connect/pfm-brazil-demo.git
+```
+
+  
+
 2. Navigate to the project directory using the terminal.
+
+  
+
+```console
+cd pfm-brazil-demo
+```
+
+  
 
 3. Run npm install to install the project dependencies.
 
-4. Create a .env.development file in the project root directory to store development environment variables or use the provided one.
+  
 
-5. Create a .env.test file in the project root directory to store test environment variables or use the provided one.
+```console
+npm install
+```
+
+  
+
+4. Create the environment files *.env.development* and *.env.test* in the project root directory setting the API URL where you will be pointing to the Test or Dev environment. 
+
+```console
+REACT_APP_API_URL="https://pfmapiserver.com/api/v1/"
+```
+  
+
+5. Run the app using the react-scripts command or use one of the start commands showed in the [scripts section](#scripts) 
+
+  
 
 ## Scripts
 
-**start:dev**
+  
+
+```console
+start:dev
+```
+
+  
 
 > Runs the app in development mode with environment variables from .env.development file.
 
-**start:qa**
+  
+
+```console
+start:qa
+```
+
+  
 
 > Runs the app in QA mode with environment variables from .env.test file.
 
-**build:dev**
+  
+
+```console
+build:dev
+```
+
+  
 
 > Builds the app for development with environment variables from .env.development file.
 
-**build:qa**
+  
+
+```console
+build:qa
+```
+
+  
 
 > Builds the app for qa with environment variables from .env.test file.
 
-**start:qa**
+  
 
-> RunsRuns the app in QA mode with environment variables from .env.test file.
+```console
+start:qa
+```
+
+  
+
+> Runs the app in QA mode with environment variables from .env.test file.
+
+## Usage
+
+Once you have runned the demo, it will appear the next form:
+
+![demoStep1](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/72d5bc68-7cd8-4efb-a530-8d3cdfc37b78)
+
+Please fill the fields and submit it.
+
+Then the onboarding form will be displayed, here you have to enter a valid CPF and submit it.
+
+![Captura](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/6e984c57-11e5-4ae8-ba47-9b81410acc9a)
+
+The user was created.
+
+![1Captura](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/c2c2b2d2-cdd6-448a-9708-4d668ac70175)
+
+You can now create a consent and do the bank aggregation process. To do it click on the PLUS icon, select the bank and period of time that the consent will be granted.
+
+![2Captura](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/42d508f9-cb7b-4c7f-b66c-9f3908effc97)
+
+![4Captura](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/72233757-3029-44bb-a6cf-71def50f9758)
+
+This will open a new window where you have to enter the bank credentials.
+
+![5Captura](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/4a8a4d80-fc25-4860-ab6d-36245c9edcda)
+
+If the credentials were correct then the consent was granted, the resources will be showed and aggregation process will run in background.
+
+![6Captura](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/a32c29b8-66d3-433a-997e-764d3a2541e3)
+
+You now will see the consent in the consents tab and its status.
+
+![7Captura](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/7cef6479-ba87-40b6-bbc7-0f164c0769e2)
+
+You have to wait the aggregation process to be completed to see the data in the PFM [Open Banking Web Components](#open-banking-web-components).
 
 ## Open Banking SDK
 
@@ -111,9 +296,9 @@ You can manage these properties in any web component.
 | **showModalLoading** | `boolean` | Show Modal loading view                    | _false_  |
 | **modalLoadingSize** | `string`  | Modal loading view size                    | _"82px"_ |
 | **fontFamily**       | `string`  | Font family in the component               | _""_     |
-| **lang**             | `string`  | Language selected for the texts            | _"es"_   |
-| **currencyLang**     | `string`  | Indicates currency format through language | _"es-M"_ |
-| **currencyType**     | `string`  | Indicate the type of currency              | _"MXN"_  |
+| **lang**             | `string`  | Language selected for the texts            | _"pt"_   |
+| **currencyLang**     | `string`  | Indicates currency format through language | _"pt-BR"_|
+| **currencyType**     | `string`  | Indicate the type of currency              | _"BRL"_  |
 |                      |           |                                            |          |
 
 ## Web components:
@@ -154,44 +339,44 @@ The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is th
 
 | Name                                     | Type                  | Description                                                                                            | Default                                                        |
 | ---------------------------------------- | --------------------- | ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------- |
-| **bankListTitle**                        | `string`              | The custom text to be displayed in the title of the bank list view                                     | "Conecta de manera segura con tu institución"                  |
+| **bankListTitle**                        | `string`              | The custom text to be displayed in the title of the bank list view                                     | "Conecte-se com segurança à sua instituição"                  |
 | **bankListTitleIsShown**                 | [`string`, `boolean`] | Show title in bank list view                                                                           | _true_                                                         |
-| **bankListDescription**                  | `string`              | The custom text to be displayed in the description of the bank list view                               | "Selecciona tu banco y autoriza la conexión"                   |
+| **bankListDescription**                  | `string`              | The custom text to be displayed in the description of the bank list view                               | "Selecione seu banco e autorize a conexão"                   |
 | **bankListDescriptionIsShown**           | [`string`, `boolean`] | Show description in bank list view                                                                     | _true_                                                         |
-| **expirationDateFormTitle**              | `string`              | The custom text to be displayed in the title of the expiration date form                               | "Fecha de vencimiento"                                         |
+| **expirationDateFormTitle**              | `string`              | The custom text to be displayed in the title of the expiration date form                               | "Data de vencimento"                                         |
 | **expirationDateFormTitleIsShown**       | [`string`, `boolean`] | Show title in expiration date form                                                                     | _true_                                                         |
-| **expirationDateFormDescription**        | `string`              | The custom text to be displayed in the description of the expiration date form                         | "Selecciona el vencimiento de tu vinculación"                  |
+| **expirationDateFormDescription**        | `string`              | The custom text to be displayed in the description of the expiration date form                         | "Selecione a expiração do seu link"                  |
 | **expirationDateFormDescriptionIsShown** | [`string`, `boolean`] | Show description in expiration date form view                                                          | _true_                                                         |
-| **submitButtonText**                     | `string`              | The custom text to be displayed in the submit button of the expiration date form view                  | "Continuar"                                                    |
-| **termFieldLabel**                       | `string`              | The custom text to be displayed in the term field label of the expiration date form                    | "Plazo"                                                        |
-| **title**                                | `string`              | The custom text to be displayed in the component's title                                               | "Consentimientos"                                              |
+| **submitButtonText**                     | `string`              | The custom text to be displayed in the submit button of the expiration date form view                  | "Prosseguir"                                                    |
+| **termFieldLabel**                       | `string`              | The custom text to be displayed in the term field label of the expiration date form                    | "Prazo"                                                        |
+| **title**                                | `string`              | The custom text to be displayed in the component's title                                               | "Meus consetimentos"                                              |
 | **showAddConsent**                       | `boolean`             | Show the icon to add a new consent                                                                     | _true_                                                         |
-| **titleTypeConsentText**                 | `string`              | The first title displayed in filter modal, consent type.                                               | "Tipo de consentimiento"                                       |
-| **titleStatusConsentText**               | `string`              | The second title displayed in filter modal, consent status.                                            | "Status de consentimiento"                                     |
-| **receivedTypeText**                     | `string`              | The text to be displayed in filter modal to received type.                                             | "Recibidos"                                                    |
+| **titleTypeConsentText**                 | `string`              | The first title displayed in filter modal, consent type.                                               | "Tipo de consetimento"                                       |
+| **titleStatusConsentText**               | `string`              | The second title displayed in filter modal, consent status.                                            | "Status de consetimento"                                     |
+| **receivedTypeText**                     | `string`              | The text to be displayed in filter modal to received type.                                             | "Recebidos"                                                    |
 | **trasmitedTypeText**                    | `string`              | The text to be displayed in filter modal to transmitted type.                                          | "Transmitidos"                                                 |
-| **activeButtonText**                     | `string`              | The text to be displayed in filter modal to active status.                                             | "Activo"                                                       |
-| **pendingButtonText**                    | `string`              | The text to be displayed in filter modal to pending status.                                            | "Pendiente"                                                    |
+| **activeButtonText**                     | `string`              | The text to be displayed in filter modal to active status.                                             | "Ativo"                                                       |
+| **pendingButtonText**                    | `string`              | The text to be displayed in filter modal to pending status.                                            | "Pendente"                                                    |
 | **expiredButtonText**                    | `string`              | The text to be displayed in filter modal to expired status.                                            | "Vencido"                                                      |
 | **closedButtonText**                     | `string`              | The text to be displayed in filter modal to closed status.                                             | "Cancelado"                                                    |
 | **filterText**                           | `string`              | The text to be displayed in the filter button.                                                         | "Filtrar"                                                      |
-| **detailsConsentTitleText**              | `string`              | The text to be displayed in the title of consent detail modal.                                         | "Compartir detalles:"                                          |
-| **clientIdentificacionText**             | `string`              | The text to be displayed in the client identification label inside consent detail modal.               | "Identificación del cliente"                                   |
+| **detailsConsentTitleText**              | `string`              | The text to be displayed in the title of consent detail modal.                                         | "Detalhes do consetimento:"                                          |
+| **clientIdentificacionText**             | `string`              | The text to be displayed in the client identification label inside consent detail modal.               | "Indentificação do cliente"                                   |
 | **CPFText**                              | `string`              | The text to be displayed in the cpf label inside consent detail modal.                                 | "CPF"                                                          |
-| **purposeOfDataText**                    | `string`              | The text to be displayed in the purpose label inside consent detail modal.                             | "Objetivo de los datos"                                        |
-| **instituteDestinationText**             | `string`              | The text to be displayed in the financial institution label inside consent detail modal.               | "Institución de destino"                                       |
-| **dateLimitToSharedText**                | `string`              | The text to be displayed in the date limit label inside consent detail modal.                          | "Fecha límite para compartir"                                  |
+| **purposeOfDataText**                    | `string`              | The text to be displayed in the purpose label inside consent detail modal.                             | "Objetivo dos dados"                                        |
+| **instituteDestinationText**             | `string`              | The text to be displayed in the financial institution label inside consent detail modal.               | "Instituição de destino"                                       |
+| **dateLimitToSharedText**                | `string`              | The text to be displayed in the date limit label inside consent detail modal.                          | "Prazo do consetimento"                                  |
 | **deleteButtonText**                     | `string`              | The text to be displayed in the cancel buttton inside consent detail modal.                            | "Cancelar"                                                     |
-| **renewButtonText**                      | `string`              | The text to be displayed in the renew buttton inside consent detail modal.                             | "Renovar consentimiento"                                       |
-| **dataSharedTitle**                      | `string`              | The text to be displayed in the title of data shared container inside consent detail modal.            | "Datos compartidos"                                            |
-| **dataSharedFirstSubTitle**              | `string`              | The text to be displayed in the first subtitle of data shared container inside consent detail modal.   | "Datos de registro"                                            |
-| **dataSharedFirstContent**               | `string`              | The text to be displayed in the first container of data shared container inside consent detail modal.  | "Rol de persona, Tipo de persona, Nombre completo, CPF o CNPJ" |
-| **dataSharedSecondSubTitle**             | `string`              | The text to be displayed in the second subtitle of data shared container inside consent detail modal.  | "Informaciones complementarias"                                |
-| **dataSharedSecondContent**              | `string`              | The text to be displayed in the second container of data shared container inside consent detail modal. | "Dirección, Código Postal, Estado, Teléfono Celular"           |
+| **renewButtonText**                      | `string`              | The text to be displayed in the renew buttton inside consent detail modal.                             | "Renovar consetimento"                                       |
+| **dataSharedTitle**                      | `string`              | The text to be displayed in the title of data shared container inside consent detail modal.            | "Dados compartilhados"                                            |
+| **dataSharedFirstSubTitle**              | `string`              | The text to be displayed in the first subtitle of data shared container inside consent detail modal.   | "Dados Cadastrais"                                            |
+| **dataSharedFirstContent**               | `string`              | The text to be displayed in the first container of data shared container inside consent detail modal.  | "Função da pessoa, Tipo da pessoa, Nome completo, CPF ou CNPJ" |
+| **dataSharedSecondSubTitle**             | `string`              | The text to be displayed in the second subtitle of data shared container inside consent detail modal.  | "Informações complementares"                                |
+| **dataSharedSecondContent**              | `string`              | The text to be displayed in the second container of data shared container inside consent detail modal. | "Logradouro, Código Postal, UF, Celular"           |
 | **monthsText**                           | `string`              | The text to be displayed in the months label inside consent detail modal.                              | "Meses"                                                        |
-| **titleModalDeleteConsent**              | `string`              | The text to be displayed in the title of the delete modal.                                             | "Advertencia"                                                  |
-| **descriptionModalDeleteConsent**        | `string`              | The text to be displayed in the content of the delete modal.                                           | "¿Está seguro de que desea cancelar este consentimiento?"      |
-| **textCancelButtonModalConsent**         | `string`              | The text to be displayed in the cancel button of the delete modal.                                     | "Volver"                                                       |
+| **titleModalDeleteConsent**              | `string`              | The text to be displayed in the title of the delete modal.                                             | "Aviso"                                                  |
+| **descriptionModalDeleteConsent**        | `string`              | The text to be displayed in the content of the delete modal.                                           | "Tem certeza de que deseja cancelar este consetimento?"      |
+| **textCancelButtonModalConsent**         | `string`              | The text to be displayed in the cancel button of the delete modal.                                     | "Voltar"                                                       |
 | **textConfirmButtonModalConsent**        | `string`              | The text to be displayed in the confirm button of the delete modal.                                    | "Cancelar consentimiento"                                      |
 | **showFilter**                           | [`string`, `boolean`] | Show the filter button                                                                                 | _false_                                                        |
 | **closeDisabled**                        | [`string`, `boolean`] | The Close events are disabled                                                                          | _false_                                                        |
@@ -252,37 +437,37 @@ The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is th
 
 | Name                              | Type                  | Description                                                                          | Default                      |
 | --------------------------------- | --------------------- | ------------------------------------------------------------------------------------ | ---------------------------- |
-| **title**                         | `string`              | The custom text to be displayed in the title of the view                             | "Cuentas agregadas"          |
+| **title**                         | `string`              | The custom text to be displayed in the title of the view                             | "Contas agregadas"          |
 | **titleShow**                     | [`string`, `boolean`] | Show view title                                                                      | _true_                       |
 | **newAccountDisabled**            | [`string`, `boolean`] | Disable the option to add accounts                                                   | _false_                      |
 | **editAccountDisabled**           | [`string`, `boolean`] | Disable the option to edit accounts                                                  | _false_                      |
 | **deleteAccountDisabled**         | [`string`, `boolean`] | Disable the option to delete accounts                                                | _false_                      |
-| **newAccountSubmitButton**        | `string`              | The custom text that will be displayed on the Submit button of the new account form  | "Crear cuenta"               |
-| **deleteAccountButton**           | `string`              | The custom text that will be displayed on the Delete button of the edit account form | "Eliminar"                   |
-| **editAccountSubmitButton**       | `string`              | The custom text that will be displayed on the Submit button of the edit account form | "Guardar"                    |
-| **newAccountModalTitle**          | `string`              | The custom text to display in the title of the new account modal.                    | "Crear cuenta"               |
-| **editAccountModalTitle**         | `string`              | The custom text to display in the title of the edit account modal.                   | "Edición: cuenta"            |
-| **debitAndCashSectionTitle**      | `string`              | The custom text to display in the title of the Debit and cash section                | "Débito y efectivo"          |
+| **newAccountSubmitButton**        | `string`              | The custom text that will be displayed on the Submit button of the new account form  | "Criar conta"               |
+| **deleteAccountButton**           | `string`              | The custom text that will be displayed on the Delete button of the edit account form | "Apagar"                   |
+| **editAccountSubmitButton**       | `string`              | The custom text that will be displayed on the Submit button of the edit account form | "Salvar"                    |
+| **newAccountModalTitle**          | `string`              | The custom text to display in the title of the new account modal.                    | "Criar conta"               |
+| **editAccountModalTitle**         | `string`              | The custom text to display in the title of the edit account modal.                   | "Edição: conta"            |
+| **debitAndCashSectionTitle**      | `string`              | The custom text to display in the title of the Debit and cash section                | "Débito"          |
 | **debitAndCashSectionOrder**      | [`string`, `number`]  | Position number in the list of the Debit and cash section                            | _1_                          |
 | **debitAndCashSectionShow**       | [`string`, `boolean`] | Show Debit and cash section                                                          | _true_                       |
-| **creditCardAndDebtSectionTitle** | `string`              | The custom text to display in the title of the Credit card and debt section          | "Tarjeta de crédito y deuda" |
+| **creditCardAndDebtSectionTitle** | `string`              | The custom text to display in the title of the Credit card and debt section          | "Cartão de crédito e dívidas" |
 | **creditCardAndDebtSectionOrder** | [`string`, `number`]  | Position number in the list of the Credit card and debt section                      | _2_                          |
 | **creditCardAndDebtSectionShow**  | [`string`, `boolean`] | Show Credit card and debt section                                                    | _true_                       |
-| **shortTermBalanceSectionTitle**  | `string`              | The custom text to display in the title of the Short-term balance section            | "Saldo a corto plazo"        |
+| **shortTermBalanceSectionTitle**  | `string`              | The custom text to display in the title of the Short-term balance section            | "Saldo a curto prazo"        |
 | **shortTermBalanceSectionOrder**  | [`string`, `number`]  | Position number in the list of the Short-term balance section                        | _3_                          |
 | **shortTermBalanceSectionShow**   | [`string`, `boolean`] | Show Short-term balance section                                                      | _true_                       |
-| **investmentsSectionTitle**       | `string`              | The custom text to display in the title of the Investments section                   | "Inversiones"                |
+| **investmentsSectionTitle**       | `string`              | The custom text to display in the title of the Investments section                   | "Investimentos"                |
 | **investmentsSectionOrder**       | [`string`, `number`]  | Position number in the list of the Investments section                               | _4_                          |
 | **investmentsSectionShow**        | [`string`, `boolean`] | Show Investments section                                                             | _true_                       |
 | **creditsSectionTitle**           | `string`              | The custom text to display in the title of the Credits section                       | "Créditos"                   |
 | **creditsSectionOrder**           | [`string`, `number`]  | Position number in the list of the Credits section                                   | _5_                          |
 | **creditsSectionShow**            | [`string`, `boolean`] | Show Credits section                                                                 | _true_                       |
-| **longTermBalanceSectionTitle**   | `string`              | The custom text to display in the title of the Long-term balance section             | "Saldo a largo plazo"        |
+| **longTermBalanceSectionTitle**   | `string`              | The custom text to display in the title of the Long-term balance section             | "Saldo a longo prazo"        |
 | **longTermBalanceSectionOrder**   | [`string`, `number`]  | Position number in the list of the Long-term balance section                         | _6_                          |
 | **longTermBalanceSectionShow**    | [`string`, `boolean`] | Show Long-term balance section                                                       | _true_                       |
 | **totalSectionTitle**             | `string`              | The custom text to display in the title of the Total section                         | _null_                       |
 | **totalSectionOrder**             | [`string`, `number`]  | Position number in the list of the Total section                                     | _7_                          |
-| **totalSectionShow**              | [`string`, `boolean`] | Show Total section                                                                   | "Patrimonio Neto"            |
+| **totalSectionShow**              | [`string`, `boolean`] | Show Total section                                                                   | "Patrimônio Líquido"            |
 |                                   |                       |                                                                                      |
 
 ## Events
@@ -344,19 +529,19 @@ The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is th
 | Name                                  | Type                | Description                                                                                              | Default                                                                                      |
 | ------------------------------------- | ------------------- | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | **creditTitle**                       | `string`            | The custom text to display in the title of the web component                                             | "Crédito"                                                                                    |
-| **totalCreditTitle**                  | `string`            | The custom text to display in the available amount section of the total credits section                  | "Limite disponible total:"                                                                   |
-| **totalActualText**                   | `string`            | The custom text to display in the used amount section of total credits section                           | "Factura actual total:"                                                                      |
+| **totalCreditTitle**                  | `string`            | The custom text to display in the available amount section of the total credits section                  | "Limite disponivel total:"                                                                   |
+| **totalActualText**                   | `string`            | The custom text to display in the used amount section of total credits section                           | "Fatura atual total:"                                                                      |
 | **totalInitialLimitText**             | `string`            | The custom text to display in the limit amount section of total credits section                          | "Limite inicial total:"                                                                      |
 | **allCreditHeaderTextBank**           | `string`            | The custom text to display in the first column of the credits table                                      | "Banco"                                                                                      |
-| **allCreditHeaderTextName**           | `string`            | The custom text to display in the second column of the credits table                                     | "Nombre de Línea"                                                                            |
-| **allCreditHeaderTextCurrentBalance** | `string`            | The custom text to display in the third column of the credits table                                      | "Factura atual"                                                                              |
-| **allCreditHeaderTextAvailableLimit** | `string`            | The custom text to display in the fourth column of the credits table                                     | "Limite disponible"                                                                          |
+| **allCreditHeaderTextName**           | `string`            | The custom text to display in the second column of the credits table                                     | "Nome da Linha"                                                                            |
+| **allCreditHeaderTextCurrentBalance** | `string`            | The custom text to display in the third column of the credits table                                      | "Fatura atual"                                                                              |
+| **allCreditHeaderTextAvailableLimit** | `string`            | The custom text to display in the fourth column of the credits table                                     | "Limite disponivel"                                                                          |
 | **allCreditHeaderTextInitialLimit**   | `string`            | The custom text to display in the fifth column of the credits table                                      | "Limite inicial"                                                                             |
 | **warningPercentage**                 | [`number`,`string`] | The custom warning percentage where the progress bar will change color                                   | 0.7                                                                                          |
 | **isEmpty**                           | `boolean`           | Show the empty view in the component                                                                     | _false_                                                                                      |
-| **emptyViewTitle**                    | `string`            | The custom text to be displayed in the Title section of the Empty view (When there are no credits)       | "Bienvenido a tu resumen de créditos"                                                        |
-| **emptyViewDescription**              | `string`            | The custom text to be displayed in the Description section of the Empty view (When there are no credits) | "En cuanto des de alta una cuenta bancaria aquí verás un resumen de tus cuentas de crédito." |
-| **emptyViewActionText**               | `string`            | The custom text to be displayed in the Action Button of the Empty view (When there are no credits)       | "Agregar cuenta"                                                                             |
+| **emptyViewTitle**                    | `string`            | The custom text to be displayed in the Title section of the Empty view (When there are no credits)       | "Bem-vindo ao seu resumo de crédito"                                                        |
+| **emptyViewDescription**              | `string`            | The custom text to be displayed in the Description section of the Empty view (When there are no credits) | "Assim que você registrar uma conta bancária aqui, verá um resumo de suas contas de crédito." |
+| **emptyViewActionText**               | `string`            | The custom text to be displayed in the Action Button of the Empty view (When there are no credits)       | "Adicionar Conta"                                                                             |
 
 ## Events
 
@@ -386,86 +571,80 @@ This component helps in managing transactions.
 Insert the html tag in your web application as follow.
 
 ```html
-<ob-transactions-component
-  transactionsData
-  accountsData
-  availableAccountsData
-  availableAccountsData
-></ob-transactions-component>
+<ob-transactions-component transactionsData accountsData categoriesData></ob-transactions-component>
 ```
 
 ## Data Properties
 
 The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is the data source of this component.
 
-| Name                      | Type                 | Description                                                                     | Default | SDK Function                                                                                          |
-| ------------------------- | -------------------- | ------------------------------------------------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------- |
-| **transactionsData**      | [`string`, `Array`]  | The data of the transactions that will be used                               | _[]_    | [Transactions List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-transactions)             |
-| **accountsData**          | [`string` , `Array`] | data of the accounts that will be used                                          | _[]_    | [Accounts List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-accounts)                     |
-| **availableAccountsData** | [`string` , `Array`] | The data of the available accounts that will be used to create new transactions | _[]_    | [Accounts List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-categories) (filter accounts) |
-| **categoriesData**        | [`string` , `Array`] | data of the categories that will be used                                        | _[]_    | [List Categories](https://www.npmjs.com/package/open-banking-pfm-sdk#list-categories)                 |
+| Name                 | Type                 | Description                                    | Default | SDK Function                                                                              |
+| -------------------- | -------------------- | ---------------------------------------------- | ------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| **transactionsData** | [`string`, `Array`]  | The data of the transactions that will be used | _[]_    | [Transactions List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-transactions) |
+| **accountsData**     | [`string` , `Array`] | data of the accounts that will be used         | _[]_    | [Accounts List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-accounts)         | (https://www.npmjs.com/package/open-banking-pfm-sdk#list-categories-with-subcategories) (filter accounts) |
+| **categoriesData**   | [`string` , `Array`] | data of the categories that will be used       | _[]_    | [Categories List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-categories-with-subcategories)     |
 
 ## Customization Properties
 
 | Name                             | Type                                                                                   | Description                                                                                                       | Default                                                                  |
 | -------------------------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | **isEmpty**                      | `boolean`                                                                              | Show the empty view in the component                                                                              | _false_                                                                  |
-| **title**                        | `string`                                                                               | The custom text to be displayed in the title of the view                                                          | "Transacciones"                                                          |
+| **title**                        | `string`                                                                               | The custom text to be displayed in the title of the view                                                          | "Transações"                                                          |
 | **titleShow**                    | [`string`, `boolean`]                                                                  | Show view title                                                                                                   | _true_                                                                   |
-| **accountColumnText**            | `string`                                                                               | The custom text that will be displayed on the account column header                                               | "Cuenta"                                                                 |
+| **accountColumnText**            | `string`                                                                               | The custom text that will be displayed on the account column header                                               | "Conta"                                                                 |
 | **accountColumnOrder**           | [`string`, `number`]                                                                   | Position number in the table of the account column                                                                | _1_                                                                      |
 | **accountColumnShow**            | [`string`, `boolean`]                                                                  | Show account column                                                                                               | _true_                                                                   |
-| **dateColumnText**               | `string`                                                                               | The custom text that will be displayed on the date column header                                                  | "Fecha"                                                                  |
+| **dateColumnText**               | `string`                                                                               | The custom text that will be displayed on the date column header                                                  | "Data"                                                                  |
 | **dateColumnOrder**              | [`string`, `number`]                                                                   | Position number in the table of the date column                                                                   | _2_                                                                      |
 | **dateColumnShow**               | [`string`, `boolean`]                                                                  | Show date column                                                                                                  | _true_                                                                   |
-| **amountColumnText**             | `string`                                                                               | The custom text that will be displayed on the amount column header                                                | "Monto"                                                                  |
+| **amountColumnText**             | `string`                                                                               | The custom text that will be displayed on the amount column header                                                | "Quantia"                                                                  |
 | **amountColumnOrder**            | [`string`, `number`]                                                                   | Position number in the table of the amount column                                                                 | _3_                                                                      |
 | **amountColumnShow**             | [`string`, `boolean`]                                                                  | Show amount column                                                                                                | _true_                                                                   |
-| **descriptionColumnText**        | `string`                                                                               | The custom text that will be displayed on the description column header                                           | "Descripción"                                                            |
+| **descriptionColumnText**        | `string`                                                                               | The custom text that will be displayed on the description column header                                           | "Descrição"                                                            |
 | **descriptionColumnOrder**       | [`string`, `number`]                                                                   | Position number in the table of the description column                                                            | _4_                                                                      |
 | **descriptionColumnShow**        | [`string`, `boolean`]                                                                  | Show description column                                                                                           | _true_                                                                   |
-| **categoryColumnText**           | `string`                                                                               | The custom text that will be displayed on the category column header                                              | "Categoría"                                                              |
+| **categoryColumnText**           | `string`                                                                               | The custom text that will be displayed on the category column header                                              | "Categoria"                                                              |
 | **categoryColumnOrder**          | [`string`, `number`]                                                                   | Position number in the table of the category column                                                               | _4_                                                                      |
 | **categoryColumnShow**           | [`string`, `boolean`]                                                                  | Show category column                                                                                              | _true_                                                                   |
-| **nameFieldLabel**               | `string`                                                                               | The custom text that will be displayed on the name field label                                                    | "Nombre"                                                                 |
+| **nameFieldLabel**               | `string`                                                                               | The custom text that will be displayed on the name field label                                                    | "Nome"                                                                 |
 | **nameFieldOrder**               | [`string`, `number`]                                                                   | Position number in the form of the name field                                                                     | _1_                                                                      |
-| **categoryFieldLabel**           | `string`                                                                               | The custom text that will be displayed on the category field label                                                | "Categoría"                                                              |
+| **categoryFieldLabel**           | `string`                                                                               | The custom text that will be displayed on the category field label                                                | "Categoria"                                                              |
 | **categoryFieldOrder**           | [`string`, `number`]                                                                   | Position number in the form of the category field                                                                 | _5_                                                                      |
-| **subcategoryFieldLabel**        | `string`                                                                               | The custom text that will be displayed on the subcategory field label                                             | "Subcategoría"                                                           |
+| **subcategoryFieldLabel**        | `string`                                                                               | The custom text that will be displayed on the subcategory field label                                             | "Subcategoria"                                                           |
 | **subcategoryFieldOrder**        | [`string`, `number`]                                                                   | Position number in the form of the subcategory field                                                              | _6_                                                                      |
-| **ammountFieldLabel**            | `string`                                                                               | The custom text that will be displayed on the ammount field label                                                 | "Monto"                                                                  |
+| **ammountFieldLabel**            | `string`                                                                               | The custom text that will be displayed on the ammount field label                                                 | "Quantia"                                                                  |
 | **ammountFieldOrder**            | [`string`, `number`]                                                                   | Position number in the form of the ammount field                                                                  | _3_                                                                      |
 | **transactionTypeFieldLabel**    | `string`                                                                               | The custom text that will be displayed on the transaction type field label                                        | "Tipo de saldo"                                                          |
 | **transactionTypeFieldOrder**    | [`string`, `number`]                                                                   | Position number in the form of the transaction type field                                                         | _4_                                                                      |
-| **accountFieldLabel**            | `string`                                                                               | The custom text that will be displayed on the account field label                                                 | "Tipo de cuenta"                                                         |
+| **accountFieldLabel**            | `string`                                                                               | The custom text that will be displayed on the account field label                                                 | "Tipo de conta"                                                         |
 | **accountFieldOrder**            | [`string`, `number`]                                                                   | Position number in the form of the account field                                                                  | _2_                                                                      |
-| **dateFieldLabel**               | `string`                                                                               | The custom text that will be displayed on the date field label                                                    | "Fecha"                                                                  |
+| **dateFieldLabel**               | `string`                                                                               | The custom text that will be displayed on the date field label                                                    | "Data"                                                                  |
 | **dateFieldOrder**               | [`string`, `number`]                                                                   | Position number in the form of the date field                                                                     | _7_                                                                      |
-| **newTransactionTitle**          | `string`                                                                               | The custom text to be displayed in the title of the new transaction modal                                         | "Nuevo movimiento"                                                       |
-| **newTransactionButton**         | `string`                                                                               | The custom text to display on the new transaction button                                                          | "Crear movimiento"                                                       |
-| **editTransactionTitle**         | `string`                                                                               | The custom text to be displayed in the title of the edit transaction modal                                        | "Detalle de movimiento"                                                  |
-| **editTransactionButton**        | `string`                                                                               | The custom text to display on the edit transaction button                                                         | "Guardar cambios"                                                        |
-| **deletetTransactionButtonText** | `string`                                                                               | The custom text to display on the delete transaction button                                                       | "Eliminar"                                                               |
+| **newTransactionTitle**          | `string`                                                                               | The custom text to be displayed in the title of the new transaction modal                                         | "Nova transação"                                                       |
+| **newTransactionButton**         | `string`                                                                               | The custom text to display on the new transaction button                                                          | "Criar transação"                                                       |
+| **editTransactionTitle**         | `string`                                                                               | The custom text to be displayed in the title of the edit transaction modal                                        | "Detalhe da transação"                                                  |
+| **editTransactionButton**        | `string`                                                                               | The custom text to display on the edit transaction button                                                         | "Salvar"                                                        |
+| **deletetTransactionButtonText** | `string`                                                                               | The custom text to display on the delete transaction button                                                       | "Apagar"                                                               |
 | **newTransactionDisabled**       | [`string`, `boolean`]                                                                  | Disable the option to create transactions                                                                         | _false_                                                                  |
 | **editTransactionDisabled**      | [`string`, `boolean`]                                                                  | Disable the option to edit transactions                                                                           | _false_                                                                  |
 | **deleteTransactionDisabled**    | [`string`, `boolean`]                                                                  | Disable the option to delete transactions                                                                         | _false_                                                                  |
-| **chargeText**                   | `string`                                                                               | The custom text that refers to the charges                                                                        | "Cargo"                                                                  |
-| **debitText**                    | `string`                                                                               | The custom text that refers to the debits                                                                         | "Ingreso"                                                                |
-| **searchPlaceholder**            | `string`                                                                               | The custom text to be displayed in the placeholder of the search transaction field                                | "Búsqueda de transacción"                                                |
+| **chargeText**                   | `string`                                                                               | The custom text that refers to the charges                                                                        | "Gasto"                                                                  |
+| **debitText**                    | `string`                                                                               | The custom text that refers to the debits                                                                         | "Recebimento"                                                                |
+| **searchPlaceholder**            | `string`                                                                               | The custom text to be displayed in the placeholder of the search transaction field                                | "Pesquisa de transação"                                                |
 | **searchDebounceTime**           | [`string`, `number`]                                                                   | Time in milliseconds it takes to fire the search field event                                                      | _2000_                                                                   |
 | **defaultFilterOptions**         | {caategoryId: `string`, subcategoryId: `string`, dateFrom: `string`, dateTo: `string`} | The default values for the filter modal                                                                           | _None_                                                                   |
 | **filterDisabled**               | [`string`, `boolean`]                                                                  | Disable the option to filter transactions                                                                         | _false_                                                                  |
 | **filterModalTitle**             | `string`                                                                               | The custom text to be displayed in the title of the filter transaction modal                                      | "Filtrado"                                                               |
-| **cleanFilterButtonText**        | `string`                                                                               | The custom text to display on the clean filter button                                                             | "Limpiar filtros"                                                        |
-| **submitFilterButtonText**       | `string`                                                                               | The custom text to display on the submit filter button                                                            | "Aplicar filtrado"                                                       |
-| **predefinedDateFilterTitle**    | `string`                                                                               | The custom text to be displayed in the predefined date filter section                                             | "Fecha predefinida"                                                      |
-| **customDateFilterTitle**        | `string`                                                                               | The custom text to be displayed in the custom date filter section                                                 | "Fecha personalizada"                                                    |
-| **lastWeekButtonText**           | `string`                                                                               | The custom text to display on the last week button                                                                | "Última semana"                                                          |
+| **cleanFilterButtonText**        | `string`                                                                               | The custom text to display on the clean filter button                                                             | "Filtros limpos"                                                        |
+| **submitFilterButtonText**       | `string`                                                                               | The custom text to display on the submit filter button                                                            | "Aplicar filtros"                                                       |
+| **predefinedDateFilterTitle**    | `string`                                                                               | The custom text to be displayed in the predefined date filter section                                             | "Data predefinida"                                                      |
+| **customDateFilterTitle**        | `string`                                                                               | The custom text to be displayed in the custom date filter section                                                 | "Data personalizada"                                                    |
+| **lastWeekButtonText**           | `string`                                                                               | The custom text to display on the last week button                                                                | "Semana Anterior"                                                          |
 | **lastFifteenDaysButtonText**    | `string`                                                                               | The custom text to display on the last fifteen days button                                                        | "Últimos 15 días"                                                        |
 | **lastThirtyDaysButtonText**     | `string`                                                                               | The custom text to display on the last thirty days button                                                         | "Últimos 30 días"                                                        |
-| **emptyViewTitle**               | `string`                                                                               | The custom text to be displayed in the Title section of the Empty view (When there are no transactions) tab       | "No tienes movimientos"                                                  |
-| **emptyViewDescription**         | `string`                                                                               | The custom text to be displayed in the Description section of the Empty view (When there are no transactions) tab | "Al dar de alta tus cuentas, verás una lista con todos tus movimientos." |
-| **emptyViewActionText**          | `string`                                                                               | The custom text to be displayed in the Action Button of the Empty view (When there are no transactions) tab       | Agregar movimiento                                                       |
+| **emptyViewTitle**               | `string`                                                                               | The custom text to be displayed in the Title section of the Empty view (When there are no transactions) tab       | "Você não tem transações."                                                  |
+| **emptyViewDescription**         | `string`                                                                               | The custom text to be displayed in the Description section of the Empty view (When there are no transactions) tab | "Ao registrar suas contas, você verá uma lista com todas as suas transações." |
+| **emptyViewActionText**          | `string`                                                                               | The custom text to be displayed in the Action Button of the Empty view (When there are no transactions) tab       | "Adicionar transação"                                                       |
 | **totalPages**                   | `number`                                                                               | The total pages in te transactions component                                                                      | 0                                                                        |
 | **activePage**                   | `number`                                                                               | The current active page                                                                                           | 1                                                                        |
 |                                  |                                                                                        |                                                                                                                   |                                                                          |
@@ -521,44 +700,44 @@ The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is th
 
 | Name               | Type                 | Description                              | Default | SDK Function                                                                          |
 | ------------------ | -------------------- | ---------------------------------------- | ------- | ------------------------------------------------------------------------------------- |
-| **categoriesData** | [`string` , `Array`] | data of the categories that will be used | _[]_    | [List Categories](https://www.npmjs.com/package/open-banking-pfm-sdk#list-categories) |
+| **categoriesData** | [`string` , `Array`] | data of the categories that will be used | _[]_    | [Categories List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-categories-with-subcategories) |
 
 ## Customization Properties
 
 | Name                                         | Type                  | Description                                                                                   | Default                                                                         |
 | -------------------------------------------- | --------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| **cardMyCategoriesTitle**                    | `string`              | The custom text to be displayed in the title of the Own Categories Card                       | "Mis categorías"                                                                |
-| **categoriesTitle**                          | `string`              | The custom text to be displayed in the title of the view                                      | "Categorías"                                                                    |
-| **categoryButtonText**                       | `string`              | The custom text that will go on the button whose action shows the details of the category     | "Detalles"                                                                      |
+| **cardMyCategoriesTitle**                    | `string`              | The custom text to be displayed in the title of the Own Categories Card                       | "Minhas categorias"                                                                |
+| **categoriesTitle**                          | `string`              | The custom text to be displayed in the title of the view                                      | "Categorias"                                                                    |
+| **categoryButtonText**                       | `string`              | The custom text that will go on the button whose action shows the details of the category     | "Detalhes"                                                                      |
 | **deleteCategoryDisabled**                   | [`string`, `boolean`] | Delete Category action is disabled                                                            | _false_                                                                         |
-| **deleteCategoryButtonText**                 | `string`              | The custom text to be displayed in the Delete Category button                                 | "Eliminar Categoría"                                                            |
+| **deleteCategoryButtonText**                 | `string`              | The custom text to be displayed in the Delete Category button                                 | "Apagar categoria"                                                            |
 | **deleteSubcategoryDisabled**                | [`string`, `boolean`] | Delete Subcategory action is disabled                                                         | _false_                                                                         |
 | **deleteOwnCategoryDisabled**                | [`string`, `boolean`] | Delete Own Category action is disabled                                                        | _false_                                                                         |
-| **deleteOwnCategoryButtonText**              | `string`              | The custom text to be displayed in the Delete own Category button                             | "Eliminar Categoría"                                                            |
+| **deleteOwnCategoryButtonText**              | `string`              | The custom text to be displayed in the Delete own Category button                             | "Apagar categoria"                                                            |
 | **deleteOwnSubategoryDisabled**              | [`string`, `boolean`] | Delete Own Subategory action is disabled                                                      | _false_                                                                         |
-| **myCategoryButtonText**                     | `string`              | The custom text that will go on the button whose action shows the details of the own category | "Detalles"                                                                      |
-| **newCategoryModalButtonText**               | `string`              | The custom text to display on the submit button in the new category modal                     | "Guardar"                                                                       |
-| **newCategoryModalInputColorPickerLabel**    | `string`              | The custom text to display on the Color Picker Label in the new category modal                | "Color"                                                                         |
-| **newCategoryModalInputLabel**               | `string`              | The custom text to display on the Name Field Label in the new category modal                  | "Nombre"                                                                        |
-| **newCategoryModalTitle**                    | `string`              | The custom text to display on the title of the new category modal                             | "Nueva categoría"                                                               |
-| **newSubCategoryModalButtonText**            | `string`              | The custom text to display on the submit button in the new subcategory modal                  | "Guardar"                                                                       |
-| **newSubCategoryModalInputColorPickerLabel** | `string`              | The custom text to display on the Color Picker Label in the new subcategory modal             | "Color de la subcategoría"                                                      |
-| **newSubCategoryModalInputLabel**            | `string`              | The custom text to display on the Name Field Label in the new subcategory modal               | "Nombre de la subcategoría"                                                     |
-| **newSubCategoryModalTitle**                 | `string`              | The custom text to display on the title of the new category modal                             | "Nueva subcategoría"                                                            |
-| **detailsCategoryModalTitle**                | `string`              | The custom text to display on the title of the Category details modal                         | "Detalles de la categoría"                                                      |
-| **detailsCategoryModalButtonText**           | `string`              | The custom text to display on the new subcategory button in the category details modal        | "Crear subcategoría"                                                            |
-| **detailsCategoryModalSubCategoryText**      | `string`              | The custom text to be displayed in the subcategories title in the category details modal      | "Subcategorías"                                                                 |
-| **confirmDeleteDialogTitle**                 | `string`              | The custom text to be displayed in the title of the Confirm Delete Dialog                     | "Advertencia"                                                                   |
-| **confirmDeleteDialogMessage**               | `string`              | The custom text to be displayed in the body of the Confirm Delete Dialog                      | "Estás seguro que deseas eliminar esta categoría. Esta acción es irreversible." |
+| **myCategoryButtonText**                     | `string`              | The custom text that will go on the button whose action shows the details of the own category | "Detalhes"                                                                      |
+| **newCategoryModalButtonText**               | `string`              | The custom text to display on the submit button in the new category modal                     | "Salvar"                                                                       |
+| **newCategoryModalInputColorPickerLabel**    | `string`              | The custom text to display on the Color Picker Label in the new category modal                | "Cor"                                                                         |
+| **newCategoryModalInputLabel**               | `string`              | The custom text to display on the Name Field Label in the new category modal                  | "Nome"                                                                        |
+| **newCategoryModalTitle**                    | `string`              | The custom text to display on the title of the new category modal                             | "Nova categoria"                                                               |
+| **newSubCategoryModalButtonText**            | `string`              | The custom text to display on the submit button in the new subcategory modal                  | "Salvar"                                                                       |
+| **newSubCategoryModalInputColorPickerLabel** | `string`              | The custom text to display on the Color Picker Label in the new subcategory modal             | "Cor da subcategoria"                                                      |
+| **newSubCategoryModalInputLabel**            | `string`              | The custom text to display on the Name Field Label in the new subcategory modal               | "Nome da subcategoria"                                                     |
+| **newSubCategoryModalTitle**                 | `string`              | The custom text to display on the title of the new category modal                             | "Nova subcategoría"                                                            |
+| **detailsCategoryModalTitle**                | `string`              | The custom text to display on the title of the Category details modal                         | "Detalhes da categoria"                                                      |
+| **detailsCategoryModalButtonText**           | `string`              | The custom text to display on the new subcategory button in the category details modal        | "Criar subcategoría"                                                            |
+| **detailsCategoryModalSubCategoryText**      | `string`              | The custom text to be displayed in the subcategories title in the category details modal      | "Subcategorias"                                                                 |
+| **confirmDeleteDialogTitle**                 | `string`              | The custom text to be displayed in the title of the Confirm Delete Dialog                     | "Aviso"                                                                   |
+| **confirmDeleteDialogMessage**               | `string`              | The custom text to be displayed in the body of the Confirm Delete Dialog                      | "Tem certeza de que deseja apagar essa categoria? Esta ação é irreversível." |
 | **confirmDeleteDialogNegativeButtonText**    | `string`              | The custom text to be displayed in the Negative Button of the Confirm Delete Dialog           | "Cancelar"                                                                      |
 | **confirmDeleteDialogPositiveButtonText**    | `string`              | The custom text to be displayed in the Positive Button of the Confirm Delete Dialog           | "Eliminar"                                                                      |
 | **editSubcategoryDisabled**                  | [`string`, `boolean`] | Edit Subcategory action is disabled                                                           | _false_                                                                         |
 | **editOwnSubcategoryDisabled**               | [`string`, `boolean`] | Edit Own Subcategory action is disabled                                                       | _false_                                                                         |
 | **editOwnCategoryDisabled**                  | [`string`, `boolean`] | Edit Own Category action is disabled                                                          | _false_                                                                         |
-| **editOwnCategoryButtonText**                | `string`              | The custom text to display on the edit own category button                                    | "Editar Categoría"                                                              |
+| **editOwnCategoryButtonText**                | `string`              | The custom text to display on the edit own category button                                    | "Editar Categoria"                                                              |
 | **editCategoryDisabled**                     | [`string`, `boolean`] | Edit Category action is disabled                                                              | _false_                                                                         |
-| **editCategoryButtonText**                   | `string`              | The custom text to display on the edit category button                                        | "Editar Categoría"                                                              |
-| **editCategoryModalTitle**                   | `string`              | The custom text to display on the title of the edit category modal                            | "Editar Categoría"                                                              |
+| **editCategoryButtonText**                   | `string`              | The custom text to display on the edit category button                                        | "Editar Categoria"                                                              |
+| **editCategoryModalTitle**                   | `string`              | The custom text to display on the title of the edit category modal                            | "Editar Categoria"                                                              |
 | **editSubCategoryModalTitle**                | `string`              | The custom text to display on the title of the edit subcategory modal                         | "Editar Subcategoria"                                                           |
 |                                              |                       |                                                                                               |
 
@@ -610,36 +789,36 @@ Insert the html tag in your web application as follow.
 
 The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is the data source of this component.
 
-| Name               | Type                 | Description                                  | Default | SDK Function                                                                          |
-| ------------------ | -------------------- | -------------------------------------------- | ------- | ------------------------------------------------------------------------------------- |
+| Name               | Type                 | Description                               | Default | SDK Function                                                                          |
+| ------------------ | -------------------- | ----------------------------------------- | ------- | ------------------------------------------------------------------------------------- |
 | **budgetData**     | [`string`, `Array`]  | The data of the budgets that will be used | _[]_    | [Budgets List](httpshttps://www.npmjs.com/package/open-banking-pfm-sdk#list-budgets)  |
-| **categoriesData** | [`string` , `Array`] | data of the categories that will be used     | _[]_    | [List Categories](https://www.npmjs.com/package/open-banking-pfm-sdk#list-categories) |
+| **categoriesData** | [`string` , `Array`] | data of the categories that will be used  | _[]_    | [Categories List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-categories-with-subcategories) |
 
 ## Customization Properties
 
 | Name                                      | Type      | Description                                                                                                             | Default                                                                           |
 | ----------------------------------------- | --------- | ----------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| **budgetTitle**                           | `string`  | The custom text to be displayed in the title of the view                                                                | "Presupuestos"                                                                    |
-| **budgetTotalTitle**                      | `string`  | The custom text to be displayed in the title of the Total budget section                                                | "Presupuesto total"                                                               |
-| **budgetModalFirstTitle**                 | `string`  | The custom text to be displayed in the first title of the new budget modal                                              | "Selecciona una categoría"                                                        |
-| **budgetModalSecondTitle**                | `string`  | The custom text to be displayed in the second title of the new budget modal                                             | ' ?' ? will be replaced by category's name                                        |
-| **budgetModalDetailTitle**                | `string`  | The custom text to be displayed in the first title of the budget detail modal                                           | "Detalle"                                                                         |
-| **formCategoriesText**                    | `string`  | The custom text to display in the category section title in the new budget modal when a category has been selected      | "Categoría"                                                                       |
-| **formSubcategoriesText**                 | `string`  | The custom text to display in the subcategories section title in the new budget modal when a category has been selected | "Subcategorías"                                                                   |
+| **budgetTitle**                           | `string`  | The custom text to be displayed in the title of the view                                                                | "Limite de orçamentos"                                                                    |
+| **budgetTotalTitle**                      | `string`  | The custom text to be displayed in the title of the Total budget section                                                | "Limite de orçamentos total"                                                               |
+| **budgetModalFirstTitle**                 | `string`  | The custom text to be displayed in the first title of the new budget modal                                              | "Selecione uma categoria"                                                        |
+| **budgetModalSecondTitle**                | `string`  | The custom text to be displayed in the second title of the new budget modal                                             | " ?", ? will be replaced by category's name                                        |
+| **budgetModalDetailTitle**                | `string`  | The custom text to be displayed in the first title of the budget detail modal                                           | "Detalhes"                                                                         |
+| **formCategoriesText**                    | `string`  | The custom text to display in the category section title in the new budget modal when a category has been selected      | "Categoria"                                                                       |
+| **formSubcategoriesText**                 | `string`  | The custom text to display in the subcategories section title in the new budget modal when a category has been selected | "Subcategorias"                                                                   |
 | **warningPercentage**                     | `number`  | The percentage where the budget status changes from stable to warning                                                   | _"70"_                                                                            |
-| **budgetCardMessage**                     | `string`  | The custom text indicating the remaining budget                                                                         | "Por ejecutar:"                                                                   |
-| **formCreateButtonText**                  | `string`  | The custom text to display on the submit button in the new budget modal                                                 | "Crear presupuesto"                                                               |
-| **formSaveButtonText**                    | `string`  | The custom text to display on the submit button in the edit budget modal                                                | "Guardar cambios"                                                                 |
+| **budgetCardMessage**                     | `string`  | The custom text indicating the remaining budget                                                                         | "Por executar:"                                                                   |
+| **formCreateButtonText**                  | `string`  | The custom text to display on the submit button in the new budget modal                                                 | "Criar limite orçamentário"                                                               |
+| **formSaveButtonText**                    | `string`  | The custom text to display on the submit button in the edit budget modal                                                | "Salvar"                                                                 |
 | **editButtonText**                        | `string`  | The custom text to be displayed in the edit button of the budget detail modal                                           | "Editar"                                                                          |
-| **deleteButtonText**                      | `string`  | The custom text to be displayed in the delete button of the budget detail modal                                         | "Eliminar"                                                                        |
-| **confirmDeleteDialogTitle**              | `string`  | The custom text to be displayed in the title of the Confirm Delete Dialog                                               | "Advertencia"                                                                     |
-| **confirmDeleteDialogMessage**            | `string`  | The custom text to be displayed in the body of the Confirm Delete Dialog                                                | "Estás seguro que deseas eliminar este presupuesto. Esta acción es irreversible." |
+| **deleteButtonText**                      | `string`  | The custom text to be displayed in the delete button of the budget detail modal                                         | "Apagar"                                                                        |
+| **confirmDeleteDialogTitle**              | `string`  | The custom text to be displayed in the title of the Confirm Delete Dialog                                               | "Aviso"                                                                     |
+| **confirmDeleteDialogMessage**            | `string`  | The custom text to be displayed in the body of the Confirm Delete Dialog                                                | "Tem certeza de que deseja apagar esse limite orçamentário? Esta ação é irreversível." |
 | **confirmDeleteDialogNegativeButtonText** | `string`  | The custom text to be displayed in the Negative Button of the Confirm Delete Dialog                                     | "Cancelar"                                                                        |
-| **confirmDeleteDialogPositiveButtonText** | `string`  | The custom text to be displayed in the Positive Button of the Confirm Delete Dialog                                     | "Eliminar"                                                                        |
+| **confirmDeleteDialogPositiveButtonText** | `string`  | The custom text to be displayed in the Positive Button of the Confirm Delete Dialog                                     | "Apagar"                                                                        |
 | **isEmpty**                               | `boolean` | Show the empty view in the component                                                                                    | _false_                                                                           |
-| **emptyViewTitle**                        | `string`  | The custom text to be displayed in the Title section of the Empty view (When there are no budgets)                      | "No tienes presupuestos"                                                          |
-| **emptyViewDescription**                  | `string`  | The custom text to be displayed in the Description section of the Empty view (When there are no budgets)                | "Nuevo presupuesto"                                                               |
-| **emptyViewActionText**                   | `string`  | The custom text to be displayed in the Action Button of the Empty view (When there are no budgets)                      | "Pulsa el botón para crear tus presupuestos."                                     |
+| **emptyViewTitle**                        | `string`  | The custom text to be displayed in the Title section of the Empty view (When there are no budgets)                      | "Você não possui limites orçamentários"                                                          |
+| **emptyViewDescription**                  | `string`  | The custom text to be displayed in the Description section of the Empty view (When there are no budgets)                | "Novo limite orçamentário"                                                               |
+| **emptyViewActionText**                   | `string`  | The custom text to be displayed in the Action Button of the Empty view (When there are no budgets)                      | "Clique para criar seus limites orçamentários"                                     |
 |                                           |           |                                                                                                                         |
 
 ## Events
@@ -690,70 +869,70 @@ The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is th
 | Name               | Type                 | Description                               | Default                                    | SDK Function                                                                          |
 | ------------------ | -------------------- | ----------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------- |
 | **summaryData**    | [`string`, `Object`] | The data of the summary that will be used | _{incomes: [], expenses: [], balances:[]}_ | [Resume](httpshttps://www.npmjs.com/package/open-banking-pfm-sdk#resume)              |
-| **categoriesData** | [`string` , `Array`] | data of the categories that will be used  | _[]_                                       | [List Categories](https://www.npmjs.com/package/open-banking-pfm-sdk#list-categories) |
+| **categoriesData** | [`string` , `Array`] | data of the categories that will be used  | _[]_                                       | [Categories List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-categories-with-subcategories) |
 
 ## Customization Properties
 
 | Name                                          | Type      | Description                                                                                                                    | Default                                                                                                                                                    |
 | --------------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **analysisExpensesTableAverageTitle**         | `string`  | The custom text to display in the average column header of the analysis table of expenses                                      | "Promedio"                                                                                                                                                 |
-| **analysisExpensesTableDescrTitle**           | `string`  | The custom text to display in the description column header of the analysis table of expenses                                  | "Descripción"                                                                                                                                              |
-| **analysisExpensesTableNumTranTitle**         | `string`  | The custom text to display in the number of transactions column header of the analysis table of expenses                       | "Núm. de transacciones"                                                                                                                                    |
+| **analysisExpensesTableAverageTitle**         | `string`  | The custom text to display in the average column header of the analysis table of expenses                                      | "Média"                                                                                                                                                 |
+| **analysisExpensesTableDescrTitle**           | `string`  | The custom text to display in the description column header of the analysis table of expenses                                  | "Descrição"                                                                                                                                              |
+| **analysisExpensesTableNumTranTitle**         | `string`  | The custom text to display in the number of transactions column header of the analysis table of expenses                       | "Num. de transações"                                                                                                                                    |
 | **analysisExpensesTableSubTitle**             | `string`  | The custom text to display in the subtitle of the analysis table of expenses                                                   | "Total"                                                                                                                                                    |
-| **analysisExpensesTableTitle**                | `string`  | The custom text to display in the title of the analysis table of expenses                                                      | "Análisis"                                                                                                                                                 |
+| **analysisExpensesTableTitle**                | `string`  | The custom text to display in the title of the analysis table of expenses                                                      | "Análise"                                                                                                                                                 |
 | **analysisExpensesTableTotalTitle**           | `string`  | The custom text to display in the total column header of the analysis table of expenses                                        | "Total"                                                                                                                                                    |
-| **analysisIncomesTableAmountTitle**           | `string`  | The custom text to display in the amount column header of the analysis table of incomes                                        | "Monto"                                                                                                                                                    |
-| **analysisIncomesTableCategoryTitle**         | `string`  | The custom text to display in the category column header of the analysis table of incomes                                      | "Categoría"                                                                                                                                                |
-| **analysisIncomesTableConceptTitle**          | `string`  | The custom text to display in the concept column header of the analysis table of incomes                                       | "Concepto"                                                                                                                                                 |
-| **analysisIncomesTableDateTitle**             | `string`  | The custom text to display in the date column header of the analysis table of incomes                                          | "Fecha"                                                                                                                                                    |
+| **analysisIncomesTableAmountTitle**           | `string`  | The custom text to display in the amount column header of the analysis table of incomes                                        | "Quantia"                                                                                                                                                    |
+| **analysisIncomesTableCategoryTitle**         | `string`  | The custom text to display in the category column header of the analysis table of incomes                                      | "Categoria"                                                                                                                                                |
+| **analysisIncomesTableConceptTitle**          | `string`  | The custom text to display in the concept column header of the analysis table of incomes                                       | "Conceito"                                                                                                                                                 |
+| **analysisIncomesTableDateTitle**             | `string`  | The custom text to display in the date column header of the analysis table of incomes                                          | "Data"                                                                                                                                                    |
 | **analysisIncomesTableSubTitle**              | `string`  | The custom text to display in the subtitle of the analysis table of incomes                                                    | "Total"                                                                                                                                                    |
 | **analysisIncomesTableTitle**                 | `string`  | The custom text to display in the title of the analysis table of incomes                                                       | "Análisis"                                                                                                                                                 |
-| **cardBalanceChartTitle**                     | `string`  | The custom text to display in the chart title on the balance section                                                           | "Selecciona el mes a consultar"                                                                                                                            |
-| **cardBalanceExpenseTitle**                   | `string`  | The custom text that will be displayed in the title of the expense card in the balance section                                 | "Egresos"                                                                                                                                                  |
-| **cardBalanceIncomeTitle**                    | `string`  | The custom text that will be displayed in the title of the income card in the balance section                                  | "Ingresos"                                                                                                                                                 |
+| **cardBalanceChartTitle**                     | `string`  | The custom text to display in the chart title on the balance section                                                           | "Selecione o mês"                                                                                                                            |
+| **cardBalanceExpenseTitle**                   | `string`  | The custom text that will be displayed in the title of the expense card in the balance section                                 | "Gastos"                                                                                                                                                  |
+| **cardBalanceIncomeTitle**                    | `string`  | The custom text that will be displayed in the title of the income card in the balance section                                  | "Recebimentos"                                                                                                                                                 |
 | **cardBalanceTitle**                          | `string`  | The custom text that will be displayed in the title of the balance card in the balance section                                 | "Saldo"                                                                                                                                                    |
-| **cardExpensesBarChartTitle**                 | `string`  | The custom text to display in the title of the bar chart in the expenses section                                               | "Selecciona el mes a consultar"                                                                                                                            |
-| **cardExpensesCatTableTitle**                 | `string`  | The custom text that will be displayed in the title of the categories table in the expenses section                            | "Egresos"                                                                                                                                                  |
+| **cardExpensesBarChartTitle**                 | `string`  | The custom text to display in the title of the bar chart in the expenses section                                               | "Selecione o mês"                                                                                                                            |
+| **cardExpensesCatTableTitle**                 | `string`  | The custom text that will be displayed in the title of the categories table in the expenses section                            | "Gastos"                                                                                                                                                  |
 | **cardExpensesDonChartTitle**                 | `string`  | The custom text to display in the title of the doughnut chart in the expense section                                           | ""                                                                                                                                                         |
-| **cardExpensesSubcatTableTitle**              | `string`  | The custom text that will be displayed in the title of the subcategories table in the expenses section                         | "Desglose de gastos"                                                                                                                                       |
-| **cardExpensesTotalTitle**                    | `string`  | The custom text to display in the title of the expense total card in the expense section                                       | "Egreso total"                                                                                                                                             |
-| **cardIncomesBarChartTitle**                  | `string`  | The custom text to display in the title of the bar chart in the incomes section                                                | "Selecciona el mes a consultar"                                                                                                                            |
-| **cardIncomesCatTableTitle**                  | `string`  | The custom text that will be displayed in the title of the categories table in the incomes section                             | "Desglose de ingresos por categoría"                                                                                                                       |
+| **cardExpensesSubcatTableTitle**              | `string`  | The custom text that will be displayed in the title of the subcategories table in the expenses section                         | "Detalhamento de gastos"                                                                                                                                       |
+| **cardExpensesTotalTitle**                    | `string`  | The custom text to display in the title of the expense total card in the expense section                                       | "Total de gastos"                                                                                                                                             |
+| **cardIncomesBarChartTitle**                  | `string`  | The custom text to display in the title of the bar chart in the incomes section                                                | "Selecione o mês"                                                                                                                            |
+| **cardIncomesCatTableTitle**                  | `string`  | The custom text that will be displayed in the title of the categories table in the incomes section                             | "Detalhamento de recebimentos por categoria"                                                                                                                       |
 | **cardIncomesDonChartTitle**                  | `string`  | The custom text to display in the title of the doughnut chart in the incomes section                                           | ""                                                                                                                                                         |
-| **cardIncomesSubcatTableTitle**               | `string`  | The custom text that will be displayed in the title of the subcategories table in the incomes section                          | "Desglose de ingresos"                                                                                                                                     |
-| **cardIncomesTotalTitle**                     | `string`  | The custom text to display in the title of the total card in the incomes section                                               | "Ingreso total"                                                                                                                                            |
-| **categoryExpensesTableAmountTitle**          | `string`  | The custom text to display in the total column header of the category table in the expenses section                            | "Monto"                                                                                                                                                    |
-| **categoryExpensesTableConceptTitle**         | `string`  | The custom text to display in the concept column header of the category table in the expenses section                          | "Concepto"                                                                                                                                                 |
-| **categoryExpensesTableDetailTitle**          | `string`  | The custom text to display in the detail column header of the category table in the expenses section                           | "Detalles"                                                                                                                                                 |
-| **categoryExpensesTablePercentTitle**         | `string`  | The custom text to display in the percentage column header of the category table in the expenses section                       | "Porcentaje"                                                                                                                                               |
-| **categoryIncomesTableAmountTitle**           | `string`  | The custom text to display in the total column header of the category table in the incomes section                             | "Monto"                                                                                                                                                    |
-| **categoryIncomesTableConceptTitle**          | `string`  | The custom text to display in the concept column header of the category table in the incomes section                           | "Concepto"                                                                                                                                                 |
-| **categoryIncomesTableDetailTitle**           | `string`  | The custom text to display in the detail column header of the category table in the incomes section                            | "Detalles"                                                                                                                                                 |
-| **categoryIncomesTablePercentTitle**          | `string`  | The custom text to display in the percentage column header of the category table in the incomes section                        | "Porcentaje"                                                                                                                                               |
-| **expensesBarChartColor**                     | `string`  | The color of the bar chart in the expenses section                                                                             | _""_                                                                                                                                                       |
-| **expensesBarChartSelectedColor**             | `string`  | The color of the bar chart selected in the expenses section                                                                    | _""_                                                                                                                                                       |
-| **iconExpensesAnalysisTooltip**               | `string`  | The custom text that will be displayed on the tooltip of the analysis button of the category table in the expenses section     | "Análisis"                                                                                                                                                 |
+| **cardIncomesSubcatTableTitle**               | `string`  | The custom text that will be displayed in the title of the subcategories table in the incomes section                          | "Detalhamento de recebimentos"                                                                                                                                     |
+| **cardIncomesTotalTitle**                     | `string`  | The custom text to display in the title of the total card in the incomes section                                               | "Total de recebimentos"                                                                                                                                            |
+| **categoryExpensesTableAmountTitle**          | `string`  | The custom text to display in the total column header of the category table in the expenses section                            | "Quantia"                                                                                                                                                    |
+| **categoryExpensesTableConceptTitle**         | `string`  | The custom text to display in the concept column header of the category table in the expenses section                          | "Conceito"                                                                                                                                                 |
+| **categoryExpensesTableDetailTitle**          | `string`  | The custom text to display in the detail column header of the category table in the expenses section                           | "Detalhes"                                                                                                                                                 |
+| **categoryExpensesTablePercentTitle**         | `string`  | The custom text to display in the percentage column header of the category table in the expenses section                       | "Porcentagem"                                                                                                                                               |
+| **categoryIncomesTableAmountTitle**           | `string`  | The custom text to display in the total column header of the category table in the incomes section                             | "Quantia"                                                                                                                                                    |
+| **categoryIncomesTableConceptTitle**          | `string`  | The custom text to display in the concept column header of the category table in the incomes section                           | "Conceito"                                                                                                                                                 |
+| **categoryIncomesTableDetailTitle**           | `string`  | The custom text to display in the detail column header of the category table in the incomes section                            | "Detalhes"                                                                                                                                                 |
+| **categoryIncomesTablePercentTitle**          | `string`  | The custom text to display in the percentage column header of the category table in the incomes section                        | "Porcentagem"                                                                                                                                               |
+| **expensesBarChartColor**                     | `string`  | The color of the bar chart in the expenses section                                                                             | _"#F89A9A"_                                                                                                                                                       |
+| **expensesBarChartSelectedColor**             | `string`  | The color of the bar chart selected in the expenses section                                                                    | _"#BC7474"_                                                                                                                                                       |
+| **iconExpensesAnalysisTooltip**               | `string`  | The custom text that will be displayed on the tooltip of the analysis button of the category table in the expenses section     | "Análise"                                                                                                                                                 |
 | **iconExpensesTransactionTooltip**            | `string`  | The custom text that will be displayed on the tooltip of the transactions button of the category table in the expenses section | "Transacciones"                                                                                                                                            |
-| **iconIncomesAnalysisTooltip**                | `string`  | The custom text that will be displayed on the tooltip of the analysis button of the category table in the incomes section      | "Análisis                                                                                                                                                  |
-| **iconIncomesTransactionTooltip**             | `string`  | The custom text that will be displayed on the tooltip of the transactions button of the category table in the incomes section  | "Transacciones"                                                                                                                                            |
-| **incomesBarChartColor**                      | `string`  | The color of the bar chart in the incomes section                                                                              | _""_                                                                                                                                                       |
-| **incomesBarChartSelectedColor**              | `string`  | TThe color of the bar chart selected in the incomes section                                                                    | _""_                                                                                                                                                       |
-| **subcategoryExpensesTableAmountTitle**       | `string`  | The custom text to display in the total column header of the subcategory table in the expenses section                         | "Monto"                                                                                                                                                    |
-| **subcategoryExpensesTableConceptTitle**      | `string`  | The custom text to display in the concept column header of the subcategory table in the expenses section                       | "Concepto"                                                                                                                                                 |
-| **subcategoryExpensesTableTransactionsTitle** | `string`  | The custom text to display in the transactions column header of the subcategory table in the expenses section                  | "Transacciones"                                                                                                                                            |
-| **subcategoryExpensesTablePercentTitle**      | `string`  | The custom text to display in the percentage column header of the category table in the expenses section                       | "Porcentaje"                                                                                                                                               |
-| **subcategoryIncomesTableAmountTitle**        | `string`  | The custom text to display in the total column header of the subcategory table in the incomes section                          | "Monto"                                                                                                                                                    |
-| **subcategoryIncomesTableConceptTitle**       | `string`  | The custom text to display in the concept column header of the subcategory table in the incomes section                        | "Concepto"                                                                                                                                                 |
-| **subcategoryIncomesTableTransactionsTitle**  | `string`  | The custom text to display in the transactions column header of the subcategory table in the incomes section                   | "Transacciones"                                                                                                                                            |
-| **subcategoryIncomesTablePercentTitle**       | `string`  | The custom text to display in the percentage column header of the category table in the incomes section                        | "Porcentaje"                                                                                                                                               |
-| **summaryTitle**                              | `string`  | The custom text that will be displayed on the main component title                                                             | "Resumen"                                                                                                                                                  |
-| **tabBalanceTitle**                           | `string`  | The custom text that will be displayed on the balance tab                                                                      | "Balance"                                                                                                                                                  |
+| **iconIncomesAnalysisTooltip**                | `string`  | The custom text that will be displayed on the tooltip of the analysis button of the category table in the incomes section      | "Análise"                                                                                                                                                 |
+| **iconIncomesTransactionTooltip**             | `string`  | The custom text that will be displayed on the tooltip of the transactions button of the category table in the incomes section  | "Movimentos"                                                                                                                                            |
+| **incomesBarChartColor**                      | `string`  | The color of the bar chart in the incomes section                                                                              | _"#3FD8AF"_                                                                                                                                                       |
+| **incomesBarChartSelectedColor**              | `string`  | TThe color of the bar chart selected in the incomes section                                                                    | _"#21866B"_                                                                                                                                                       |
+| **subcategoryExpensesTableAmountTitle**       | `string`  | The custom text to display in the total column header of the subcategory table in the expenses section                         | "Quantia"                                                                                                                                                    |
+| **subcategoryExpensesTableConceptTitle**      | `string`  | The custom text to display in the concept column header of the subcategory table in the expenses section                       | "Conceito"                                                                                                                                                 |
+| **subcategoryExpensesTableTransactionsTitle** | `string`  | The custom text to display in the transactions column header of the subcategory table in the expenses section                  | "Movimentos"                                                                                                                                            |
+| **subcategoryExpensesTablePercentTitle**      | `string`  | The custom text to display in the percentage column header of the category table in the expenses section                       | "Porcentagem"                                                                                                                                               |
+| **subcategoryIncomesTableAmountTitle**        | `string`  | The custom text to display in the total column header of the subcategory table in the incomes section                          | "Quantia"                                                                                                                                                    |
+| **subcategoryIncomesTableConceptTitle**       | `string`  | The custom text to display in the concept column header of the subcategory table in the incomes section                        | "Conceito"                                                                                                                                                 |
+| **subcategoryIncomesTableTransactionsTitle**  | `string`  | The custom text to display in the transactions column header of the subcategory table in the incomes section                   | "Movimentos"                                                                                                                                            |
+| **subcategoryIncomesTablePercentTitle**       | `string`  | The custom text to display in the percentage column header of the category table in the incomes section                        | "Porcentagem"                                                                                                                                               |
+| **summaryTitle**                              | `string`  | The custom text that will be displayed on the main component title                                                             | "Resumo"                                                                                                                                                  |
+| **tabBalanceTitle**                           | `string`  | The custom text that will be displayed on the balance tab                                                                      | "Saldo"                                                                                                                                                  |
 | **tabExpensesTitle**                          | `string`  | The custom text that will be displayed on the expenses tab                                                                     | "Gastos"                                                                                                                                                   |
-| **tabIncomesTitle**                           | `string`  | The custom text that will be displayed on the incomes tab                                                                      | "Ingresos"                                                                                                                                                 |
+| **tabIncomesTitle**                           | `string`  | The custom text that will be displayed on the incomes tab                                                                      | "Recebimentos"                                                                                                                                                 |
 | **isEmpty**                                   | `boolean` | Show the empty view in the component                                                                                           | _false_                                                                                                                                                    |
-| **emptyViewTitle**                            | `string`  | The custom text to be displayed in the Title section of the Empty view (When the summary is not available) tab                 | "Bienvenido a tu resumen de gastos"                                                                                                                        |
-| **emptyViewDescription**                      | `string`  | The custom text to be displayed in the Description section of the Empty view (When the summary is not available) tab           | "En cuanto des de alta una cuenta bancaria o registres tus movimientos de los últimos 6 meses, aquí verás un resumen gráfico de tus gastos por categoría." |
-| **emptyViewActionText**                       | `string`  | The custom text to be displayed in the Action Button of the Empty view (When the summary is not available) tab                 | "Agregar cuenta"                                                                                                                                           |
+| **emptyViewTitle**                            | `string`  | The custom text to be displayed in the Title section of the Empty view (When the summary is not available) tab                 | "Bem-vindo ao seu resumo de gastos"                                                                                                                        |
+| **emptyViewDescription**                      | `string`  | The custom text to be displayed in the Description section of the Empty view (When the summary is not available) tab           | "Quando você autorizar uma nova conta bancária ou quando registrar seus movimentos financeiros dos últimos 6 meses, você verá aqui um resumo gráfico dos seus gastos por categoria." |
+| **emptyViewActionText**                       | `string`  | The custom text to be displayed in the Action Button of the Empty view (When the summary is not available) tab                 | "Agregar conta"                                                                                                                                           |
 |                                               |           |                                                                                                                                |                                                                                                                                                            |
 
 ## Events
@@ -802,13 +981,13 @@ Insert the html tag in your web application as follow.
 | Name                    | Type                  | Description                                                              | Default                                                                             |
 | ----------------------- | --------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
 | **closeDisabled**       | [`string`, `boolean`] | The Close events are disabled                                            | _false_                                                                             |
-| **title**               | `string`              | The custom text to be displayed in the title of the view                 | "¡Hola!"                                                                            |
+| **title**               | `string`              | The custom text to be displayed in the title of the view                 | "Olá!"                                                                            |
 | **titleIsShown**        | [`string`, `boolean`] | Show view title                                                          | _true_                                                                              |
-| **description**         | `string`              | The custom text to be displayed in the description of the view           | "Ingresa tu CPF y obtén todo el potencial del open baking de manera fácil y rápida" |
+| **description**         | `string`              | The custom text to be displayed in the description of the view           | "Informe seu CPF e aproveite todo o potencial da panificação aberta de forma rápida e fácil" |
 | **descriptionIsShown**  | [`string`, `boolean`] | Show view description                                                    | _true_                                                                              |
-| **cpfFieldPlaceholder** | `string`              | The custom text to be displayed in the placeholder of the cpf text field | "Escribe tu CPF aquí"                                                               |
+| **cpfFieldPlaceholder** | `string`              | The custom text to be displayed in the placeholder of the cpf text field | "Escreva seu CPF aqui"                                                               |
 | **cpfFieldIsShown**     | [`string`, `boolean`] | Show cpf text field                                                      | _true_                                                                              |
-| **continueButton**      | `string`              | The custom text to be displayed in the continue button                   | "Continuar"                                                                         |
+| **continueButton**      | `string`              | The custom text to be displayed in the continue button                   | "Prosseguir"                                                                         |
 | **isShown**             | [`string`, `boolean`] | Show modal view                                                          | _true_                                                                              |
 |                         |                       |                                                                          |
 

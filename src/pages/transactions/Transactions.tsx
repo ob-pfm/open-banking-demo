@@ -10,12 +10,13 @@ import {
   Account
 } from 'open-banking-pfm-sdk';
 import { IAccount, IListOptions, ITransaction } from 'open-banking-pfm-sdk/interfaces';
-import { URL_SERVER } from '../../constants';
+import { URL_SERVER as serverUrl } from '../../constants';
 import { showErrorToast, unicodeToChar } from '../../helpers';
 import { IOutletContext } from '../../interfaces';
 
-import '../../libs/wc/ob-transactions-component';
 import { ITransactionFilterEvent } from './interfaces';
+
+import '../../libs/wc/ob-transactions-component';
 
 // Define interface for filter options
 interface TransactionsOptions {
@@ -79,11 +80,11 @@ const TransactionsComponent = () => {
   const [transactionsFilteredData, setTransactionsFilteredData] = useState<ITransaction[]>([]);
   const [page, setPage] = useState(0); // Set initial state for current page
   // Memoize AccountsClient instance
-  const accountServices = useMemo(() => new AccountsClient(apiKey, URL_SERVER), [apiKey]);
+  const accountServices = useMemo(() => new AccountsClient({ apiKey, serverUrl }), [apiKey]);
   // Memoize CategoriesClient instance
-  const categoryServices = useMemo(() => new CategoriesClient(apiKey, URL_SERVER), [apiKey]);
+  const categoryServices = useMemo(() => new CategoriesClient({ apiKey, serverUrl }), [apiKey]);
   // Memoize TransactionsClient instance
-  const transactionServices = useMemo(() => new TransactionsClient(apiKey, URL_SERVER), [apiKey]);
+  const transactionServices = useMemo(() => new TransactionsClient({ apiKey, serverUrl }), [apiKey]);
 
   const getFiltersFromObject = ({
     accounts,
@@ -287,7 +288,7 @@ const TransactionsComponent = () => {
             else componentRef.current.isEmpty = true;
             onSuccess();
             // Show success toast
-            toast.success('Nuevo Movimiento agregado.');
+            toast.success('Novo movimento adicionado.');
             // Hide loading indicator
             componentRef.current.showModalLoading = false;
           });
@@ -394,13 +395,16 @@ const TransactionsComponent = () => {
   useEffect(() => {
     if (userId) {
       // Fetch categories list with subcategories for the given userId
-      categoryServices.getListWithSubcategories(userId).then((response) => {
-        // Update categoriesData in componentRef with the fetched data
-        componentRef.current.categoriesData = response.map((category) => ({
-          ...category.toObject(),
-          subcategories: category.subcategories.map((subcategory: any) => subcategory.toObject())
-        }));
-      });
+      categoryServices
+        .getListWithSubcategories(userId)
+        .then((response) => {
+          // Update categoriesData in componentRef with the fetched data
+          componentRef.current.categoriesData = response;
+        })
+        .catch((error) => {
+          // Show error toast on error
+          showErrorToast(error);
+        });
     }
   }, [categoryServices, userId]);
 
@@ -426,11 +430,6 @@ const TransactionsComponent = () => {
           const accounts = response.map((acc: Account) => acc);
           // Update accountsData in componentRef with the fetched data
           componentRef.current.accountsData = response;
-          // Update availableAccountsData in componentRef with no bank aggregation
-          // acounts
-          componentRef.current.availableAccountsData = response.filter(
-            (account) => account.isBankAggregation === false
-          );
 
           if (accounts.length > 0) {
             if (accountIdParam)
@@ -557,9 +556,6 @@ const TransactionsComponent = () => {
         showAlert={isProcessing} // Whether to show the alert or not, based on isProcessing value
         alertText={alertText} // Text to display in the alert
         fontFamily="Lato" // Font family for the component
-        lang="pt" // Language for the component, e.g. Portuguese
-        currencyLang="pt-BR" // Language for currency formatting, e.g. Brazilian Portuguese
-        currencyType="BRL" // Currency type, e.g. Brazilian Real
         searchDebounceTime={500} // Debounce time for search functionality in milliseconds
         activePage={1} // Active page number for pagination
       />

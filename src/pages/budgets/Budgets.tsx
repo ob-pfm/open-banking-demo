@@ -3,10 +3,11 @@ import { useOutletContext } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { CategoriesClient, ParentCategory, BudgetsClient, Budget, BudgetPayload } from 'open-banking-pfm-sdk';
-import { URL_SERVER } from '../../constants';
+import { URL_SERVER as serverUrl } from '../../constants';
+
+import { IOutletContext } from '../../interfaces';
 
 import '../../libs/wc/ob-budget-component';
-import { IOutletContext } from '../../interfaces';
 
 interface IBudgetData {
   id: number;
@@ -34,9 +35,9 @@ const BudgetsComponent = () => {
   // Destructuring values from a custom hook
   const { isProcessing, alertText, userId, apiKey } = useOutletContext<IOutletContext>();
   // Creating a memoized instance of a client class
-  const budgetsServices = useMemo(() => new BudgetsClient(apiKey, URL_SERVER), [apiKey]);
+  const budgetsServices = useMemo(() => new BudgetsClient({ apiKey, serverUrl }), [apiKey]);
   // Creating a memoized instance of another client class
-  const categoryServices = useMemo(() => new CategoriesClient(apiKey, URL_SERVER), [apiKey]);
+  const categoryServices = useMemo(() => new CategoriesClient({ apiKey, serverUrl }), [apiKey]);
 
   const getBudgets = useCallback(
     (onSuccess: (response: boolean) => void, onError?: () => void) => {
@@ -186,10 +187,7 @@ const BudgetsComponent = () => {
       categoryServices
         .getListWithSubcategories(userId) // Fetch categories with subcategories using categoryServices
         .then((response: ParentCategory[]) => {
-          componentRef.current.categoriesData = response.map((category) => ({
-            ...category.toObject(),
-            subcategories: category.subcategories.map((subcategory) => subcategory.toObject())
-          })); // Map categories and subcategories to plain objects
+          componentRef.current.categoriesData = response;
           getBudgets((isEmpty: boolean) => {
             // Call getBudgets function with callback on success
             if (isEmpty) componentRef.current.isEmpty = true; // Set isEmpty flag to true
@@ -222,9 +220,6 @@ const BudgetsComponent = () => {
       alertText={alertText} // Set the text for the alert
       ref={componentRef} // Attach a ref to the component using componentRef
       fontFamily="Lato" // Set the font family to "Lato"
-      lang="pt" // Set the language to "pt" for localization
-      currencyLang="pt-BR" // Set the currency language to "pt-BR" for localization
-      currencyType="BRL" // Set the currency type to "BRL"
     />
   );
 };

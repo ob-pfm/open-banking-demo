@@ -3,10 +3,11 @@ import { useNavigate, useOutletContext } from 'react-router-dom';
 
 import { Bank, Credit, CreditBalance } from 'open-banking-pfm-sdk/models';
 import { BanksClient, CreditsClient } from 'open-banking-pfm-sdk';
-import '../../libs/wc/ob-credit-component';
-import { URL_SERVER } from '../../constants';
+import { URL_SERVER as serverUrl } from '../../constants';
 import { IOutletContext } from '../../interfaces';
 import { showErrorToast } from '../../helpers';
+
+import '../../libs/wc/ob-credit-component';
 
 const CreditsComponent = () => {
   const navigate = useNavigate(); // Get navigate function from react-router-dom
@@ -15,8 +16,8 @@ const CreditsComponent = () => {
   const { isProcessing, userId, alertText, apiKey } = useOutletContext<IOutletContext>();
 
   // Create instances of CreditsClient and BanksClient using memoized version
-  const creditsServices = useMemo(() => new CreditsClient(apiKey, URL_SERVER), [apiKey]);
-  const banksServices = useMemo(() => new BanksClient(apiKey, URL_SERVER), [apiKey]);
+  const creditsServices = useMemo(() => new CreditsClient({ apiKey, serverUrl }), [apiKey]);
+  const banksServices = useMemo(() => new BanksClient({ apiKey, serverUrl }), [apiKey]);
 
   // Hanlde click button on empty view
   const handleEmptyClick = useCallback(() => {
@@ -84,9 +85,6 @@ const CreditsComponent = () => {
       alertText={alertText} // String prop that sets the text for the alert
       alertType="warning" // String prop that sets the type of the alert
       fontFamily="Lato" // String prop that sets the font family for the component
-      lang="pt" // String prop that sets the language for the component
-      currencyLang="pt-BR" // String prop that sets the currency language for the component
-      currencyType="BRL" // String prop that sets the currency type for the component
     />
   );
 };
