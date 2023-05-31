@@ -19,6 +19,7 @@ import {
 } from '../../constants';
 import { getApiKey, getUserId, showErrorToast } from '../../helpers';
 
+import '../../libs/wc/ob-onboarding-component';
 import './style.css';
 
 const PFMPage = () => {

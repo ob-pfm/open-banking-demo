@@ -7,6 +7,8 @@ import { URL_SERVER as serverUrl } from '../../constants';
 
 import { IOutletContext } from '../../interfaces';
 
+import '../../libs/wc/ob-budget-component';
+
 interface IBudgetData {
   id: number;
   amount: number;

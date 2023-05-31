@@ -9,6 +9,8 @@ import { IOutletContext } from '../../interfaces';
 import styles from './style.css';
 import { showErrorToast } from '../../helpers';
 
+import '../../libs/wc/ob-accounts-component';
+
 interface ISubmitEventData {
   account: {
     id?: number;

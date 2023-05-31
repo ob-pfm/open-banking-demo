@@ -8,6 +8,8 @@ import { URL_SERVER as serverUrl } from '../../constants';
 
 import { IOutletContext } from '../../interfaces';
 
+import '../../libs/wc/ob-categories-component';
+
 // Define interface for event data
 interface ISubmitEventData {
   category?: {

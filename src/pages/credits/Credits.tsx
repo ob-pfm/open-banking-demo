@@ -7,6 +7,8 @@ import { URL_SERVER as serverUrl } from '../../constants';
 import { IOutletContext } from '../../interfaces';
 import { showErrorToast } from '../../helpers';
 
+import '../../libs/wc/ob-credit-component';
+
 const CreditsComponent = () => {
   const navigate = useNavigate(); // Get navigate function from react-router-dom
   const componentRef = useRef<any>(null); // Create a ref for the component

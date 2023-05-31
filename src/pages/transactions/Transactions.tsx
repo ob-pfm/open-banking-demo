@@ -16,6 +16,8 @@ import { IOutletContext } from '../../interfaces';
 
 import { ITransactionFilterEvent } from './interfaces';
 
+import '../../libs/wc/ob-transactions-component';
+
 // Define interface for filter options
 interface TransactionsOptions {
   accounts: IAccount[];

@@ -9,6 +9,8 @@ import { URL_SERVER as serverUrl } from '../../constants';
 import { IOutletContext } from '../../interfaces';
 import { IConsentRenewEvent } from './interfaces';
 
+import '../../libs/wc/ob-consent-wizard-component';
+
 const ConsentComponent = () => {
   const navigate = useNavigate(); // Get navigate function from react-router-dom
   // Get context data using useOutletContext hook

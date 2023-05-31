@@ -8,6 +8,7 @@ import { IOutletContext } from '../../interfaces';
 import { showErrorToast, unicodeToChar } from '../../helpers';
 
 import './summary.css';
+import '../../libs/wc/ob-summary-component';
 
 // Get date range based on a given date
 const getDateRange = (date: Date) => {
