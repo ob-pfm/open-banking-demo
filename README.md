@@ -237,9 +237,3905 @@ You have to wait the aggregation process to be completed to see the data in the 
 
 ## Open Banking SDK
 
-The Open Banking PFM SDK uses Client classes and with **Promises** to get responses from the API, structured as data models. For further information visit:
-
 [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk)
+
+The Open Banking PFM SDK uses Client classes and with **Promises** to get responses from the Open Banking PFM API in an easier way and structured as data models.
+
+
+```console
+ npm i open-banking-pfm-sdk
+```
+
+## Table of contents
+
+- [Users Client](#users-client)
+- [Banks Client](#banks-client)
+- [Categories Client](#categories-client)
+- [Accounts Client](#accounts-client)
+- [Transactions Client](#transactions-client)
+- [Budgets Client](#budgets-client)
+- [Bank Aggregation Client](#bank-aggregation-client)
+- [Consents Client](#consents-client)
+- [Credits Client](#credits-client)
+- [Insights Client](#insights-client)
+- [Helpers](#helpers)
+- [Error Codes](#error-codes)
+
+
+# Users Client
+
+  
+
+![Language](https://img.shields.io/badge/Language-Typescript-blue.svg) ![Language](https://img.shields.io/badge/Language-JavaScript-yellow.svg)
+
+  
+
+This client contains the available actions related to users.
+In order to successfully integrate the following functions, it is important to previously load the users explained in the installation guide.
+  
+
+## Setup
+
+  
+
+```javascript
+
+import { UsersClient } from 'open-banking-pfm-sdk';
+//The constructor receives an object with two properties, the first is the api key to validate access to all of its functions, the second is the API Server Url, both are required.
+const apiKey = 'XXXX-XXXX-XXXX';
+const serverUrl = 'https://pfmapiserver.com/api/v1/';
+const usersClient = new UsersClient({ apiKey, serverUrl });
+```
+
+  
+
+## How to use
+
+  
+
+### Get User
+
+  
+
+Given a valid user ID, fetches the information of an user.
+
+  
+
+```javascript
+usersClient
+	.get(userId)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+Output:
+
+  
+
+```console
+UserDetail {
+	id: 2230303,
+	cpf: '27767376109'
+	dateCreated: '1646243107260',
+}
+```
+
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+  
+
+### Get Financial Entities
+
+  
+
+Fetches the information of the user's financial entities.
+
+  
+
+```javascript
+usersClient
+	.getFinancialEntities()
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+
+Output:
+
+
+```console
+[
+	{
+		"id": 291340104,
+		"name": "Cash",
+		"code": "1234",
+		"imagePath": "https://cdn.finerio.mx/pfm/financial-entities/default.jpg",
+		"isBankAggregation": false,
+		"dateCreated": 1683239167408,
+		"lastUpdated": 1683239167408
+	}
+]
+```
+
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+
+# Banks Client
+
+  
+
+![Language](https://img.shields.io/badge/Language-Typescript-blue.svg) ![Language](https://img.shields.io/badge/Language-JavaScript-yellow.svg)
+
+  
+
+This client contains the available actions related to banks.
+
+  
+
+## Setup
+
+  
+
+```javascript
+import { BanksClient } from 'open-banking-pfm-sdk';
+//The constructor receives an object with two properties, the first is the api key to validate access to all of its functions, the second is the API Server Url, both are required.
+const apiKey = 'XXXX-XXXX-XXXX';
+const serverUrl = 'https://pfmapiserver.com/api/v1/';
+const banksClient = new BanksClient ({ apiKey, serverUrl });
+```
+
+  
+
+## How to use
+
+  
+
+### Available Banks
+
+  
+
+Returns the list of available banks to be able to add and manage movements, money and balance with the bank.
+
+  
+
+```javascript
+const userId = 123232;
+banksClient
+	.getAvailables(userId)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+Output:
+
+  
+
+```console
+[
+	Bank {
+		bankId: 1115160,
+		name: "Bank 1",
+		imagePath: "https://cdn.finerio.mx/pfm/financial-entities/bank_BNW_shield.png",
+		financialEntityId: 497394395,
+		isBankAggregation: true,
+        hasActiveConsent: false
+	},
+	Bank {
+		bankId: 1115155,
+		name: "Bank 2",
+		imagePath: "https://cdn.finerio.mx/pfm/financial-entities/bank_BNW_shield.png",
+		financialEntityId: 497394395,
+		isBankAggregation: true,
+        hasActiveConsent: false
+	},
+	...
+]
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 401
+
+Invalid authorization.
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+ 
+ # Categories Client
+
+  
+
+![Language](https://img.shields.io/badge/Language-Typescript-blue.svg) ![Language](https://img.shields.io/badge/Language-JavaScript-yellow.svg)
+
+  
+
+This client contains the available actions related to the classification of transactions and budgets.
+
+  
+
+## Setup
+
+  
+
+```javascript
+import { CategoriesClient } from 'open-banking-pfm-sdk';
+//The constructor receives an object with two properties, the first is the api key to validate access to all of its functions, the second is the API Server Url, both are required.
+const apiKey = 'XXXX-XXXX-XXXX';
+const serverUrl = 'https://pfmapiserver.com/api/v1/';
+const categoriesClient = new CategoriesClient({ apiKey, serverUrl });
+```
+
+  
+
+## How to use
+
+  
+
+### List Categories with subcategories
+
+  
+
+Fetches a list of categories, sorted by ID in descending order with its corresponding subcategories
+
+  
+
+```javascript
+categoriesClient
+	.getListWithSubcategories(userId, cursor)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+The cursor param is optional. If a cursor is specified, the list starts with the item that has that ID. If a user ID is specified, both system and user categories are fetched. If a user ID is not specified, only system categories are fetched.
+
+  
+
+Output:
+
+  
+
+```console
+[
+	Category {
+		id: 1,
+		name: 'Hogar',
+		color: '#A3CB38',
+		imagePath: 'https://cdn.image.com',
+		parentCategoryId: null,
+		userId: null,
+		isUserCategory: false,
+		subcategories: [Category,Category,Category]
+	},
+	Category {
+		id: 2,
+		name: 'Alimentos',
+		color: '#FECA46',
+		imagePath: 'https://cdn.image.com',
+		parentCategoryId: null,
+		userId: null,
+		isUserCategory: false,
+		subcategories: [Category,Category,Category]
+	},
+	...
+]
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+### List Categories
+
+  
+
+Fetches a list of categories, sorted by ID in descending order
+
+  
+
+```javascript
+categoriesClient
+	.getList(userId, cursor)
+	.then((data) =>  console.log(data))
+	.catch((error) =>  console.log(error));
+```
+
+  
+
+The cursor param is optional. If a cursor is specified, the list starts with the item that has that ID. If a user ID is specified, both system and user categories are fetched. If a user ID is not specified, only system categories are fetched.
+
+  
+
+Output:
+
+  
+
+```console
+[
+	Category {
+		id: 1,
+		name: 'Hogar',
+		color: '#A3CB38',
+		imagePath: 'https://cdn.image.com',
+		parentCategoryId: null,
+		userId: null,
+		isUserCategory: false,
+	},
+	Category {
+		id: 2,
+		name: 'Alimentos',
+		color: '#FECA46',
+		imagePath: 'https://cdn.image.com',
+		parentCategoryId: null,
+		userId: null,
+		isUserCategory: false,
+	},
+	...
+]
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+### Get Category
+
+  
+
+Given a valid category ID, fetches the information of a category.
+
+  
+
+```javascript
+const categoryId = 2;
+categoriesClient
+	.get(categoryId)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+Output:
+
+  
+
+```console
+Category {
+	id: 2,
+	name: 'Alimentos',
+	color: '#FECA46',
+	imagePath: 'https://cdn.image.com',
+	parentCategoryId: null,
+	userId: null,
+	isUserCategory: false,
+}
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+### Create Category
+
+  
+
+Creates a category. If a user ID is not specified, the category is considered as a system category. If a parent category ID is specified, the category is considered a subcategory. You have to import the Category Payload Model to update it.
+
+  
+
+```javascript
+import { CategoryPayload } from "open-banking-pfm-sdk";
+...
+const newCategoryData = new CategoryPayload(
+	{
+		userId: 858263023, //The ID of the user that owns the category
+		name: "Sports", //The name of the category. It's required.
+		color: "f848ef", //The color of the category
+		parentCategoryId: null, //The ID of the parent category that owns this subcategory
+	}
+);
+
+categoriesClient.create(newCategoryData)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+Output:
+
+  
+
+```console
+Category {
+	id: 363479579,
+	name: "Sports",
+	color: "f848ef",
+	imagePath: "https://cdn.finerio.mx/pfm/financial-entities/default.jpg",
+	parentCategoryId: null,
+	userId: 858263023,
+	isUserCategory: true,
+	dateCreated: 1678317553755,
+	lastUpdated: 1678317553755
+}
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+### Update Category
+
+  
+
+Given a valid category id updates a category. You can pass an object with the properties to update ( `name`: _string_, `color`: _string_, `parentCategoryId`: [_number_, _null_] ).
+
+  
+
+```javascript
+const modifiedCategoryData = { name: 'Ball Sports' };
+
+categoriesClient
+	.edit(categoryId, modifiedCategoryData)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+Output:
+
+  
+
+```console
+Category {
+	id: 363479579,
+	name: "Ball Sports",
+	color: "f848ef",
+	imagePath: "https://cdn.finerio.mx/pfm/financial-entities/default.jpg",
+	parentCategoryId: null,
+	userId: 858263023,
+	isUserCategory: true,
+	dateCreated: 1678317553755,
+	lastUpdated: 1678317553755
+}
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+### Delete Category
+
+  
+
+Given a valid category id deletes a category.
+
+  
+
+```javascript
+categoriesClient
+	.delete(categoryId)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+If the category was removed, the response will be returned as true.
+
+
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+# Accounts Client
+
+  
+
+![Language](https://img.shields.io/badge/Language-Typescript-blue.svg) ![Language](https://img.shields.io/badge/Language-JavaScript-yellow.svg)
+
+  
+
+This client helps in managing users' bank accounts.
+
+  
+
+## Setup
+
+  
+
+```javascript
+import { AccountsClient } from 'open-banking-pfm-sdk';
+//The constructor receives an object with two properties, the first is the api key to validate access to all of its functions, the second is the API Server Url, both are required.
+const apiKey = 'XXXX-XXXX-XXXX';
+const serverUrl = 'https://pfmapiserver.com/api/v1/';
+const accountsClient = new AccountsClient ({ apiKey, serverUrl });
+```
+
+  
+
+## How to use
+
+  
+
+### List Accounts
+
+  
+
+Fetches a list of accounts per user, sorted by ID in descending order.
+
+  
+
+```javascript
+accountsClient
+	.getList(userId)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+The ID of the user that owns the accounts is required.
+
+  
+
+Output:
+
+  
+
+```console
+[
+	Account {
+		id: 320023867,
+		providerId: '296ac8fc-1f79-456f-b051-1ad1770dfd5d',
+		nature: 'Credit card',
+		name: 'Dinners Grafite',
+		number: 'Dinners Grafite',
+		balance: 0,
+		chargeable: false,
+		dateCreated: 1673471719653,
+		lastUpdated: 1673471822866,
+		isBankAggregation: false,
+		financialEntityId: 547953460
+	},
+	Account {
+		id: 278020899,
+		providerId: '291e5a29-49ed-401f-a583-193caa7acddd',
+		nature: 'Debit',
+		name: '11188222-4',
+		number: '111882224',
+		balance: 41233.07,
+		chargeable: false,
+		dateCreated: 1672938088048,
+		lastUpdated: 1673487691911,
+		isBankAggregation: false,
+		financialEntityId: 547953460
+	}
+	...
+]
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+### Get Account
+
+  
+
+Given a valid account ID, fetches the information of an account.
+
+  
+
+```javascript
+accountsClient
+	.get(accountId)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+Output:
+
+  
+
+```console
+Account {
+	id: 320023867,
+	providerId: '296ac8fc-1f79-456f-b051-1ad1770dfd5d',
+	nature: 'Credit card',
+	name: 'Dinners Grafite',
+	number: 'Dinners Grafite',
+	balance: 0,
+	chargeable: false,
+	dateCreated: 1673471719653,
+	lastUpdated: 1673471822866,
+	isBankAggregation: false,
+	financialEntityId: 547953460
+},
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+### Create Account
+
+  
+
+Creates an account. A previosuly created user and a financial entity is required. You have to import the Account Payload Model to create a new one.
+
+ The possible values for nature property are "_*Debit*_" , "_*Credit card*_" , "_*Credit*_" , "_*Investment*_" , "_*Mortgage*_"
+
+```javascript
+
+import { AccountPayload } from "open-banking-pfm-sdk";
+...
+const newAccountData = new AccountPayload(
+	{
+		userId: 1115164, //The ID of the user that owns the account. It's required.
+		financialEntityId: 743443, //The ID of the financial entity of the account. It's required.
+		nature: 'Debit', //The nature of the account (check the account nature values down). It's required.
+		name: 'Premium', //The name of the account. It's required.
+		number: '1111 1111 1111 1111', //The number of the account. It's required.
+		balance: 1000, //The balance of the account. It's required.
+		chargeable: false //A flag that indicates if the balance of an account will change with transactions changes. It's required.
+	}
+);
+
+accountsClient.create(newAccountData)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+Output:
+
+  
+
+```console
+Account {
+	id: 2230303,
+	providerId: '296ac8fc-1f79-456f-b051-1ad1770dfd5d',
+	nature: 'Debit',
+	name: "Premium",
+	number: "1111 1111 1111 1111",
+	balance: 1000,
+	chargeable: false,
+	dateCreated: 1673471719653,
+	lastUpdated: 1673471822866,
+	isBankAggregation: false,
+	financialEntityId: 547953460
+}
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+  
+
+### Update Account
+
+  
+
+Updates an account. You can pass an object with the properties to update ( `nature`: _string_, `name`: _string_, `number`: _string_, `balance`: _number_, `chargeable`: _boolean_ ).
+
+  
+
+```javascript
+const modifiedAccountData = { name: 'Gold' };
+
+accountsClient
+	.update(accountId, modifiedAccountData)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+Output:
+
+  
+
+```console
+Account {
+	id: 2230303,
+	providerId: '296ac8fc-1f79-456f-b051-1ad1770dfd5d',
+	nature: 'Debit',
+	name: "Gold",
+	number: "1111 1111 1111 1111",
+	balance: 1000,
+	chargeable: false,
+	dateCreated: 1673471719653,
+	lastUpdated: 1673471822866,
+	isBankAggregation: false,
+	financialEntityId: 547953460
+}
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+### Delete Account
+
+  
+
+Deletes an account and all its information, including transactions.
+
+  
+
+```javascript
+accountsClient
+	.delete(accountId)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+
+# Transactions Client
+
+  
+
+![Language](https://img.shields.io/badge/Language-Typescript-blue.svg) ![Language](https://img.shields.io/badge/Language-JavaScript-yellow.svg)
+
+  
+
+This client helps in the management of financial movements within an account.
+
+  
+
+## Setup
+
+  
+
+```javascript
+import { TransactionsClient } from 'open-banking-pfm-sdk';
+//The constructor receives an object with two properties, the first is the api key to validate access to all of its functions, the second is the API Server Url, both are required.
+const apiKey = 'XXXX-XXXX-XXXX';
+const serverUrl = 'https://pfmapiserver.com/api/v1/';
+const transactionsClient = new TransactionsClient ({ apiKey, serverUrl });
+```
+
+  
+
+## How to use
+
+  
+
+### List Transactions
+
+  
+
+Fetches a list of transactions per account. You can pass a filter options object as parameter if is not passed all transactions are listed.
+
+  
+
+```javascript
+const filterOptions = {
+	categoryId: 12, //optional
+	description: 'netflix', //optional
+	charge: true, //optional
+	minAmount: 0, //optional
+	maxAmount: 1000, //optional
+	dateFrom: 1587567125458, //optional
+	dateTo: 1587567125458, //optional
+	page: 0, //optional
+	size: 100, //optional
+	field: 'executionDate', //optional
+	order: 'desc' //optional
+}; // optional
+
+transactionsClient
+	.getList(accountId, filterOptions)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+Output:
+
+  
+
+```console
+[
+	Transaction {
+		id: 123,
+		date: 1587567125458,
+		charge: true,
+		description: "UBER EATS",
+		amount: 1234.56,
+		categoryId: 123,
+		dateCreated: 1587567125458,
+		lastUpdated: 1587567125458,
+		isBankAggregation: true
+	},
+	Transaction {
+		id: 456,
+		date: 1587567145458,
+		charge: true,
+		description: "RAPPI",
+		amount: 1234.56,
+		categoryId: 123,
+		dateCreated: 1646259197099,
+		lastUpdated: 1646259197099,
+		isBankAggregation: true
+	}
+	...
+]
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+### Get Transaction
+
+  
+
+Given a valid transaction ID, fetches the information of a transaction.
+
+  
+
+```javascript
+transactionsClient
+	.get(transactionId)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+Output:
+
+```console
+Transaction {
+	id: 123,
+	date: 1587567125458,
+	charge: true,
+	description: "UBER EATS",
+	amount: 1234.56,
+	categoryId: 123,
+	dateCreated: 1587567125458,
+	lastUpdated: 1587567125458,
+	isBankAggregation: true
+}
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+### Create Transaction
+
+  
+
+Creates a transaction. A previosuly created account is required. You have to import the Transaction Payload Model to create a new one.
+
+  
+
+```javascript
+import { TransactionPayload } from "open-banking-pfm-sdk";
+...
+const newTransactionData = new TransactionPayload(
+	{
+	accountId: 487870282, //The ID of the account that holds the transaction. It´s required.
+	amount: 1111, //The amount of the transaction. It´s required.
+	charge: true, //A flag that indicates if the transaction is a charge or a deposit. It´s required.
+	date: 1678255200000, //The date of the transaction. It´s required.
+	description: 'Transaction Test', //The description of the transaction. It´s required.
+	categoryId: 16 //The category ID of the transaction
+	}
+);
+
+transactionsClient.create(newTransactionData)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+Output:
+
+  
+
+```console
+Transaction {
+	id: 789,
+	date: 1587567145458,
+	charge: true,
+	description: "Transaction Test",
+	amount: 1111,
+	categoryId: 16,
+	dateCreated: 1587567145458,
+	lastUpdated: 1587567145458,
+	isBankAggregation: false
+}
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+### Update Transaction
+
+  
+
+Given a valid transaction id updates a transaction. You can pass an object with the properties to update ( `amount`: _number_, `charge`: _boolean_, `date`: _number_, `description`: _string_, `categoryId`: _number_ ).
+
+  
+
+```javascript
+const modifiedTransactionData = { description: 'Edited Transaction Test' };
+transactionsClient
+	.edit(transactionId, modifiedTransactionData)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+Output:
+
+  
+
+```console
+Transaction {
+	id: 789,
+	date: 1587567145458,
+	charge: true,
+	description: "Edited Transaction Test",
+	amount: 1111,
+	categoryId: 16,
+	dateCreated: 1587567145458,
+	lastUpdated: 1587567145458,
+	isBankAggregation: false
+}
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+### Delete Transaction
+
+  
+
+Deletes a transaction and all its information.
+
+  
+
+```javascript
+transactionsClient
+	.delete(transactionId)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+### Delete all transactions from an account
+
+  
+
+Deletes all transactions of the account by its identifier.
+
+  
+
+```javascript
+transactionsClient
+	.deleteAll(accountId)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+Possible Errors:
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+ # Budgets Client
+
+  
+
+![Language](https://img.shields.io/badge/Language-Typescript-blue.svg) ![Language](https://img.shields.io/badge/Language-JavaScript-yellow.svg)
+
+  
+
+This client has the actions that allow you to manage the representations of the user's budget plans.
+
+  
+
+## Setup
+
+  
+
+```javascript
+import { BudgetsClient } from 'open-banking-pfm-sdk';
+//The constructor receives an object with two properties, the first is the api key to validate access to all of its functions, the second is the API Server Url, both are required.
+const apiKey = 'XXXX-XXXX-XXXX';
+const serverUrl = 'https://pfmapiserver.com/api/v1/';
+const budgetsClient = new BudgetsClient({ apiKey, serverUrl });
+```
+
+  
+
+## How to use
+
+  
+
+### List Budgets
+
+  
+
+Fetches a list of budgets per user, sorted by ID in descending order.
+
+  
+
+```javascript
+budgetsClient
+	.getList(userId, cursor)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+The cursor param is optional. If a cursor is specified, the list starts with the item that has that ID.
+
+  
+
+Output:
+
+ 
+```console
+[
+	Budget {
+		id: 982908114,
+		categoryId: 11,
+		name: "Sports",
+		amount: 1111.00,
+		warningPercentage: 0.70,
+		spent: 0.00,
+		leftToSpend: 1111.00,
+		status: "ok",
+		dateCreated: 1677714920234,
+		lastUpdated: 1677714920234
+	},
+	Budget {
+		id: 982908115,
+		categoryId: 11,
+		name: "Travelling",
+		amount: 1111.00,
+		warningPercentage: 0.70,
+		spent: 0.00,
+		leftToSpend: 1111.00,
+		status: "ok",
+		dateCreated: 1677714920234,
+		lastUpdated: 1677714920234
+	}
+	...
+]
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+### Get Budget
+
+  
+
+Given a valid budget ID, fetches the information of a budget.
+
+  
+
+```javascript
+const budgetId = 982908114;
+budgetsClient
+	.get(budgetId)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+Output:
+
+  
+
+```console
+Budget {
+	id: 982908114,
+	categoryId: 11,
+	name: "Sports",
+	amount: 1111.00,
+	warningPercentage: 0.70,
+	spent: 0.00,
+	leftToSpend: 1111.00,
+	status: "ok",
+	dateCreated: 1677714920234,
+	lastUpdated: 1677714920234
+}
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+### Create Budget
+
+  
+
+Creates a budget. A previously created user and a category is required. There can be only one budget per category.
+
+  
+
+```javascript
+import { BudgetPayload } from "open-banking-pfm-sdk";
+...
+const newBudgetData = new BudgetPayload(
+	{
+		amount: 100, //The amount of the budget. It's required.
+		categoryId: 62, //The category ID of the budget. It's required.
+		name: "Donaciones", //The name of the budget. It's required.
+		userId: 1859616, //The ID of the user that owns the budget. It's required.
+		warningPercentage: 0.5 //The percentage where the budget status changes from stable to warning. This is optinal field. By default is 0.7.
+	}
+);
+
+budgetsClient.create(newBudgetData)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+Output:
+
+  
+
+```console
+Budget {
+	id: 234924782,
+	categoryId: 62,
+	name: "Donaciones",
+	amount: 100.00,
+	warningPercentage: 0.70,
+	spent: 0.00,
+	leftToSpend: 100.00,
+	status: "ok",
+	dateCreated: 1678317204886,
+	lastUpdated: 1678317204886
+}
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+### Update Budget
+
+  
+
+Update a budget. You can pass an object with the properties to update ( `amount`: _number_, `name`: _string_, `warningPercentage`: _number_ ).
+
+  
+
+```javascript
+const modifiedBudgetData = { amount: 500 };
+
+budgetsClient
+	.edit(budgetId, modifiedBudgetData)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+Output:
+
+  
+
+```console
+Budget {
+	id: 234924782,
+	categoryId: 62,
+	name: "Donaciones",
+	amount: 500.00,
+	warningPercentage: 0.70,
+	spent: 0.00,
+	leftToSpend: 100.00,
+	status: "ok",
+	dateCreated: 1678317204886,
+	lastUpdated: 1678317204886
+}
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+### Delete Budget
+
+  
+
+Deletes a budget and all its information.
+
+  
+
+```javascript
+budgetsClient
+	.delete(budgetId)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+If the budget was removed, the response will be returned as true.
+
+
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+
+ 
+  
+
+# Bank Aggregation Client
+
+  
+
+![Language](https://img.shields.io/badge/Language-Typescript-blue.svg) ![Language](https://img.shields.io/badge/Language-JavaScript-yellow.svg)
+
+  
+
+This is the same client as [Banks Client](#banks-client), next contains the available actions related to bank aggregation process.
+
+
+  
+
+![Language](https://img.shields.io/badge/Language-Typescript-blue.svg) ![Language](https://img.shields.io/badge/Language-JavaScript-yellow.svg)
+
+
+## Setup
+
+  
+
+```javascript
+import { BanksClient } from 'open-banking-pfm-sdk';
+//The constructor receives an object with two properties, the first is the api key to validate access to all of its functions, the second is the API Server Url, both are required.
+const apiKey = 'XXXX-XXXX-XXXX';
+const serverUrl = 'https://pfmapiserver.com/api/v1/';
+const banksClient = new BanksClient ({ apiKey, serverUrl });
+```
+
+
+## How to use
+
+
+
+  
+
+### Create Bank Consent
+
+  
+
+Given a bank ID and a user ID, create consent and retrieve the url for ask it.
+
+  
+
+```javascript
+const bankId = 'c55a1362-93fd-49eb-86ae-d82205b861c5'; //The ID of the bank to request
+const userId = 487969842; //The ID of the user to request.
+const time = 3; //Term of expiration of consent expressed in months: 3, 6 or 12.
+
+banksClient
+	.createConsent(bankId, userId, time)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+Output:
+
+  
+
+```console
+{
+	bankId: "c55a1362-93fd-49eb-86ae-d82205b861c5",
+	userId: 487969842,
+	url: "https://auth1.tboz-csbx.staging.ozoneapi-br.com/auth?client_id=75deaf3f-2597-48a0-bf70"
+}
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 401
+
+Invalid authorization.
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+### Authorize Bank Consent
+
+  
+
+The code, token and consent state are received to authorize of the consent. In the background, the consent is consumed.
+
+  
+This function not requires the ApiKey, so in the client constructor you don't have to specify it.
+
+
+```javascript
+import { BanksClient } from 'open-banking-pfm-sdk';
+const serverUrl = 'https://pfmapiserver.com/api/v1/';
+const banksClient = new BanksClient ({ serverUrl });
+```
+
+```javascript
+const code = 'c55a136207f52861-97e8-4329-8bc5-c324089de119'; //The authCode given by the bank
+const id_token = 'eyJhbGciOiJQUzI1NiIsImtpZCI6IkpWdlBicE12bjVaVFJKaGhTaFFGcllJVElHQklVZj'; //The token given by the bank
+const state = '3fa85f64-5717-4562-b3fc-2c963f66afa6'; //The state given by the bank.
+
+banksClient
+	.authorize(code, id_token, state)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+Output:
+
+  
+
+```console
+true
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 401
+
+Invalid authorization.
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+### Get Bank aggregation status
+
+  
+
+Action to obtain bank aggregation status. The status can be *_'CONSENT_REQUESTED' , 'CONSENT_AUTHORISED',  'CONSENT_REJECTED' , 'CONSENT_DELETED' , 'AGGREGATION_STARTED' , 'AGGREGATION_COMPLETED' , 'PROCESS_FAILED'_*
+
+```javascript
+const bankId = 'c55a1362-93fd-49eb-86ae-d82205b861c5'; //The ID of the bank to request
+const userId = 487969842; //The ID of the user to request.
+banksClient
+	.getAggregationStatus(bankId, userId)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+Output:
+
+  
+
+```console
+{
+	bankId: "c55a1362-93fd-49eb-86ae-d82205b861c5",
+	userId: 487969842,
+	status: "CONSENT_REQUESTED"
+}
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 401
+
+Invalid authorization.
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+### Bank aggregation status with Long Polling
+
+  
+
+Starts a long polling to get bank aggregation status.
+
+  
+
+```javascript
+const options = {
+	bankId: 2230303, //The ID of the bank to request. Is required
+	userId: 1111, //The ID of the user to request. Is required.
+	onResponse: () => null, //Triggered when the response is received.
+	onError: () => null //Triggered when a server error occurs
+	time: 5000 //Interval between requests
+};
+
+banksClient
+	.aggregationStatusSubscribe(options)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+To stop the long polling:
+
+  
+
+```javascript
+banksClient.aggregationStatusUnsubscribe();
+```
+
+  
+
+### Get Bank Resources
+
+  
+
+Consult the resources granted to the user for the given bank and start in the background the aggregation of the resources that the user is authorised to user.
+
+  
+
+```javascript
+const bankId = 'c55a1362-93fd-49eb-86ae-d82205b861c5'; //The ID of the bank to request
+const userId = 487969842; //The ID of the user to request.
+
+banksClient
+	.getResources(bankId, userId)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+Output:
+
+  
+
+```console
+{
+	bankId: "c55a1362-93fd-49eb-86ae-d82205b861c5",
+	userId: 487969842,
+	resources: [
+		"ACCOUNT", "CREDIT_CARD_ACCOUNT"
+	]
+}
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 401
+
+Invalid authorization.
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+### Synchronize
+
+  
+
+Start of the resources that the user is authorised for.
+
+  
+
+```javascript
+const bankId = 'c55a1362-93fd-49eb-86ae-d82205b861c5'; //The ID of the bank to request
+const userId = 487969842; //The ID of the user to request.
+
+banksClient
+	.synchronize(bankId, userId)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+Output:
+  
+
+```console
+true
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 401
+
+Invalid authorization.
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+### Consume Bank Consent (deprecated)
+
+  
+
+Given a authCode, token and state, consume consent and retrieve consent's status.
+
+  
+
+```javascript
+const authCode = 'c55a136207f52861-97e8-4329-8bc5-c324089de119'; //The authCode given by the bank
+const token = 'eyJhbGciOiJQUzI1NiIsImtpZCI6IkpWdlBicE12bjVaVFJKaGhTaFFGcllJVElHQklVZj'; //The token given by the bank
+const state = '3fa85f64-5717-4562-b3fc-2c963f66afa6'; //The state given by the bank.
+
+banksClient
+	.consumeConsent(authCode, token, state)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+Output:
+
+  
+
+```console
+{
+	status: "CONSENT_AUTHORISED"
+}
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 401
+
+Invalid authorization.
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+### Aggregate Banks (deprecated)
+
+  
+
+Retrieve a list of banks that have successfully completed the bank aggregation process.
+
+  
+
+```javascript
+const userId = 10; //The ID of the user to request.
+
+banksClient
+	.getAggregates(userId)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+Output:
+
+  
+
+```console
+[
+	BankAggregated {
+		consentId: "urn:consumption:aac-649a4ef6-d4b4-43a8-b32e-1aba5a0355fd",
+		originBankName: null,
+		customerIdentification: null,
+		cpf: "76109277673",
+		targetInstitution: "consumptionSandboxAuth1234",
+		deadline: 0,
+		expirationDay: 1686184974479,
+		status: "CONSENT_REQUESTED",
+		isSynchronized: null
+	},
+...
+]
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 401
+
+Invalid authorization.
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+ # Consents Client
+
+  
+
+![Language](https://img.shields.io/badge/Language-Typescript-blue.svg) ![Language](https://img.shields.io/badge/Language-JavaScript-yellow.svg)
+
+  
+
+This client helps in Open Banking Consents endpoints.
+
+  
+
+## Setup
+
+  
+
+```javascript
+import { ConsentsClient} from 'open-banking-pfm-sdk';
+//The constructor receives an object with two properties, the first is the api key to validate access to all of its functions, the second is the API Server Url, both are required.
+const apiKey = 'XXXX-XXXX-XXXX';
+const serverUrl = 'https://pfmapiserver.com/api/v1/';
+const consentsClient = new ConsentsClient({ apiKey, serverUrl });
+```
+
+  
+
+## How to use
+
+  
+
+### Get Consent
+
+  
+
+Given a valid consent ID, fetches the information of a consent.
+
+  
+
+```javascript
+consentsClient
+	.get(consentId)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+Output:
+
+  
+
+```console
+ConsentDetail {
+	consentId: "urn:consumption:aac-372ed338-76e7-4616-b793-e792b74215d7",
+	originBankName: "test304 test304 test304",
+	customerIdentification: null,
+	cpf: null,
+	BankConsent: {
+		bankId: 885402086,
+		name: "Consumption Sandbox Auth Server"
+	},
+	purpose: "Finanças Pessoais",
+	deadline: 3,
+	status: "ACTIVATED",
+	isSynchronized: false
+},
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 401
+
+Invalid authorization.
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+### Get Consent List
+
+  
+
+Fetches a list of consents per user.
+
+  
+
+```javascript
+const filterOptions = {
+	type: 'ACTIVATED' | 'PENDING' | 'EXPIRED' | 'CANCELLED', //Optional
+	status: 'RECEIVED' | 'TRANSMITTED' //Optional
+};
+
+consentsClient
+	.getList(userId, filterOptions)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+Output:
+
+  
+
+```console
+[
+Consent {
+	consentId: "urn:consumption:aac-372ed338-76e7-4616-b793-e792b74215d7",
+	expirationDate: 1688513720224,
+	BankConsent: {
+		bankId: 885402086,
+		name: "Consumption Sandbox Auth Server"
+	},
+	status: "ACTIVATED"
+	}
+]
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 401
+
+Invalid authorization.
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+### Cancel Consent
+
+  
+
+A consent is canceled given the identifier.
+
+  
+
+```javascript
+consentsClient
+	.delete(consentId)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+If the consent was cancelled, the response will be returned as true.
+
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+
+# Credits Client
+
+  
+
+![Language](https://img.shields.io/badge/Language-Typescript-blue.svg) ![Language](https://img.shields.io/badge/Language-JavaScript-yellow.svg)
+
+  
+
+This client helps in managing users' credit accounts.
+
+  
+
+## Setup
+
+  
+
+```javascript
+import { CreditsClient } from 'open-banking-pfm-sdk';
+//The constructor receives an object with two properties, the first is the api key to validate access to all of its functions, the second is the API Server Url, both are required.
+const apiKey = 'XXXX-XXXX-XXXX';
+const serverUrl = 'https://pfmapiserver.com/api/v1/';
+const creditsClient = new CreditsClient({ apiKey, serverUrl });
+```
+
+  
+
+## How to use
+
+  
+
+### List Credits
+
+  
+
+Fetches a list of credit accounts per user.
+
+  
+
+```javascript
+creditsClient
+	.getList(userId)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+The ID of the user that owns the accounts is required.
+
+  
+
+Output:
+
+  
+
+```console
+{
+	"data": [
+		{
+			"id": 927241071,
+			"providerId": "141000000000000000000013",
+			"financialEntityId": 941746456,
+			"nature": "Credit card",
+			"name": "Cartão INFINITE",
+			"number": "Cartão INFINITE",
+			"balance": 8247.81,
+			"chargeable": false,
+			"dateCreated": 1682652624964,
+			"lastUpdated": 1682652624964,
+			"lineName": "CREDITO_A_VISTA",
+			"availableAmount": 8247.8111,
+			"limitAmount": 49856.0111,
+			"usedAmount": 41609.2111,
+			"isBankAggregation": true
+		}
+	],
+	"nextCursor": null,
+	"totalBalance": {
+		"availableAmount": 8247.8111,
+		"limitAmount": 49856.0111,
+		"usedAmount": 41609.2111
+	}
+}
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+
+# Insights Client
+
+  
+
+![Language](https://img.shields.io/badge/Language-Typescript-blue.svg) ![Language](https://img.shields.io/badge/Language-JavaScript-yellow.svg)
+
+  
+
+Insights and datapoints about user financial information.
+
+  
+
+## Setup
+
+  
+
+```javascript
+import { InsightsClient } from 'open-banking-pfm-sdk';
+//The constructor receives an object with two properties, the first is the api key to validate access to all of its functions, the second is the API Server Url, both are required.
+const apiKey = 'XXXX-XXXX-XXXX';
+const serverUrl = 'https://pfmapiserver.com/api/v1/';
+const insightsClient = new InsightsClient({ apiKey, serverUrl });
+```
+
+  
+
+## How to use
+
+  
+
+### Resume
+
+  
+
+Given a valid user ID, fetches a resume of the financial information of a user. It contains expenses, incomes and balances.
+
+  
+
+```javascript
+const insightsOptions = {
+	accountId:525742481,//Mandatory
+	dateFrom: number,//Optional
+	dateTo: number;//Optional
+}
+
+insightsClient
+	.getResume(userId, insightsOptions)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+Output:
+
+  
+
+```console
+Resume {
+	incomes: [],
+	expenses: [
+		IncomeExpense {
+			date: 1672552800000,
+			categories: [
+				CategoryResume {
+					categoryId: 2,
+					amount: 720.82,
+					subcategories: [
+						SubcategoryInsights {
+							categoryId: 16,
+							amount: 720.82,
+							transactionsByDate: [
+								TransactionsByDate {
+									date: 1674194400000,
+									transactions: [
+										Transaction {
+											id: 796541939,
+											date: 1674194400000,
+											charge: true,
+											description: 'Clk*Compao Plaza',
+											amount: 720.82,
+											categoryId: 16,
+											dateCreated: 1676572948884,
+											lastUpdated: 1676981093696
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				CategoryResume {
+					categoryId: 4,
+					amount: 433.82,
+					subcategories: [ [SubcategoryInsights] ]
+				},
+				CategoryResume {
+					categoryId: 7,
+					amount: 369.82,
+					subcategories: [ [SubcategoryInsights] ]
+				}
+			],
+			amount: 1524.46
+		},
+		IncomeExpense {
+			date: 1675231200000,
+			categories: [Array],
+			amount: 12006.02
+		}
+	],
+	balances: [
+		Balance { incomes: 0, expenses: 12006.02, date: 1675231200000 },
+		Balance { incomes: 0, expenses: 1524.46, date: 1672552800000 }
+	]
+}
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+  
+
+### Analysis
+
+  
+
+Given a valid user ID, fetches an analysis of the financial information of a user. It contains expenses, incomes and balances. It receives an object as parameter, accountId is required.
+
+  
+
+```javascript
+const insightsOptions = {
+	accountId:525742481,//Required
+	dateFrom: number,//Optional
+	dateTo: number;//Optional
+}
+insightsClient
+	.getAnalysis(userId, insightsOptions)
+	.then((data) => console.log(data))
+	.catch((error) => console.log(error));
+```
+
+  
+
+Output:
+
+  
+
+```console
+[
+	Analysis {
+		date: 1672552800000,
+		categories: [
+			CategoryAnalysis {
+				categoryId: 2,
+				amount: 720.82,
+				subcategories: [
+					SubcategoryAnalysis {
+						categoryId: 16,
+						average: 720.82,
+						quantity: 1,
+						amount: 720.82,
+						transactions: [
+							TransactionAnalysis {
+								description: 'Clk*Compao Plaza',
+								average: 720.82,
+								quantity: 1,
+								amount: 720.82
+							}
+						]
+					}
+				]
+			},
+			CategoryAnalysis {
+				categoryId: 4,
+				amount: 433.82,
+				subcategories: [ [SubcategoryAnalysis] ]
+			},
+			CategoryAnalysis {
+				categoryId: 7,
+				amount: 369.82,
+				subcategories: [ [SubcategoryAnalysis] ]
+			}
+		]
+	},
+	Analysis {
+		date: 1675231200000,
+		categories: [
+			[CategoryAnalysis],
+			[CategoryAnalysis],
+			[CategoryAnalysis],
+			[CategoryAnalysis],
+			[CategoryAnalysis],
+			[CategoryAnalysis],
+			[CategoryAnalysis]
+		]
+	},
+	Analysis {
+		date: 1677650400000,
+		categories: [ [CategoryAnalysis] ]
+	}
+]
+```
+<details>
+  <summary><h4>Possible Errors</h4></summary>
+  
+  ### Error 400
+
+Something in your request was wrong.
+
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ]
+}
+```
+
+## Error 404
+
+The requested param was not found.
+
+```json
+{
+	"errors": [
+	    {
+	      "code": "string",
+	      "title": "string",
+	      "detail": "string"
+	    }
+	]
+}
+```
+
+
+
+## Error 500
+
+Something in your request was wrong.
+
+
+```json
+{
+	"message": "string"
+}
+```
+</details>
+
+ 
+
+# Helpers
+
+  
+
+![Language](https://img.shields.io/badge/Language-Typescript-blue.svg) ![Language](https://img.shields.io/badge/Language-JavaScript-yellow.svg)
+
+  
+
+Helpers are functions that can complement the use of clients.
+
+  
+
+## How to use
+
+  
+
+### Build Clients
+
+  
+
+This function is used to instantiate all clients with a single call.
+
+  
+
+```javascript
+import { buildClients } from 'open-banking-pfm-sdk';
+//The constructor receives an object with two properties, the first is the api key to validate access to all of its functions, the second is the API Server Url, both are required.
+const apiKey = 'XXXX-XXXX-XXXX';
+const serverUrl = 'https://pfmapiserver.com/api/v1/';
+const clients = new buildClients({ apiKey, serverUrl });
+console.log(clients);
+```
+
+  
+
+Output:
+
+  
+
+```console
+ClientDictionary {
+	accountsClient: AccountsClient,
+	banksClient: BanksClient,
+	budgetsClient: IBudgetsClient;
+	categoriesClient: ICategoriesClient;
+	transactionsClient: TransactionsClient,
+	usersClient: UsersClient,
+	creditsClient: CreditsClient,
+	consentsClient: ConsentsClient
+}
+```
+
+
+
 
 ## Open Banking Web Components
 
@@ -264,7 +4160,6 @@ The Open Banking Web Componentes are reusable components with their functionalit
   - [Categories Component](#categories-component)
   - [Budget Component](#budget-component)
   - [Summary Component](#summary-component)
-  - [Onboarding Component](#onboarding-component)
 - [Theme Colors](#theme-colors)
 - [Global components](#global-components)
 
@@ -311,10 +4206,19 @@ You can manage these properties in any web component.
 
 This component displays the consent list, consent detail and banks list to start consent consume process.
 
+![consetns2](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/4d48a71b-0b98-4a8d-8a0f-b7313ee731b4)
+
 ## Installation
 
+Download de *_ob-consent-wizard-component.js_* file from *_latest_* folder of [Open Banking SDK Web Components](https://github.com/ob-pfm/open-banking-sdk/blob/master/dist/latest/ob-consent-wizard-component.js)
+
+Refer to this file from your local file system using script tag or import it to your web application.
 ```html
-<script src="https://cdn.finerio.mx/pfm/components/ob-consent-wizard-component.js"></script>
+<script src="/libs/ob-consent-wizard-component.js"></script>
+```
+  
+```javascript
+import './libs/ob-consent-wizard-component';
 ```
 
 ## How to use
@@ -322,7 +4226,11 @@ This component displays the consent list, consent detail and banks list to start
 Insert the html tag in your web application as follow.
 
 ```html
-<ob-consent-wizard-component banksData consentsData consentSelectedData> </ob-consent-wizard-component>
+<ob-consent-wizard-component 
+	banksData 
+	consentsData 
+	consentSelectedData
+></ob-consent-wizard-component>
 ```
 
 ## Data Properties
@@ -409,10 +4317,19 @@ The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is th
 
 This component helps in managing accounts and calculating their balance.
 
+![accounts](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/24649fb1-a563-4980-b5db-00c9f8e56587)
+
 ## Installation
 
+Download de *_ob-accounts-component.js_* file from *_latest_* folder of [Open Banking SDK Web Components](https://github.com/ob-pfm/open-banking-sdk/blob/master/dist/latest/ob-accounts-component.js)
+
+Refer to this file from your local file system using script tag or import it to your web application.
 ```html
-<script src="https://cdn.finerio.mx/pfm/components/ob-accounts-component.js"></script>
+<script src="/libs/ob-accounts-component.js"></script>
+```
+  
+```javascript
+import './libs/ob-accounts-component';
 ```
 
 ## How to use
@@ -420,7 +4337,10 @@ This component helps in managing accounts and calculating their balance.
 Insert the html tag in your web application as follow.
 
 ```html
-<ob-accounts-component accountsData financialEntitiesData></ob-accounts-component>
+<ob-accounts-component
+	accountsData 
+	financialEntitiesData
+></ob-accounts-component>
 ```
 
 ## Data Properties
@@ -496,12 +4416,21 @@ The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is th
 ![Language](https://img.shields.io/badge/Language-JavaScript-yellow.svg)
 ![Category](https://img.shields.io/badge/Category-WebComponents-blue.svg)
 
-This component shows credit accounts information .
+This component shows credit accounts information.
+
+![credit](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/58b426f2-3ef0-4058-9107-a2ffb6ae1c99)
 
 ## Installation
 
+Download de *_ob-credit-component.js_* file from *_latest_* folder of [Open Banking SDK Web Components](https://github.com/ob-pfm/open-banking-sdk/blob/master/dist/latest/ob-credit-component.js)
+
+Refer to this file from your local file system using script tag or import it to your web application.
 ```html
-<script src="https://cdn.finerio.mx/pfm/components/ob-credit-component.js"></script>
+<script src="/libs/ob-credit-component.js"></script>
+```
+  
+```javascript
+import './libs/ob-credit-component';
 ```
 
 ## How to use
@@ -509,7 +4438,10 @@ This component shows credit accounts information .
 Insert the html tag in your web application as follow.
 
 ```html
-<ob-credit-component creditData banksData></ob-credit-component>
+<ob-credit-component
+	creditData
+	banksData
+></ob-credit-component>
 ```
 
 ## Data Properties
@@ -560,10 +4492,19 @@ The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is th
 
 This component helps in managing transactions.
 
+![transacciones](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/ff72271a-dfbb-4430-94fb-55a662e311e1)
+
 ## Installation
 
+Download de *_ob-transactions-component.js_* file from *_latest_* folder of [Open Banking SDK Web Components](https://github.com/ob-pfm/open-banking-sdk/blob/master/dist/latest/ob-transactions-component.js)
+
+Refer to this file from your local file system using script tag or import it to your web application.
 ```html
-<script src="https://cdn.finerio.mx/pfm/components/ob-transactions-component.js"></script>
+<script src="/libs/ob-transactions-component.js"></script>
+```
+  
+```javascript
+import './libs/ob-transactions-component';
 ```
 
 ## How to use
@@ -571,7 +4512,11 @@ This component helps in managing transactions.
 Insert the html tag in your web application as follow.
 
 ```html
-<ob-transactions-component transactionsData accountsData categoriesData></ob-transactions-component>
+<ob-transactions-component 
+	transactionsData 
+	accountsData 
+	categoriesData
+></ob-transactions-component>
 ```
 
 ## Data Properties
@@ -682,16 +4627,27 @@ The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is th
 
 This component helps in managing categories.
 
+![categorias](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/7ce74783-c278-40bf-ad06-a544005d4eb2)
+
 ## Installation
 
+Download de *_ob-categories-component.js_* file from *_latest_* folder of [Open Banking SDK Web Components](https://github.com/ob-pfm/open-banking-sdk/blob/master/dist/latest/ob-categories-component.js)
+
+Refer to this file from your local file system using script tag or import it to your web application.
 ```html
-<script src="https://cdn.finerio.mx/pfm/components/ob-categories-component.js"></script>
+<script src="/libs/ob-categories-component.js"></script>
+```
+  
+```javascript
+import './libs/ob-categories-component';
 ```
 
 ## How to use
 
 ```html
-<ob-categories-component categoriesData></ob-categories-component>
+<ob-categories-component 
+	categoriesData
+></ob-categories-component>
 ```
 
 ## Data Properties
@@ -771,10 +4727,19 @@ The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is th
 
 This component helps in managing and calculating budgets.
 
+![bufgets](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/45779d73-3868-4743-b746-8609326af0e7)
+
 ## Installation
 
+Download de *_ob-budget-component.js_* file from *_latest_* folder of [Open Banking SDK Web Components](https://github.com/ob-pfm/open-banking-sdk/blob/master/dist/latest/ob-budget-component.js)
+
+Refer to this file from your local file system using script tag or import it to your web application.
 ```html
-<script src="https://cdn.finerio.mx/pfm/components/ob-budget-component.js"></script>
+<script src="/libs/ob-budget-component.js"></script>
+```
+  
+```javascript
+import './libs/ob-budget-component';
 ```
 
 ## How to use
@@ -782,7 +4747,10 @@ This component helps in managing and calculating budgets.
 Insert the html tag in your web application as follow.
 
 ```html
-<ob-budget-component budgetData categoriesData></ob-budget-component>
+<ob-budget-component 
+	budgetData 
+	categoriesData
+></ob-budget-component>
 ```
 
 ## Data Properties
@@ -848,10 +4816,19 @@ The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is th
 
 This component shows data in graphic charts.
 
+![summary](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/ce9f9ded-d249-4de3-a543-3997986be97d)
+
 ## Installation
 
+Download de *_ob-summary-component.js_* file from *_latest_* folder of [Open Banking SDK Web Components](https://github.com/ob-pfm/open-banking-sdk/blob/master/dist/latest/ob-summary-component.js)
+
+Refer to this file from your local file system using script tag or import it to your web application.
 ```html
-<script src="https://cdn.finerio.mx/pfm/components/ob-summary-component.js"></script>
+<script src="/libs/ob-summary-component.js"></script>
+```
+  
+```javascript
+import './libs/ob-summary-component';
 ```
 
 ## How to use
@@ -859,7 +4836,10 @@ This component shows data in graphic charts.
 Insert the html tag in your web application as follow.
 
 ```html
-<ob-summary-component summaryData categoriesData></ob-summary-component>
+<ob-summary-component 
+	summaryData 
+	categoriesData
+></ob-summary-component>
 ```
 
 ## Data Properties
@@ -954,53 +4934,6 @@ The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is th
 | **empty-button-click**               | Triggers when action button in empty view is clicked           | _None_                              |
 |                                      |                                                                |                                     |
 
-# Onboarding Component
-
-![Language](https://img.shields.io/badge/Language-HTML-red.svg)
-![Language](https://img.shields.io/badge/Language-JavaScript-yellow.svg)
-![Category](https://img.shields.io/badge/Category-WebComponents-blue.svg)
-
-This component displays a modal that allows you to insert a CPF.
-
-## Installation
-
-```html
-<script src="https://cdn.finerio.mx/pfm/components/ob-onboarding-component.js"></script>
-```
-
-## How to use
-
-Insert the html tag in your web application as follow.
-
-```html
-<ob-onboarding-component></ob-onboarding-component>
-```
-
-## Properties
-
-| Name                    | Type                  | Description                                                              | Default                                                                             |
-| ----------------------- | --------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
-| **closeDisabled**       | [`string`, `boolean`] | The Close events are disabled                                            | _false_                                                                             |
-| **title**               | `string`              | The custom text to be displayed in the title of the view                 | "Olá!"                                                                            |
-| **titleIsShown**        | [`string`, `boolean`] | Show view title                                                          | _true_                                                                              |
-| **description**         | `string`              | The custom text to be displayed in the description of the view           | "Informe seu CPF e aproveite todo o potencial da panificação aberta de forma rápida e fácil" |
-| **descriptionIsShown**  | [`string`, `boolean`] | Show view description                                                    | _true_                                                                              |
-| **cpfFieldPlaceholder** | `string`              | The custom text to be displayed in the placeholder of the cpf text field | "Escreva seu CPF aqui"                                                               |
-| **cpfFieldIsShown**     | [`string`, `boolean`] | Show cpf text field                                                      | _true_                                                                              |
-| **continueButton**      | `string`              | The custom text to be displayed in the continue button                   | "Prosseguir"                                                                         |
-| **isShown**             | [`string`, `boolean`] | Show modal view                                                          | _true_                                                                              |
-|                         |                       |                                                                          |
-
-## Events
-
-| Name                  | Description                                  | Detail Data       |
-| --------------------- | -------------------------------------------- | ----------------- |
-| **component-mount**   | Triggers when the component is mounted       | _None_            |
-| **component-unmount** | Triggers when the component is unmounted     | _None_            |
-| **close-modal**       | Triggers when the modal is closed            | _None_            |
-| **continue**          | Triggers when the continue button is clicked | cpfText: `string` |
-|                       |                                              |                   |
-
 # Theme Colors
 
 The theme colors can be changed from the component properties.
@@ -1070,6 +5003,8 @@ This component represents a button that contains only text and performs a specif
 - `ob-categories-component`
 - `ob-transactions-component`
 - `ob-summary-component`
+- 
+![1](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/01b5c38a-4b74-47e6-a8f0-e03ea649fc22)
 
 The component structure is:
 
@@ -1097,6 +5032,8 @@ Cards are used to display content made up of different types of objects. This co
 - `ob-budget-component`
 - `ob-categories-component`
 - `ob-summary-component`
+- 
+![2](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/a7dac85c-1510-4b4b-acf7-21401cc7bcba)
 
 The component structure is:
 
@@ -1114,6 +5051,8 @@ The component structure is:
 ---
 
 Element that allows to inform about the acceptance of the option that is linked to it. This component is used by `ob-accounts-component` web component.
+
+![3](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/c4bf7f2a-ea31-441c-8d59-b57be253d00c)
 
 The component structure is:
 
@@ -1141,6 +5080,8 @@ The component structure is:
 
 The Collapsible COntainer are used to show or hide content. This component is used by `ob-accounts-component` web component.
 
+![4](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/0bd7bba9-1edb-47bf-a89d-7e88eedd4417)
+
 The component structure is:
 
 ```html
@@ -1160,6 +5101,8 @@ Cards are used to display content made up of different types of objects. This co
 
 - `ob-budget-component`
 - `ob-categories-component`
+- 
+![5](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/d7233df5-eda3-4107-80f8-11dff46090c8)
 
 The component structure is:
 
@@ -1180,6 +5123,8 @@ A modal that displays a warning message and requires confirmation of the action 
 
 - `ob-budget-component`
 - `ob-categories-component`
+
+![6](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/4acba20d-01e2-4f16-886c-1ead77fd54cd)
 
 The component structure is:
 
@@ -1214,6 +5159,8 @@ The component structure is:
 ---
 
 Shows a dropdown list when interacting with it. This component is used by `ob-transactions-component` web component.
+
+![image](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/5c958295-2538-47da-b03a-3111306cd8ee)
 
 The component structure is:
 
@@ -1260,6 +5207,8 @@ This view appears when you have no items to display. This component is used by n
 - `ob-budget-component`
 - `ob-transactions-component`
 - `ob-summary-component`
+- 
+![7](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/f925232d-ea41-4e5a-8b53-4e7ba2ffca5b)
 
 The component structure is:
 
@@ -1295,6 +5244,8 @@ This component represents a button that can only contain one icon and performs a
 - `ob-categories-component`
 - `ob-transactions-component`
 - `ob-summary-component`
+- 
+![8](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/4287f9d8-194b-4d93-9bce-e315d66fc117)
 
 The component structure is:
 
@@ -1324,6 +5275,9 @@ A modal with a Spinner view used to render processes. This component is used by 
 - `ob-transactions-component`
 - `ob-summary-component`
 
+
+![9](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/d0e1cb7e-d13c-440c-bcb2-a3f8b0f8dfad)
+
 The component structure is:
 
 ```html
@@ -1349,6 +5303,8 @@ It is a Spinner view used to represent processes. This component is used by next
 - `ob-categories-component`
 - `ob-transactions-component`
 - `ob-summary-component`
+- 
+![9](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/a13a4cf4-cc3e-40ab-9984-00561d466577)
 
 The component structure is:
 
@@ -1374,6 +5330,8 @@ It is a popup window that can contain different objects such as forms or tables.
 - `ob-categories-component`
 - `ob-transactions-component`
 - `ob-summary-component`
+
+![13](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/db849f37-05d2-4a6c-bfa8-4860e546828e)
 
 The component structure is:
 
@@ -1406,6 +5364,8 @@ Displays a series of options from which only one can be selected. It is commonly
 - `ob-accounts-component`
 - `ob-transactions-component`
 
+![2](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/2790defe-8e02-475d-be1c-2540862be64b)
+
 The component structure is:
 
 ```html
@@ -1436,6 +5396,8 @@ The component structure is:
 
 Text field used for searching. This component is used by `ob-transactions-component` web component.
 
+![10](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/b4741743-b25a-45a7-835c-a236857df879)
+
 The component structure is:
 
 ```html
@@ -1463,6 +5425,8 @@ This is a field that displays a single selection list. It is commonly used in fo
 
 - `ob-accounts-component`
 - `ob-transactions-component`
+
+![11](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/bb0010ef-3074-4431-b2ec-ae1d78dfda34)
 
 The component structure is:
 
@@ -1510,6 +5474,8 @@ It is a pop-up window that is displayed from the right of the screen and can con
 - `ob-categories-component`
 - `ob-transactions-component`
 
+![1](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/bc1df911-f8f6-4215-ba35-98910356b06a)
+
 The component structure is:
 
 ```html
@@ -1542,6 +5508,8 @@ The component structure is:
 
 It is special checkbox used for binary states like on/off. This component is used by `ob-transactions-component` web component.
 
+![14](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/edb08ac7-8428-4b18-8adc-45f8672ca4a7)
+
 The component structure is:
 
 ```html
@@ -1561,6 +5529,8 @@ The component structure is:
 ---
 
 The tab structure consists of an unordered list of tabs that display content when one of them is activated. This component is used by `ob-summary-component` web component.
+
+![16](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/a223f755-0e3f-4248-a623-c53be3b8d908)
 
 The component structure is:
 
@@ -1591,6 +5561,8 @@ Text field used in forms. This component is used by next web components:
 - `ob-budget-component`
 - `ob-categories-component`
 - `ob-transactions-component`
+- 
+![15](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/7f60e95d-950b-4ae9-900f-020b9ccf2876)
 
 The component structure is:
 
@@ -1628,6 +5600,8 @@ Shows a text as a title. This component is used by next web components:
 - `ob-transactions-component`
 - `ob-summary-component`
 
+![18](https://github.com/Finerio-Connect/pfm-brazil-demo/assets/100369880/1bb4b84a-0341-4676-81c9-586ba2f267ac)
+
 The component structure is:
 
 ```html
@@ -1638,34 +5612,3 @@ The component structure is:
 | ------------ | ------- | ------------------------ | -------- |
 | `opwc-title` | **H1**  | It is the main ClassName | _None_   |
 |              |         |                          |
-
-## **`Toast Component`**
-
----
-
-It is a pop-up window that returns a feedback of a process. This component is used by next web components:
-
-- `ob-accounts-component`
-- `ob-budget-component`
-- `ob-categories-component`
-- `ob-transactions-component`
-
-The component structure is:
-
-```html
-<div class="opwc-toast">
-  <div class="opwc-toast__close-button">...</div>
-  <div class="opwc-toast__container">
-    <svg class="opwc-toast__icon">...</svg>
-    ...
-  </div>
-</div>
-```
-
-| ClassName                  | Element | Description                                          | Variants |
-| -------------------------- | ------- | ---------------------------------------------------- | -------- |
-| `opwc-toast`               | **Div** | It is the main ClassName                             | _None_   |
-| `opwc-toast__close-button` | **Div** | Refers to the close button                           | _None_   |
-| `opwc-toast__container`    | **Div** | Contains the alert icon and the message of the toast | _None_   |
-| `opwc-toast__icon`         | **Svg** | Refers to the alert icon                             | _None_   |
-|                            |         |                                                      |
