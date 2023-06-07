@@ -259,7 +259,6 @@ The Open Banking PFM SDK uses Client classes and with **Promises** to get respon
 - [Credits Client](#credits-client)
 - [Insights Client](#insights-client)
 - [Helpers](#helpers)
-- [Error Codes](#error-codes)
 
 
 # Users Client
