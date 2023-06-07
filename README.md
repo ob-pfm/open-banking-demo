@@ -1,5 +1,5 @@
 
-# Project Name: pfm-brazil-demo
+# Project Name: open-banking-demo
 
   
 
@@ -29,7 +29,7 @@
 
   
 
-**pfm-brazil-demo** is a React web app for personal financial management. It ilustrates the use and the way to integrate the Open Banking SDK and Open Banking Web Components in a web application.
+**open-banking-demo** is a React web app for personal financial management. It ilustrates the use and the way to integrate the Open Banking SDK and Open Banking Web Components in a web application.
 
   
 
@@ -111,7 +111,7 @@ return(
   
 
 ```console
-git clone https://github.com/Finerio-Connect/pfm-brazil-demo.git
+git clone https://github.com/ob-pfm/open-banking-demo.git
 ```
 
   
@@ -121,7 +121,7 @@ git clone https://github.com/Finerio-Connect/pfm-brazil-demo.git
   
 
 ```console
-cd pfm-brazil-demo
+cd open-banking-demo
 ```
 
   
