@@ -1487,7 +1487,7 @@ Updates an account. You can pass an object with the properties to update ( `natu
 const modifiedAccountData = { name: 'Gold' };
 
 accountsClient
-	.update(accountId, modifiedAccountData)
+	.edit(accountId, modifiedAccountData)
 	.then((data) => console.log(data))
 	.catch((error) => console.log(error));
 ```
