@@ -23,7 +23,8 @@
 
 - [Open Banking Web Components](#open-banking-web-components)
 
-  
+- [Appendix](#appendix)
+ 
 
 ## Introduction
 
@@ -5611,3 +5612,49 @@ The component structure is:
 | ------------ | ------- | ------------------------ | -------- |
 | `opwc-title` | **H1**  | It is the main ClassName | _None_   |
 |              |         |                          |
+
+
+## Appendix
+
+## Consume consent process
+
+Once the user has given consent with their credentials there will be a callback redirecting to the configured URL with the needed params to start the consume of the consent, in this step is important to have a web application that gets these params and call the the [SDK's authorize method](#authorize-bank-consent) to consume the consent.
+
+The format of the callback is the next:
+
+*_https://configured-url.com/consume#code=CODE&id_token=TOKENI&state=STATE_*
+
+Notice that the query strings are separeted by a *_#_* from the URL. 
+
+In this demo you will find an example of this implementation (check *_ConsumeConsentPage.tsx_*).
+
+```javascript
+import { useLocation } from 'react-router-dom';
+...
+const location = useLocation();
+...
+const params = location.hash.split('&');
+const authCode = params.find((el) => el.indexOf('code') !== -1)?.split('=')[1]; // Extract the auth code from the URL
+const token = params.find((el) => el.indexOf('id_token') !== -1)?.split('=')[1]; // Extract the token from the URL
+const state = params.find((el) => el.indexOf('state') !== -1)?.split('=')[1]; // Extract the state from the URL
+```
+
+In order to get the params of the url, the useLocation() hook was used and the three needed params for call th authorize method are extracted.
+
+Then this params are passed as arguments to the [Authorize SDK method](#authorize-bank-consent) to consume the consent.
+
+```javascript
+...
+const banksClient = new BanksClient({ serverUrl });
+// Authorize the client using the auth code, token, and state
+banksClient
+  .authorize(authCode, token, state)
+  .then(() => {
+    setConsumeStatus(CONSUME_SUCCESSFUL); // Set the consume status to successful
+  })
+  .catch((error) => {
+    setConsumeStatus(CONSUME_FAILED); // Set the consume status to failed
+  });
+...
+```
+
