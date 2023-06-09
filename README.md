@@ -5618,11 +5618,11 @@ The component structure is:
 
 ## Consume consent process
 
-Once the user has given consent with their credentials there will be a callback redirecting to the configured URL with the needed params to start the consume of the consent, in this step is important to have a web application that gets these params and call the the [SDK's authorize method](#authorize-bank-consent) to consume the consent.
+Once the user has given consent with their credentials there will be a callback redirecting to the configured URL with the needed params to start the consume of the consent, in this step is important to have a web application that gets these params and call the [SDK's authorize method](#authorize-bank-consent) to consume the consent.
 
 The format of the callback is the next:
 
-*_https://configured-url.com/consume#code=CODE&id_token=TOKENI&state=STATE_*
+*_https://configured-url.com/#code=CODE&id_token=TOKEN&state=STATE_*
 
 Notice that the query strings are separeted by a *_#_* from the URL. 
 
@@ -5641,8 +5641,6 @@ const state = params.find((el) => el.indexOf('state') !== -1)?.split('=')[1]; //
 
 In order to get the params of the url, the useLocation() hook was used and the three needed params for call th authorize method are extracted.
 
-Then this params are passed as arguments to the [Authorize SDK method](#authorize-bank-consent) to consume the consent.
-
 ```javascript
 ...
 const banksClient = new BanksClient({ serverUrl });
@@ -5657,4 +5655,4 @@ banksClient
   });
 ...
 ```
-
+Then this params are passed as arguments to the [Authorize SDK method](#authorize-bank-consent) to consume the consent.
