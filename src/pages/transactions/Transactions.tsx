@@ -21,7 +21,7 @@ import '../../libs/wc/ob-transactions-component';
 // Define interface for filter options
 interface TransactionsOptions {
   accounts: IAccount[];
-  accountId: number;
+  accountId: string;
   minAmount: string;
   maxAmount: string;
   categoryId: string;
@@ -62,7 +62,7 @@ const TransactionsComponent = () => {
   const [filterOptions, setFilterOptions] = useState<TransactionsOptions>({
     // Set initial state for filter options
     accounts: [],
-    accountId: 0,
+    accountId: '',
     minAmount: '',
     maxAmount: '',
     categoryId: '',
@@ -95,7 +95,7 @@ const TransactionsComponent = () => {
     dateTo
   }: {
     accounts?: IAccount[] | null;
-    accountId?: number | null;
+    accountId?: string | null;
     categoryId?: string | null;
     subcategoryId?: string | null;
     dateFrom?: string | null;
@@ -168,7 +168,10 @@ const TransactionsComponent = () => {
         if (userId) {
           // Call the transactionServices to fetch the list of transactions with provided filter options
           transactionServices
-            .getList(Number(accountId), { ...parsedFilterOptions, page, field: 'executionDate' })
+            .getList(
+              accountId.split(',').map((num) => Number(num)),
+              { ...parsedFilterOptions, page, field: 'executionDate' }
+            )
             .then((response) => {
               onSuccess(response.data); // Call onSuccess callback with the fetched data as argument
               // Set the totalPages property of componentRef.current with the total pages from the response
@@ -371,13 +374,14 @@ const TransactionsComponent = () => {
 
   const handleChangeAccount = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const accountId = e.target.value === '' ? filterOptions.accounts.map((acc) => acc.id).join(',') : e.target.value;
       // Show loading indicator
       componentRef.current.showModalLoading = true;
 
       // Update activePage, setPage, and filterOptions based on the selected account value
       componentRef.current.activePage = 1;
       setPage(0);
-      setFilterOptions({ ...filterOptions, accountId: Number(e.target.value) });
+      setFilterOptions({ ...filterOptions, accountId });
 
       // Hide loading indicator
       componentRef.current.showModalLoading = false;
@@ -437,7 +441,7 @@ const TransactionsComponent = () => {
               setFilterOptions(
                 getFiltersFromObject({
                   accounts,
-                  accountId: Number(accountIdParam),
+                  accountId: accountIdParam,
                   categoryId,
                   subcategoryId,
                   dateFrom,
@@ -449,7 +453,7 @@ const TransactionsComponent = () => {
               setFilterOptions(
                 getFiltersFromObject({
                   accounts,
-                  accountId: Number(accounts[0].id),
+                  accountId: accounts[0].id.toString(),
                   categoryId,
                   subcategoryId,
                   dateFrom,
@@ -541,6 +545,7 @@ const TransactionsComponent = () => {
         // Render select input element only if there are accounts available
         <div className="selectContainer">
           <select onChange={handleChangeAccount} value={filterOptions.accountId}>
+            <option value="">Todas as contas</option>
             {/* Map through filterOptions.accounts array to render options */}
             {filterOptions.accounts.map((account) => (
               <option key={account.id} value={account.id}>

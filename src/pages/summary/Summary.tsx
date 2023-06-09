@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useOutletContext, createSearchParams, useNavigate } from 'react-router-dom';
+import { useOutletContext, useNavigate } from 'react-router-dom';
 
 import { CategoriesClient, InsightsClient, AccountsClient, Account } from 'open-banking-pfm-sdk';
 import { URL_SERVER as serverUrl } from '../../constants';
@@ -40,36 +40,32 @@ const SummaryComponent = () => {
   const handleSubcategoryDetailClick = useCallback(
     (e: { detail: ISubmitEventData }) => {
       const { summary, date } = e.detail;
-      const { iniDate, endDate } = getDateRange(new Date(date));
+      const offset = new Date().getTimezoneOffset();
+      const offsetDate = new Date(Number(date) + offset * 60 * 1000);
+      const { iniDate, endDate } = getDateRange(offsetDate);
+      const accountIds = accountId === '' || accountId === 0 ? accountsList.map((acc) => acc.id).join(',') : accountId;
       navigate({
         pathname: '../movimientos',
-        search: createSearchParams({
-          account_id: `${accountId}`,
-          category_id: `${summary.parentCategoryId}`,
-          subcategory_id: `${summary.categoryId}`,
-          date_from: `${iniDate}`,
-          date_to: `${endDate}`
-        }).toString()
+        search: `account_id=${accountIds}&category_id=${summary.parentCategoryId}&subcategory_id=${summary.categoryId}&date_from=${iniDate}&date_to=${endDate}`
       });
     },
-    [navigate, accountId]
+    [navigate, accountId, accountsList]
   );
 
   // Handle transaction detail click event
   const handleTransactionDetailClick = useCallback(
     (e: { detail: ISubmitEventData }) => {
       const { date } = e.detail;
-      const { iniDate, endDate } = getDateRange(new Date(date));
+      const offset = new Date().getTimezoneOffset();
+      const offsetDate = new Date(Number(date) + offset * 60 * 1000);
+      const { iniDate, endDate } = getDateRange(offsetDate);
+      const accountIds = accountId === '' || accountId === 0 ? accountsList.map((acc) => acc.id).join(',') : accountId;
       navigate({
         pathname: '../movimientos',
-        search: createSearchParams({
-          account_id: `${accountId}`,
-          date_from: `${iniDate}`,
-          date_to: `${endDate}`
-        }).toString()
+        search: `account_id=${accountIds}&date_from=${iniDate}&date_to=${endDate}`
       });
     },
-    [navigate, accountId]
+    [navigate, accountId, accountsList]
   );
 
   // Handle empty action click event
@@ -129,41 +125,35 @@ const SummaryComponent = () => {
         expenses: [],
         balances: []
       };
-      if (accountId !== 0) {
-        // Make API call to get summary data for a specific account or all accounts
-        const request =
-          accountId === ''
-            ? insightsServices.getResume(userId)
-            : insightsServices.getResume(userId, { accountId: Number(accountId) });
-        request
-          .then((insights) => {
-            if (insights && (insights.incomes.length > 0 || insights.expenses.length > 0)) {
-              // Update summaryData with the fetched data
-              componentRef.current.summaryData = {
-                balances: insights.balances,
-                expenses: insights.expenses,
-                incomes: insights.incomes
-              };
-              // Set isEmpty to false if there are incomes or expenses
-              componentRef.current.isEmpty = false;
-            } else {
-              // Set isEmpty to true if there are no incomes or expenses
-              componentRef.current.isEmpty = true;
-            }
-            // Hide main loading on success
-            componentRef.current.showMainLoading = false;
-          })
-          .catch((error) => {
-            // Show error toast on failure
+      // Make API call to get summary data for a specific account or all accounts
+      const request =
+        accountId === 0
+          ? insightsServices.getResume(userId)
+          : insightsServices.getResume(userId, { accountId: Number(accountId) });
+      request
+        .then((insights) => {
+          if (insights && (insights.incomes.length > 0 || insights.expenses.length > 0)) {
+            // Update summaryData with the fetched data
+            componentRef.current.summaryData = {
+              balances: insights.balances,
+              expenses: insights.expenses,
+              incomes: insights.incomes
+            };
+            // Set isEmpty to false if there are incomes or expenses
+            componentRef.current.isEmpty = false;
+          } else {
+            // Set isEmpty to true if there are no incomes or expenses
             componentRef.current.isEmpty = true;
-            componentRef.current.showMainLoading = false;
-            showErrorToast(error);
-          });
-      } else {
-        // Set isEmpty to true and hide main loading if accountId is 0
-        componentRef.current.isEmpty = true;
-        componentRef.current.showMainLoading = false;
-      }
+          }
+          // Hide main loading on success
+          componentRef.current.showMainLoading = false;
+        })
+        .catch((error) => {
+          // Show error toast on failure
+          componentRef.current.isEmpty = true;
+          componentRef.current.showMainLoading = false;
+          showErrorToast(error);
+        });
     }
   }, [insightsServices, categoryServices, userId, accountServices, accountId]);
 
