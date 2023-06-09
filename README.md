@@ -1,5 +1,5 @@
 
-# Project Name: pfm-brazil-demo
+# Project Name: open-banking-demo
 
   
 
@@ -23,13 +23,14 @@
 
 - [Open Banking Web Components](#open-banking-web-components)
 
-  
+- [Appendix](#appendix)
+ 
 
 ## Introduction
 
   
 
-**pfm-brazil-demo** is a React web app for personal financial management. It ilustrates the use and the way to integrate the Open Banking SDK and Open Banking Web Components in a web application.
+**open-banking-demo** is a React web app for personal financial management. It ilustrates the use and the way to integrate the Open Banking SDK and Open Banking Web Components in a web application.
 
   
 
@@ -111,7 +112,7 @@ return(
   
 
 ```console
-git clone https://github.com/Finerio-Connect/pfm-brazil-demo.git
+git clone https://github.com/ob-pfm/open-banking-demo.git
 ```
 
   
@@ -121,7 +122,7 @@ git clone https://github.com/Finerio-Connect/pfm-brazil-demo.git
   
 
 ```console
-cd pfm-brazil-demo
+cd open-banking-demo
 ```
 
   
@@ -259,7 +260,6 @@ The Open Banking PFM SDK uses Client classes and with **Promises** to get respon
 - [Credits Client](#credits-client)
 - [Insights Client](#insights-client)
 - [Helpers](#helpers)
-- [Error Codes](#error-codes)
 
 
 # Users Client
@@ -1488,7 +1488,7 @@ Updates an account. You can pass an object with the properties to update ( `natu
 const modifiedAccountData = { name: 'Gold' };
 
 accountsClient
-	.update(accountId, modifiedAccountData)
+	.edit(accountId, modifiedAccountData)
 	.then((data) => console.log(data))
 	.catch((error) => console.log(error));
 ```
@@ -4387,7 +4387,7 @@ The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is th
 | **longTermBalanceSectionShow**    | [`string`, `boolean`] | Show Long-term balance section                                                       | _true_                       |
 | **totalSectionTitle**             | `string`              | The custom text to display in the title of the Total section                         | _null_                       |
 | **totalSectionOrder**             | [`string`, `number`]  | Position number in the list of the Total section                                     | _7_                          |
-| **totalSectionShow**              | [`string`, `boolean`] | Show Total section                                                                   | "Patrimônio Líquido"            |
+| **totalSectionShow**              | [`string`, `boolean`] | Show Total section                                                                   | true            |
 |                                   |                       |                                                                                      |
 
 ## Events
@@ -4523,11 +4523,11 @@ Insert the html tag in your web application as follow.
 
 The [Open Banking SDK](https://www.npmjs.com/package/open-banking-pfm-sdk) is the data source of this component.
 
-| Name                 | Type                 | Description                                    | Default | SDK Function                                                                              |
-| -------------------- | -------------------- | ---------------------------------------------- | ------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| **transactionsData** | [`string`, `Array`]  | The data of the transactions that will be used | _[]_    | [Transactions List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-transactions) |
-| **accountsData**     | [`string` , `Array`] | data of the accounts that will be used         | _[]_    | [Accounts List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-accounts)         | (https://www.npmjs.com/package/open-banking-pfm-sdk#list-categories-with-subcategories) (filter accounts) |
-| **categoriesData**   | [`string` , `Array`] | data of the categories that will be used       | _[]_    | [Categories List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-categories-with-subcategories)     |
+| Name                 | Type                 | Description                                    | Default | SDK Function
+--- | --- | --- | --- |---
+| **transactionsData** | [`string`, `Array`]  | The data of the transactions that will be used | _[]_    | [Transactions List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-transactions)                
+| **accountsData**     | [`string` , `Array`] | data of the accounts that will be used         | _[]_    | [Accounts List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-accounts)                        
+| **categoriesData**   | [`string` , `Array`] | data of the categories that will be used       | _[]_    | [Categories List](https://www.npmjs.com/package/open-banking-pfm-sdk#list-categories-with-subcategories) 
 
 ## Customization Properties
 
@@ -5612,3 +5612,47 @@ The component structure is:
 | ------------ | ------- | ------------------------ | -------- |
 | `opwc-title` | **H1**  | It is the main ClassName | _None_   |
 |              |         |                          |
+
+
+## Appendix
+
+## Consume consent process
+
+Once the user has given consent with their credentials there will be a callback redirecting to the configured URL with the needed params to start the consume of the consent, in this step is important to have a web application that gets these params and call the [SDK's authorize method](#authorize-bank-consent) to consume the consent.
+
+The format of the callback is the next:
+
+*_https://configured-url.com/#code=CODE&id_token=TOKEN&state=STATE_*
+
+Notice that the query strings are separeted by a *_#_* from the URL. 
+
+In this demo you will find an example of this implementation (check *_ConsumeConsentPage.tsx_*).
+
+```javascript
+import { useLocation } from 'react-router-dom';
+...
+const location = useLocation();
+...
+const params = location.hash.split('&');
+const authCode = params.find((el) => el.indexOf('code') !== -1)?.split('=')[1]; // Extract the auth code from the URL
+const token = params.find((el) => el.indexOf('id_token') !== -1)?.split('=')[1]; // Extract the token from the URL
+const state = params.find((el) => el.indexOf('state') !== -1)?.split('=')[1]; // Extract the state from the URL
+```
+
+In order to get the params of the url, the useLocation() hook was used and the three needed params for call the authorize method are extracted.
+
+```javascript
+...
+const banksClient = new BanksClient({ serverUrl });
+// Authorize the client using the auth code, token, and state
+banksClient
+  .authorize(authCode, token, state)
+  .then(() => {
+    setConsumeStatus(CONSUME_SUCCESSFUL); // Set the consume status to successful
+  })
+  .catch((error) => {
+    setConsumeStatus(CONSUME_FAILED); // Set the consume status to failed
+  });
+...
+```
+Then this params are passed as arguments to the [Authorize SDK method](#authorize-bank-consent) to consume the consent.
