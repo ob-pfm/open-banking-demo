@@ -5639,7 +5639,7 @@ const token = params.find((el) => el.indexOf('id_token') !== -1)?.split('=')[1];
 const state = params.find((el) => el.indexOf('state') !== -1)?.split('=')[1]; // Extract the state from the URL
 ```
 
-In order to get the params of the url, the useLocation() hook was used and the three needed params for call th authorize method are extracted.
+In order to get the params of the url, the useLocation() hook was used and the three needed params for call the authorize method are extracted.
 
 ```javascript
 ...
