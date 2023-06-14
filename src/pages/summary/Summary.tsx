@@ -129,7 +129,7 @@ const SummaryComponent = () => {
       const request =
         accountId === 0
           ? insightsServices.getResume(userId)
-          : insightsServices.getResume(userId, { accountId: Number(accountId) });
+          : insightsServices.getResume(userId, { accountIds: Number(accountId) });
       request
         .then((insights) => {
           if (insights && (insights.incomes.length > 0 || insights.expenses.length > 0)) {

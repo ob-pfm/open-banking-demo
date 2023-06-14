@@ -215,32 +215,13 @@ const TransactionsComponent = () => {
 
   const handleFilter = useCallback(
     (e: { detail: ITransactionFilterEvent }) => {
-      const {
-        accountId: accountIdFilter,
-        categoryId,
-        subcategoryId,
-        minAmount,
-        maxAmount,
-        withCharges,
-        withDebits,
-        dateFrom,
-        dateTo
-      } = e.detail;
-
-      const accountIdStr = Number(accountIdFilter);
+      const { subcategoryId, minAmount, maxAmount, withCharges, withDebits, dateFrom, dateTo } = e.detail;
 
       let transactions = transactionsData;
 
-      // Filter transactions based on various filter options
-      if (accountIdFilter !== '') {
-        transactions = transactions.filter((tr) => tr.accountId === accountIdStr);
-      }
       if (subcategoryId !== '') {
         const subCatId = Number(subcategoryId);
         transactions = transactions.filter((tr) => tr.categoryId === subCatId);
-      } else if (categoryId !== '') {
-        const catId = Number(categoryId);
-        transactions = transactions.filter((tr) => tr.categoryId === catId);
       }
       if (minAmount && minAmount !== '') {
         const min = Number(minAmount);
@@ -251,12 +232,20 @@ const TransactionsComponent = () => {
         transactions = transactions.filter((tr) => tr.amount <= max);
       }
       if (dateFrom !== '') {
-        const from = new Date(dateFrom).getTime();
-        transactions = transactions.filter((tr) => tr.date >= from);
+        const from = new Date(dateFrom);
+        from.setDate(from.getDate() + 1);
+        from.setHours(0);
+        from.setMinutes(0);
+        from.setSeconds(0);
+        transactions = transactions.filter((tr) => tr.date >= from.getTime());
       }
       if (dateTo !== '') {
-        const to = new Date(dateTo).getTime();
-        transactions = transactions.filter((tr) => tr.date <= to);
+        const to = new Date(dateTo);
+        to.setDate(to.getDate() + 1);
+        to.setHours(23);
+        to.setMinutes(59);
+        to.setSeconds(59);
+        transactions = transactions.filter((tr) => tr.date <= to.getTime());
       }
       if (withCharges === 'false') {
         transactions = transactions.filter((tr) => !tr.charge);
@@ -264,8 +253,8 @@ const TransactionsComponent = () => {
         transactions = transactions.filter((tr) => tr.charge);
       }
 
-      // Update state 'transactionsFilteredData' with filtered transactions
-      setTransactionsFilteredData(transactions);
+      // Update state 'transactionsData' property with filtered transactions
+      componentRef.current.transactionsData = transactions;
     },
     [transactionsData] // Dependency: transactionsData
   );
