@@ -10,7 +10,7 @@ import {
   Account
 } from 'open-banking-pfm-sdk';
 import { IAccount, IListOptions, ITransaction } from 'open-banking-pfm-sdk/interfaces';
-import { URL_SERVER as serverUrl } from '../../constants';
+import { URL_SERVER as serverUrl, URL_ASSETS as assetsUrl } from '../../constants';
 import { showErrorToast, unicodeToChar } from '../../helpers';
 import { IOutletContext } from '../../interfaces';
 
@@ -82,7 +82,10 @@ const TransactionsComponent = () => {
   // Memoize AccountsClient instance
   const accountServices = useMemo(() => new AccountsClient({ apiKey, serverUrl }), [apiKey]);
   // Memoize CategoriesClient instance
-  const categoryServices = useMemo(() => new CategoriesClient({ apiKey, serverUrl }), [apiKey]);
+  const categoryServices = useMemo(
+    () => new CategoriesClient({ apiKey, serverUrl, assetsUrl: `${assetsUrl}/categories/` }),
+    [apiKey]
+  );
   // Memoize TransactionsClient instance
   const transactionServices = useMemo(() => new TransactionsClient({ apiKey, serverUrl }), [apiKey]);
 

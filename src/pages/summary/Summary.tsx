@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 
 import { CategoriesClient, InsightsClient, AccountsClient, Account } from 'open-banking-pfm-sdk';
-import { URL_SERVER as serverUrl } from '../../constants';
+import { URL_SERVER as serverUrl, URL_ASSETS as assetsUrl } from '../../constants';
 
 import { IOutletContext } from '../../interfaces';
 import { showErrorToast, unicodeToChar } from '../../helpers';
@@ -30,7 +30,10 @@ const SummaryComponent = () => {
   const componentRef = useRef<any>(null);
   const navigate = useNavigate();
   const { isProcessing, alertText, userId, apiKey } = useOutletContext<IOutletContext>();
-  const categoryServices = useMemo(() => new CategoriesClient({ apiKey, serverUrl }), [apiKey]);
+  const categoryServices = useMemo(
+    () => new CategoriesClient({ apiKey, serverUrl, assetsUrl: `${assetsUrl}/categories/` }),
+    [apiKey]
+  );
   const insightsServices = useMemo(() => new InsightsClient({ apiKey, serverUrl }), [apiKey]);
   const accountServices = useMemo(() => new AccountsClient({ apiKey, serverUrl }), [apiKey]);
   const [accountId, setAccountId] = useState<number | string>(0);
