@@ -399,7 +399,8 @@ const TransactionsComponent = () => {
         })
         .catch((error) => {
           // Show error toast on error
-          showErrorToast(error);
+          if (error.detail || error.title) showErrorToast(error); // Show error toast
+          else toast.error('Um erro ocorreu.');
         });
     }
   }, [categoryServices, userId]);
@@ -459,8 +460,10 @@ const TransactionsComponent = () => {
           }
         })
         .catch((error) => {
+          componentRef.current.showMainLoading = false;
           // Show error toast on error
-          showErrorToast(error);
+          if (error.detail || error.title) showErrorToast(error); // Show error toast
+          else toast.error('Um erro ocorreu.');
         });
     }
   }, [accountServices, searchParams, userId]);

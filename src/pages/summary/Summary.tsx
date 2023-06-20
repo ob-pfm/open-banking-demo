@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import { CategoriesClient, InsightsClient, AccountsClient, Account } from 'open-banking-pfm-sdk';
 import { URL_SERVER as serverUrl, URL_ASSETS as assetsUrl } from '../../constants';
@@ -112,8 +113,8 @@ const SummaryComponent = () => {
           componentRef.current.showMainLoading = false;
         })
         .catch((error) => {
-          // Show error toast on failure
-          showErrorToast(error);
+          if (error.detail || error.title) showErrorToast(error); // Show error toast
+          else toast.error('Um erro ocorreu.');
         });
     }
   }, [categoryServices, userId]);
@@ -155,7 +156,8 @@ const SummaryComponent = () => {
           // Show error toast on failure
           componentRef.current.isEmpty = true;
           componentRef.current.showMainLoading = false;
-          showErrorToast(error);
+          if (error.detail || error.title) showErrorToast(error); // Show error toast
+          else toast.error('Um erro ocorreu.');
         });
     }
   }, [insightsServices, categoryServices, userId, accountServices, accountId]);

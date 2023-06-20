@@ -60,7 +60,9 @@ const AccountsComponent = () => {
         .catch((error) => {
           componentRef.current.banksData = []; // Reset banks data in the component
           componentRef.current.banksAccountData = []; // Reset accounts data in the component
-          showErrorToast(error); // Show error toast
+          componentRef.current.showMainLoading = false; // Hide loading indicator in the component
+          if (error.detail || error.title) showErrorToast(error); // Show error toast
+          else toast.error('Um erro ocorreu.');
         });
     }
   }, [componentRef, accountServices, userId, userServices]);
