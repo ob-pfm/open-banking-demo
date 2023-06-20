@@ -3,6 +3,7 @@ export const API_KEY_SIGNUP = 'dGVjYmFuOmludGVncmF0aW9u';
 export const AGG_IN_PROCESS = 'Agregação de banco em processo...';
 export const CONSENT_IN_PROCESS = 'Solicitação de consetimento em andamento...';
 export const URL_SERVER = `${process.env.REACT_APP_API_URL}/api/v1`;
+export const URL_ASSETS = `${process.env.REACT_APP_ASSETS_URL}`;
 export const CONSENT_REQUESTED = 'CONSENT_REQUESTED';
 export const CONSENT_AUTHORISED = 'CONSENT_AUTHORISED';
 export const CONSENT_REJECTED = 'CONSENT_REJECTED';

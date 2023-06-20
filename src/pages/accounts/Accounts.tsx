@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 
 import { FinancialEntity } from 'open-banking-pfm-sdk/models';
 import { Account, AccountsClient, AccountPayload, UsersClient } from 'open-banking-pfm-sdk';
-import { URL_SERVER as serverUrl } from '../../constants';
+import { URL_SERVER as serverUrl, URL_ASSETS as assetsUrl } from '../../constants';
 import { IOutletContext } from '../../interfaces';
 import styles from './style.css';
 import { showErrorToast } from '../../helpers';
@@ -35,7 +35,10 @@ const AccountsComponent = () => {
 
   // Create instances of AccountsClient and BanksClient using memoized version
   const accountServices = useMemo(() => new AccountsClient({ apiKey, serverUrl }), [apiKey]);
-  const userServices = useMemo(() => new UsersClient({ apiKey, serverUrl }), [apiKey]);
+  const userServices = useMemo(
+    () => new UsersClient({ apiKey, serverUrl, assetsUrl: `${assetsUrl}/br/financial-entities/` }),
+    [apiKey]
+  );
 
   // Load accounts when component mounts or userId changes
   const loadAccounts = useCallback(() => {
@@ -57,7 +60,9 @@ const AccountsComponent = () => {
         .catch((error) => {
           componentRef.current.banksData = []; // Reset banks data in the component
           componentRef.current.banksAccountData = []; // Reset accounts data in the component
-          showErrorToast(error); // Show error toast
+          componentRef.current.showMainLoading = false; // Hide loading indicator in the component
+          if (error.detail || error.title) showErrorToast(error); // Show error toast
+          else toast.error('Um erro ocorreu.');
         });
     }
   }, [componentRef, accountServices, userId, userServices]);

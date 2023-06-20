@@ -4,7 +4,8 @@ import { toast } from 'react-toastify';
 
 import { CategoriesClient, Category, CategoryPayload } from 'open-banking-pfm-sdk';
 import { ICategory, ICategoryUpdatePayload } from 'open-banking-pfm-sdk/interfaces';
-import { URL_SERVER as serverUrl } from '../../constants';
+import { showErrorToast } from '../../helpers';
+import { URL_SERVER as serverUrl, URL_ASSETS as assetsUrl } from '../../constants';
 
 import { IOutletContext } from '../../interfaces';
 
@@ -33,7 +34,10 @@ const CategoriesComponent = () => {
   const { isProcessing, alertText, userId, apiKey } = useOutletContext<IOutletContext>();
 
   // Create CategoriesClient instance with memoized apiKey
-  const categoriesServices = useMemo(() => new CategoriesClient({ apiKey, serverUrl }), [apiKey]);
+  const categoriesServices = useMemo(
+    () => new CategoriesClient({ apiKey, serverUrl, assetsUrl: `${assetsUrl}/categories/` }),
+    [apiKey]
+  );
 
   // State to store categories
   const [categories, setCategories] = useState<ICategory[]>([]);
@@ -42,10 +46,17 @@ const CategoriesComponent = () => {
   const getCategories = useCallback(
     (onSuccess: () => void) => {
       if (categoriesServices && componentRef.current !== null) {
-        categoriesServices.getListWithSubcategories(`${userId}`).then((response: Category[]) => {
-          setCategories(response.map((category) => category.toObject()));
-          onSuccess();
-        });
+        categoriesServices
+          .getListWithSubcategories(`${userId}`)
+          .then((response: Category[]) => {
+            setCategories(response.map((category) => category.toObject()));
+            onSuccess();
+          })
+          .catch((error) => {
+            if (error.detail || error.title) showErrorToast(error); // Show error toast
+            else toast.error('Um erro ocorreu.');
+            componentRef.current.showMainLoading = false;
+          });
       }
     },
     [categoriesServices, componentRef, userId]

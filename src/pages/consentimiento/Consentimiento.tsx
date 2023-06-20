@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import { buildClients } from 'open-banking-pfm-sdk';
 import { ConsentDetail } from 'open-banking-pfm-sdk/models';
 import { showErrorToast } from '../../helpers';
-import { URL_SERVER as serverUrl } from '../../constants';
+import { URL_SERVER as serverUrl, URL_ASSETS as assetsUrl } from '../../constants';
 
 import { IOutletContext } from '../../interfaces';
 import { IConsentRenewEvent } from './interfaces';
@@ -16,7 +16,10 @@ const ConsentComponent = () => {
   // Get context data using useOutletContext hook
   const { setIsProcessing, userId, initConsent, handleSetAggBankId, apiKey } = useOutletContext<IOutletContext>();
   // Create memoized instances of banksClient and consentsClient using useMemo hook
-  const { banksClient, consentsClient } = useMemo(() => buildClients({ apiKey, serverUrl }), [apiKey]);
+  const { banksClient, consentsClient } = useMemo(
+    () => buildClients({ apiKey, serverUrl, assetsUrl: `${assetsUrl}/br/financial-entities/` }),
+    [apiKey]
+  );
   // Create a reference to the consentWizardComponent
   const consentWizardComponentRef = useRef<any>(null);
   // Define state variables
@@ -45,7 +48,8 @@ const ConsentComponent = () => {
           consentWizardComponentRef.current.banksData = []; // Reset the banks data in case of error
           consentWizardComponentRef.current.consentsData = []; // Reset the consents data in case of error
           consentWizardComponentRef.current.showMainLoading = false; // Hide the main loading indicator
-          showErrorToast(error); // Show an error toast message
+          if (error.detail || error.title) showErrorToast(error); // Show error toast
+          else toast.error('Um erro ocorreu.');
         });
     }
   }, [consentsClient, banksClient, userId]);
@@ -164,7 +168,8 @@ const ConsentComponent = () => {
         .catch((error) => {
           consentWizardComponentRef.current.consentsData = []; // Clear the consentsData property
           consentWizardComponentRef.current.showMainLoading = false; // Hide the main loading indicator
-          showErrorToast(error); // Show an error toast message
+          if (error.detail || error.title) showErrorToast(error); // Show error toast
+          else toast.error('Um erro ocorreu.');
         });
     }
   }, [filterType, filterStatus, consentsClient, userId]);

@@ -10,7 +10,7 @@ import {
   Account
 } from 'open-banking-pfm-sdk';
 import { IAccount, IListOptions, ITransaction } from 'open-banking-pfm-sdk/interfaces';
-import { URL_SERVER as serverUrl } from '../../constants';
+import { URL_SERVER as serverUrl, URL_ASSETS as assetsUrl } from '../../constants';
 import { showErrorToast, unicodeToChar } from '../../helpers';
 import { IOutletContext } from '../../interfaces';
 
@@ -21,7 +21,7 @@ import '../../libs/wc/ob-transactions-component';
 // Define interface for filter options
 interface TransactionsOptions {
   accounts: IAccount[];
-  accountId: number;
+  accountId: string;
   minAmount: string;
   maxAmount: string;
   categoryId: string;
@@ -62,7 +62,7 @@ const TransactionsComponent = () => {
   const [filterOptions, setFilterOptions] = useState<TransactionsOptions>({
     // Set initial state for filter options
     accounts: [],
-    accountId: 0,
+    accountId: '',
     minAmount: '',
     maxAmount: '',
     categoryId: '',
@@ -82,7 +82,10 @@ const TransactionsComponent = () => {
   // Memoize AccountsClient instance
   const accountServices = useMemo(() => new AccountsClient({ apiKey, serverUrl }), [apiKey]);
   // Memoize CategoriesClient instance
-  const categoryServices = useMemo(() => new CategoriesClient({ apiKey, serverUrl }), [apiKey]);
+  const categoryServices = useMemo(
+    () => new CategoriesClient({ apiKey, serverUrl, assetsUrl: `${assetsUrl}/categories/` }),
+    [apiKey]
+  );
   // Memoize TransactionsClient instance
   const transactionServices = useMemo(() => new TransactionsClient({ apiKey, serverUrl }), [apiKey]);
 
@@ -95,7 +98,7 @@ const TransactionsComponent = () => {
     dateTo
   }: {
     accounts?: IAccount[] | null;
-    accountId?: number | null;
+    accountId?: string | null;
     categoryId?: string | null;
     subcategoryId?: string | null;
     dateFrom?: string | null;
@@ -168,7 +171,10 @@ const TransactionsComponent = () => {
         if (userId) {
           // Call the transactionServices to fetch the list of transactions with provided filter options
           transactionServices
-            .getList(Number(accountId), { ...parsedFilterOptions, page, field: 'executionDate' })
+            .getList(
+              accountId.split(',').map((num) => Number(num)),
+              { ...parsedFilterOptions, page, field: 'executionDate' }
+            )
             .then((response) => {
               onSuccess(response.data); // Call onSuccess callback with the fetched data as argument
               // Set the totalPages property of componentRef.current with the total pages from the response
@@ -212,32 +218,13 @@ const TransactionsComponent = () => {
 
   const handleFilter = useCallback(
     (e: { detail: ITransactionFilterEvent }) => {
-      const {
-        accountId: accountIdFilter,
-        categoryId,
-        subcategoryId,
-        minAmount,
-        maxAmount,
-        withCharges,
-        withDebits,
-        dateFrom,
-        dateTo
-      } = e.detail;
-
-      const accountIdStr = Number(accountIdFilter);
+      const { subcategoryId, minAmount, maxAmount, withCharges, withDebits, dateFrom, dateTo } = e.detail;
 
       let transactions = transactionsData;
 
-      // Filter transactions based on various filter options
-      if (accountIdFilter !== '') {
-        transactions = transactions.filter((tr) => tr.accountId === accountIdStr);
-      }
       if (subcategoryId !== '') {
         const subCatId = Number(subcategoryId);
         transactions = transactions.filter((tr) => tr.categoryId === subCatId);
-      } else if (categoryId !== '') {
-        const catId = Number(categoryId);
-        transactions = transactions.filter((tr) => tr.categoryId === catId);
       }
       if (minAmount && minAmount !== '') {
         const min = Number(minAmount);
@@ -248,12 +235,20 @@ const TransactionsComponent = () => {
         transactions = transactions.filter((tr) => tr.amount <= max);
       }
       if (dateFrom !== '') {
-        const from = new Date(dateFrom).getTime();
-        transactions = transactions.filter((tr) => tr.date >= from);
+        const from = new Date(dateFrom);
+        from.setDate(from.getDate() + 1);
+        from.setHours(0);
+        from.setMinutes(0);
+        from.setSeconds(0);
+        transactions = transactions.filter((tr) => tr.date >= from.getTime());
       }
       if (dateTo !== '') {
-        const to = new Date(dateTo).getTime();
-        transactions = transactions.filter((tr) => tr.date <= to);
+        const to = new Date(dateTo);
+        to.setDate(to.getDate() + 1);
+        to.setHours(23);
+        to.setMinutes(59);
+        to.setSeconds(59);
+        transactions = transactions.filter((tr) => tr.date <= to.getTime());
       }
       if (withCharges === 'false') {
         transactions = transactions.filter((tr) => !tr.charge);
@@ -261,8 +256,8 @@ const TransactionsComponent = () => {
         transactions = transactions.filter((tr) => tr.charge);
       }
 
-      // Update state 'transactionsFilteredData' with filtered transactions
-      setTransactionsFilteredData(transactions);
+      // Update state 'transactionsData' property with filtered transactions
+      componentRef.current.transactionsData = transactions;
     },
     [transactionsData] // Dependency: transactionsData
   );
@@ -371,13 +366,14 @@ const TransactionsComponent = () => {
 
   const handleChangeAccount = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const accountId = e.target.value === '' ? filterOptions.accounts.map((acc) => acc.id).join(',') : e.target.value;
       // Show loading indicator
       componentRef.current.showModalLoading = true;
 
       // Update activePage, setPage, and filterOptions based on the selected account value
       componentRef.current.activePage = 1;
       setPage(0);
-      setFilterOptions({ ...filterOptions, accountId: Number(e.target.value) });
+      setFilterOptions({ ...filterOptions, accountId });
 
       // Hide loading indicator
       componentRef.current.showModalLoading = false;
@@ -403,7 +399,8 @@ const TransactionsComponent = () => {
         })
         .catch((error) => {
           // Show error toast on error
-          showErrorToast(error);
+          if (error.detail || error.title) showErrorToast(error); // Show error toast
+          else toast.error('Um erro ocorreu.');
         });
     }
   }, [categoryServices, userId]);
@@ -437,7 +434,7 @@ const TransactionsComponent = () => {
               setFilterOptions(
                 getFiltersFromObject({
                   accounts,
-                  accountId: Number(accountIdParam),
+                  accountId: accountIdParam,
                   categoryId,
                   subcategoryId,
                   dateFrom,
@@ -449,7 +446,7 @@ const TransactionsComponent = () => {
               setFilterOptions(
                 getFiltersFromObject({
                   accounts,
-                  accountId: Number(accounts[0].id),
+                  accountId: accounts[0].id.toString(),
                   categoryId,
                   subcategoryId,
                   dateFrom,
@@ -463,8 +460,10 @@ const TransactionsComponent = () => {
           }
         })
         .catch((error) => {
+          componentRef.current.showMainLoading = false;
           // Show error toast on error
-          showErrorToast(error);
+          if (error.detail || error.title) showErrorToast(error); // Show error toast
+          else toast.error('Um erro ocorreu.');
         });
     }
   }, [accountServices, searchParams, userId]);
@@ -541,6 +540,7 @@ const TransactionsComponent = () => {
         // Render select input element only if there are accounts available
         <div className="selectContainer">
           <select onChange={handleChangeAccount} value={filterOptions.accountId}>
+            <option value="">Todas as contas</option>
             {/* Map through filterOptions.accounts array to render options */}
             {filterOptions.accounts.map((account) => (
               <option key={account.id} value={account.id}>
