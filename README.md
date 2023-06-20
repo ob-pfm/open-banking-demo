@@ -1,4 +1,5 @@
 
+
 # Project Name: open-banking-demo
 
   
@@ -281,10 +282,11 @@ In order to successfully integrate the following functions, it is important to p
 ```javascript
 
 import { UsersClient } from 'open-banking-pfm-sdk';
-//The constructor receives an object with two properties, the first is the api key to validate access to all of its functions, the second is the API Server Url, both are required.
+//The constructor receives an object with three properties, the first is the api key to validate access to all of its functions, the second is the API Server Url, both are required and the last one is the assets server url this one is optional and is preappended to imagePath property in getFinancialEntities response.
 const apiKey = 'XXXX-XXXX-XXXX';
 const serverUrl = 'https://pfmapiserver.com/api/v1/';
-const usersClient = new UsersClient({ apiKey, serverUrl });
+const assetsUrl= 'https://pfmassetserver.com/';
+const banksClient = new BanksClient ({ apiKey, serverUrl, assetsUrl});
 ```
 
   
@@ -475,10 +477,11 @@ This client contains the available actions related to banks.
 
 ```javascript
 import { BanksClient } from 'open-banking-pfm-sdk';
-//The constructor receives an object with two properties, the first is the api key to validate access to all of its functions, the second is the API Server Url, both are required.
+//The constructor receives an object with three properties, the first is the api key to validate access to all of its functions, the second is the API Server Url, both are required and the last one is the assets server url this one is optional and is preappended to imagePath property in getAvailables response.
 const apiKey = 'XXXX-XXXX-XXXX';
 const serverUrl = 'https://pfmapiserver.com/api/v1/';
-const banksClient = new BanksClient ({ apiKey, serverUrl });
+const assetsUrl= 'https://pfmassetserver.com/';
+const banksClient = new BanksClient ({ apiKey, serverUrl, assetsUrl});
 ```
 
   
@@ -585,10 +588,11 @@ This client contains the available actions related to the classification of tran
 
 ```javascript
 import { CategoriesClient } from 'open-banking-pfm-sdk';
-//The constructor receives an object with two properties, the first is the api key to validate access to all of its functions, the second is the API Server Url, both are required.
+//The constructor receives an object with three properties, the first is the api key to validate access to all of its functions, the second is the API Server Url, both are required and the last one is the assets server url this one is optional and is preappended to imagePath property in list, create, get and edit response.
 const apiKey = 'XXXX-XXXX-XXXX';
 const serverUrl = 'https://pfmapiserver.com/api/v1/';
-const categoriesClient = new CategoriesClient({ apiKey, serverUrl });
+const assetsUrl= 'https://pfmassetserver.com/';
+const banksClient = new BanksClient ({ apiKey, serverUrl, assetsUrl});
 ```
 
   
@@ -1685,9 +1689,10 @@ const filterOptions = {
 	field: 'executionDate', //optional
 	order: 'desc' //optional
 }; // optional
+const accountIds = [123,321]; // array or number
 
 transactionsClient
-	.getList(accountId, filterOptions)
+	.getList(accountIds, filterOptions)
 	.then((data) => console.log(data))
 	.catch((error) => console.log(error));
 ```
@@ -1699,31 +1704,36 @@ Output:
   
 
 ```console
-[
-	Transaction {
-		id: 123,
-		date: 1587567125458,
-		charge: true,
-		description: "UBER EATS",
-		amount: 1234.56,
-		categoryId: 123,
-		dateCreated: 1587567125458,
-		lastUpdated: 1587567125458,
-		isBankAggregation: true
-	},
-	Transaction {
-		id: 456,
-		date: 1587567145458,
-		charge: true,
-		description: "RAPPI",
-		amount: 1234.56,
-		categoryId: 123,
-		dateCreated: 1646259197099,
-		lastUpdated: 1646259197099,
-		isBankAggregation: true
-	}
-	...
-]
+{
+	data: [
+		Transaction {
+			id: 123,
+			date: 1587567125458,
+			charge: true,
+			description: "UBER EATS",
+			amount: 1234.56,
+			categoryId: 123,
+			dateCreated: 1587567125458,
+			lastUpdated: 1587567125458,
+			isBankAggregation: true
+		},
+		Transaction {
+			id: 456,
+			date: 1587567145458,
+			charge: true,
+			description: "RAPPI",
+			amount: 1234.56,
+			categoryId: 123,
+			dateCreated: 1646259197099,
+			lastUpdated: 1646259197099,
+			isBankAggregation: true
+		}
+		...
+	],
+	currentPage: 0,
+	totalPages: 6,
+	totalItems: 600
+}
 ```
 <details>
   <summary><h4>Possible Errors</h4></summary>
@@ -2131,7 +2141,7 @@ transactionsClient
 	.then((data) => console.log(data))
 	.catch((error) => console.log(error));
 ```
-Possible Errors:
+
 <details>
   <summary><h4>Possible Errors</h4></summary>
   
@@ -3821,7 +3831,7 @@ Given a valid user ID, fetches a resume of the financial information of a user. 
 
 ```javascript
 const insightsOptions = {
-	accountId:525742481,//Mandatory
+	accountIds:525742481,//Mandatory
 	dateFrom: number,//Optional
 	dateTo: number;//Optional
 }
@@ -3959,7 +3969,7 @@ Given a valid user ID, fetches an analysis of the financial information of a use
 
 ```javascript
 const insightsOptions = {
-	accountId:525742481,//Required
+	accountIds:525742481,//Required
 	dateFrom: number,//Optional
 	dateTo: number;//Optional
 }
@@ -4111,7 +4121,8 @@ import { buildClients } from 'open-banking-pfm-sdk';
 //The constructor receives an object with two properties, the first is the api key to validate access to all of its functions, the second is the API Server Url, both are required.
 const apiKey = 'XXXX-XXXX-XXXX';
 const serverUrl = 'https://pfmapiserver.com/api/v1/';
-const clients = new buildClients({ apiKey, serverUrl });
+const assetsUrl = 'https://pfmassetsserver.com/';
+const clients = new buildClients({ apiKey, serverUrl, assetsUrl });
 console.log(clients);
 ```
 
