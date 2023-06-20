@@ -48,7 +48,8 @@ const ConsentComponent = () => {
           consentWizardComponentRef.current.banksData = []; // Reset the banks data in case of error
           consentWizardComponentRef.current.consentsData = []; // Reset the consents data in case of error
           consentWizardComponentRef.current.showMainLoading = false; // Hide the main loading indicator
-          showErrorToast(error); // Show an error toast message
+          if (error.detail || error.title) showErrorToast(error); // Show error toast
+          else toast.error('Um erro ocorreu.');
         });
     }
   }, [consentsClient, banksClient, userId]);
@@ -167,7 +168,8 @@ const ConsentComponent = () => {
         .catch((error) => {
           consentWizardComponentRef.current.consentsData = []; // Clear the consentsData property
           consentWizardComponentRef.current.showMainLoading = false; // Hide the main loading indicator
-          showErrorToast(error); // Show an error toast message
+          if (error.detail || error.title) showErrorToast(error); // Show error toast
+          else toast.error('Um erro ocorreu.');
         });
     }
   }, [filterType, filterStatus, consentsClient, userId]);

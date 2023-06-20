@@ -199,6 +199,7 @@ const BudgetsComponent = () => {
         })
         .catch(() => {
           toast.error('Um erro ocorreu.'); // Show error toast
+          componentRef.current.showMainLoading = false; // Hide main loading
         });
   }, [getBudgets, categoryServices, userId]); // Dependencies for useEffect hook
 
