@@ -384,8 +384,9 @@ Fetches the information of the user's financial entities.
   
 
 ```javascript
+const isBankAggregation = false; //optional
 usersClient
-	.getFinancialEntities()
+	.getFinancialEntities(isBankAggregation)
 	.then((data) => console.log(data))
 	.catch((error) => console.log(error));
 ```
@@ -610,8 +611,9 @@ Fetches a list of categories, sorted by ID in descending order with its correspo
   
 
 ```javascript
+const isUserCategory = false; //optional
 categoriesClient
-	.getListWithSubcategories(userId, cursor)
+	.getListWithSubcategories(userId, isUserCategory)
 	.then((data) => console.log(data))
 	.catch((error) => console.log(error));
 ```
@@ -713,8 +715,9 @@ Fetches a list of categories, sorted by ID in descending order
   
 
 ```javascript
+const isUserCategory = false; //optional
 categoriesClient
-	.getList(userId, cursor)
+	.getList(userId, isUserCategory)
 	.then((data) =>  console.log(data))
 	.catch((error) =>  console.log(error));
 ```
@@ -1189,8 +1192,12 @@ Fetches a list of accounts per user, sorted by ID in descending order.
   
 
 ```javascript
+const accountParams = {
+	isBankAggregation: false, //optional
+	cursor: 0 //optional
+}; //optional
 accountsClient
-	.getList(userId)
+	.getList(userId, accountParams)
 	.then((data) => console.log(data))
 	.catch((error) => console.log(error));
 ```
@@ -1687,7 +1694,8 @@ const filterOptions = {
 	page: 0, //optional
 	size: 100, //optional
 	field: 'executionDate', //optional
-	order: 'desc' //optional
+	order: 'desc', //optional
+	isBankAggregation: false //optional
 }; // optional
 const accountIds = [123,321]; // array or number
 
@@ -3693,8 +3701,9 @@ Fetches a list of credit accounts per user.
   
 
 ```javascript
+const cursor = 0; //optional
 creditsClient
-	.getList(userId)
+	.getList(userId, cursor)
 	.then((data) => console.log(data))
 	.catch((error) => console.log(error));
 ```
@@ -3831,7 +3840,7 @@ Given a valid user ID, fetches a resume of the financial information of a user. 
 
 ```javascript
 const insightsOptions = {
-	accountIds:525742481,//Mandatory
+	accountIds:525742481,//Mandatory number o array of numbers
 	dateFrom: number,//Optional
 	dateTo: number;//Optional
 }
@@ -3969,7 +3978,7 @@ Given a valid user ID, fetches an analysis of the financial information of a use
 
 ```javascript
 const insightsOptions = {
-	accountIds:525742481,//Required
+	accountIds: 525742481,//Required number o array of numbers
 	dateFrom: number,//Optional
 	dateTo: number;//Optional
 }
